@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="default_background_colour">#FF5FB5CA</color>
+    <color name="default_ab_background_colour">#FF556699</color>
+    <color name="default_text_colour">#FFCCFFAA</color>
+</resources>

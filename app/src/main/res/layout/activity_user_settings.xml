@@ -29,16 +29,4 @@
         app:border_width="2dp"
         app:border_color="#FFAA0000"/>
 
-    <com.joanzapata.iconify.widget.IconTextView
-        android:text="I {fa-heart-o} to {fa-code} on {fa-android}"
-        android:shadowColor="#22000000"
-        android:shadowDx="3"
-        android:shadowDy="3"
-        android:shadowRadius="1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="40sp"
-        android:textColor="#FFAABBCC" />
-
-
 </RelativeLayout>
