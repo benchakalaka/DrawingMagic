@@ -16,9 +16,6 @@
 
 package com.drawingmagic;
 
-import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
-import jp.co.cyberagent.android.gpuimage.GPUImageView;
-import jp.co.cyberagent.android.gpuimage.GPUImageView.OnPictureSavedListener;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -29,9 +26,14 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Toast;
 
-import com.drawingmagic.utils.GPUImageFilterTools;
+import com.drawingmagic.core.GPUImageFilterTools;
 
-import static com.drawingmagic.utils.GPUImageFilterTools.*;
+import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
+import jp.co.cyberagent.android.gpuimage.GPUImageView;
+import jp.co.cyberagent.android.gpuimage.GPUImageView.OnPictureSavedListener;
+
+import static com.drawingmagic.core.GPUImageFilterTools.FilterAdjuster;
+import static com.drawingmagic.core.GPUImageFilterTools.OnGpuImageFilterChosenListener;
 
 public class ActivityGallery extends Activity implements OnSeekBarChangeListener,
         OnClickListener, OnPictureSavedListener {

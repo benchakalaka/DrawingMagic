@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package com.drawingmagic.utils;
+package com.drawingmagic.core;
 
-import static android.os.Build.VERSION.SDK_INT;
-import static android.os.Build.VERSION_CODES.GINGERBREAD;
 import android.app.Activity;
 import android.content.Context;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.view.Surface;
+
+import static android.os.Build.VERSION.SDK_INT;
+import static android.os.Build.VERSION_CODES.GINGERBREAD;
 
 public class CameraHelper {
     private final CameraHelperImpl mImpl;
@@ -33,20 +34,6 @@ public class CameraHelper {
         } else {
             mImpl = new CameraHelperBase(context);
         }
-    }
-
-    public interface CameraHelperImpl {
-        int getNumberOfCameras();
-
-        Camera openCamera(int id);
-
-        Camera openDefaultCamera();
-
-        Camera openCameraFacing(int facing);
-
-        boolean hasCamera(int cameraFacingFront);
-
-        void getCameraInfo(int cameraId, CameraInfo2 cameraInfo);
     }
 
     public int getNumberOfCameras() {
@@ -115,6 +102,20 @@ public class CameraHelper {
             result = (info.orientation - degrees + 360) % 360;
         }
         return result;
+    }
+
+    public interface CameraHelperImpl {
+        int getNumberOfCameras();
+
+        Camera openCamera(int id);
+
+        Camera openDefaultCamera();
+
+        Camera openCameraFacing(int facing);
+
+        boolean hasCamera(int cameraFacingFront);
+
+        void getCameraInfo(int cameraId, CameraInfo2 cameraInfo);
     }
 
     public static class CameraInfo2 {
