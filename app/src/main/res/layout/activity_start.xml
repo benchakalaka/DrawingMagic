@@ -29,16 +29,7 @@
         app:border_color="#FFAA0000"
         app:border_width="2dp" />
 
-    <com.joanzapata.iconify.widget.IconTextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:shadowColor="#22000000"
-        android:shadowDx="3"
-        android:shadowDy="3"
-        android:shadowRadius="1"
-        android:text="I {fa-heart-o} to {fa-code} on {fa-android}"
-        android:textColor="#FFAABBCC"
-        android:textSize="40sp" />
+
 
     <Button
         android:id="@+id/bGallery"
@@ -72,7 +63,7 @@
 
         <com.daimajia.androidviewhover.BlurLayout
             android:id="@+id/mSampleLayout"
-            android:layout_width="wrap_content"
+            android:layout_width="20dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp">
 

@@ -8,17 +8,21 @@ import android.graphics.Color;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 
+import static com.drawingmagic.core.DrawingView.*;
+import static com.drawingmagic.core.DrawingView.ShapesType;
+
 /**
  * Class represents drawing settings
  */
 public class DrawingSettings {
-    private int currentShape;
-    private int brushWidth;
-    private int currentColour;
-    private boolean fillInside;
+    private int currentShape = ShapesType.STANDARD_DRAWING;
+    // // TODO: 15/09/15 replace magic number\
+    private int brushWidth = 5;
+    private int currentColour = Color.BLUE;
+    private boolean fillInside = false;
     private boolean dashed = false;
     private boolean displayLinesWhileDrawing = false;
-    private int gridType;
+    private int gridType = GridType.PARTLY_GRID;
 
     public boolean getDashedState() {
         return this.dashed;

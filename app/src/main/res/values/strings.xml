@@ -1,4 +1,17 @@
 <resources>
     <string name="app_name">DrawingMagic</string>
     <string name="action_settings">Settings</string>
+    <string name="drawing_tools">Drawing tools</string>
+    <string name="display_lines_while_drawing">Display lines during drawing</string>
+    <string name="dashed">Dashed line</string>
+    <string name="choose_custom_color">Color picker</string>
+    <string name="change_brush_size">Brush size</string>
+    <string name="type_of_grid">Type of grid</string>
+    <string name="fill_shape">Fill shape inside</string>
+    <string name="draw_arrow">Draw arrow</string>
+    <string name="draw_rect">Draw rectangle</string>
+    <string name="draw_triangle">Draw triangle</string>
+    <string name="draw_circle">Draw circle</string>
+    <string name="draw_line">Draw line</string>
+    <string name="free_drawing">Free drawing</string>
 </resources>

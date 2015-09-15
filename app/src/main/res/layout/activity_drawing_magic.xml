@@ -1,5 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
@@ -35,6 +36,24 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1">
+
+            <github.chenupt.springindicator.SpringIndicator
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                app:siTextSize="18sp"
+                app:siIndicatorColors="@array/indicator_colors"
+                app:siTextColor="@color/default_text_colour"
+                app:siSelectedTextColor="@android:color/white"
+                app:siIndicatorColor="@color/default_ab_background_colour"
+                android:id="@+id/viewPagerIndicator"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"/>
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/viewPager"
+                android:layout_below="@+id/viewPagerIndicator"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
 
         </RelativeLayout>
 

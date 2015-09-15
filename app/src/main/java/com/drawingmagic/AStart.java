@@ -10,8 +10,6 @@ import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.daimajia.androidviewhover.BlurLayout;
 import com.drawingmagic.utils.Notification;
-import com.joanzapata.iconify.Iconify;
-import com.joanzapata.iconify.fonts.FontAwesomeModule;
 import com.romainpiel.shimmer.Shimmer;
 import com.romainpiel.shimmer.ShimmerTextView;
 
@@ -34,7 +32,7 @@ public class AStart extends SuperActivity {
 
     @Click
     void bGallery() {
-        startActivity(new Intent(AStart.this, ActivityGallery.class));
+        startActivity(new Intent(this, ActivityGallery.class));
     }
 
     @Click
@@ -44,11 +42,10 @@ public class AStart extends SuperActivity {
 
     @Click
     void bCamera() {
-        ActivityCamera_.intent(AStart.this).start();
+        ActivityCamera_.intent(this).start();
     }
 
     @AfterViews void afterViews(){
-        Iconify.with(new FontAwesomeModule());
         Shimmer shimmer = new Shimmer();
 
         shimmer.setRepeatCount(1)
@@ -76,21 +73,27 @@ public class AStart extends SuperActivity {
 
                     }
                 });
-        shimmer.start(stv);
 
+        shimmer.start(stv);
 
         BlurLayout.setGlobalDefaultDuration(450);
 
-
         View hover = LayoutInflater.from(this).inflate(R.layout.hover_sample, null);
+        View hover2 = LayoutInflater.from(this).inflate(R.layout.hover_sample2, null);
+        View hover3 = LayoutInflater.from(this).inflate(R.layout.hover_sample3, null);
+        View hover4 = LayoutInflater.from(this).inflate(R.layout.hover_sample4, null);
+
         hover.findViewById(R.id.heart).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // // TODO: 14/09/15 replace with my animayion
                 YoYo.with(Techniques.Tada)
                         .duration(550)
                         .playOn(v);
             }
         });
+
+
         hover.findViewById(R.id.share).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -100,7 +103,36 @@ public class AStart extends SuperActivity {
                         .playOn(v);
             }
         });
+
+        //sample 2
+
+        hover2.findViewById(R.id.description).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Notification.showSuccess(AStart.this, "Pretty Cool, Right?");
+            }
+        });
+
+
+        hover4.findViewById(R.id.cat).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Notification.showSuccess(AStart.this, "hover4 Cool, Right?");
+            }
+        });
+
+        hover4.findViewById(R.id.mail).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
         mSampleLayout.setHoverView(hover);
+        mSampleLayout2.setHoverView(hover2);
+        mSampleLayout3.setHoverView(hover3);
+        mSampleLayout4.setHoverView(hover4);
+
         mSampleLayout.setBlurDuration(550);
         mSampleLayout.addChildAppearAnimator(hover, R.id.heart, Techniques.FlipInX, 550, 0);
         mSampleLayout.addChildAppearAnimator(hover, R.id.share, Techniques.FlipInX, 550, 250);
@@ -113,18 +145,6 @@ public class AStart extends SuperActivity {
         mSampleLayout.addChildAppearAnimator(hover, R.id.description, Techniques.FadeInUp);
         mSampleLayout.addChildDisappearAnimator(hover, R.id.description, Techniques.FadeOutDown);
 
-        //sample 2
-
-
-        View hover2 = LayoutInflater.from(this).inflate(R.layout.hover_sample2, null);
-        hover2.findViewById(R.id.description).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Notification.showSuccess(AStart.this, "Pretty Cool, Right?");
-            }
-        });
-        mSampleLayout2.setHoverView(hover2);
-
         mSampleLayout2.addChildAppearAnimator(hover2, R.id.description, Techniques.FadeInUp);
         mSampleLayout2.addChildDisappearAnimator(hover2, R.id.description, Techniques.FadeOutDown);
         mSampleLayout2.addChildAppearAnimator(hover2, R.id.image, Techniques.DropOut, 1200);
@@ -132,18 +152,12 @@ public class AStart extends SuperActivity {
         mSampleLayout2.setBlurDuration(1000);
 
         //sample3
-
-        View hover3 = LayoutInflater.from(this).inflate(R.layout.hover_sample3, null);
-        mSampleLayout3.setHoverView(hover3);
         mSampleLayout3.addChildAppearAnimator(hover3, R.id.eye, Techniques.Landing);
         mSampleLayout3.addChildDisappearAnimator(hover3, R.id.eye, Techniques.TakingOff);
         mSampleLayout3.enableZoomBackground(true);
         mSampleLayout3.setBlurDuration(1200);
 
         //sample 4
-
-        View hover4 = LayoutInflater.from(this).inflate(R.layout.hover_sample4, null);
-        mSampleLayout4.setHoverView(hover4);
         mSampleLayout4.addChildAppearAnimator(hover4, R.id.cat, Techniques.SlideInLeft);
         mSampleLayout4.addChildAppearAnimator(hover4, R.id.mail, Techniques.SlideInRight);
 
@@ -153,26 +167,5 @@ public class AStart extends SuperActivity {
         mSampleLayout4.addChildAppearAnimator(hover4, R.id.content, Techniques.BounceIn);
         mSampleLayout4.addChildDisappearAnimator(hover4, R.id.content, Techniques.FadeOutUp);
 
-
-        hover4.findViewById(R.id.cat).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
-        hover4.findViewById(R.id.mail).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
-
-                emailIntent.setType("plain/text");
-                emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{"daimajia@gmail.com"});
-                emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "About AndroidViewHover");
-                emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, "I have a good idea about this project..");
-
-                startActivity(Intent.createChooser(emailIntent, "Send mail..."));
-            }
-        });
     }
 }
