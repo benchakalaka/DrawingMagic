@@ -18,6 +18,8 @@ import com.drawingmagic.core.DrawingView;
 import com.drawingmagic.utils.AnimationUtils;
 import com.drawingmagic.utils.Utils;
 
+import net.steamcrafted.materialiconlib.MaterialIconView;
+
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.CheckedChange;
 import org.androidannotations.annotations.Click;
@@ -58,15 +60,16 @@ public class FDrawingTools extends Fragment {
 
 
     private DrawingSettings drawingSettings = new DrawingSettings();
-    private OnSelectTypeOfShapeListener listener;
+    private OnChangeDrawingSettingsListener listener;
     @ViewById
-    ImageView ivColour0, ivColour1, ivColour2, ivColour3, ivColour4, ivColour5, ivColour6, ivColour7, ivColour8, ivColour9, ivColour10, ivColour11,
-            ivCustomColour, ivFillShape, ivChangeBrushSize, ivSimple, ivSimpleSelected, ivLine, ivLineSelected, ivRectangle, ivRectangleSelected,
-            ivTriangle, ivTriangleSelected, ivCircle, ivArrow, ivCircleSelected, ivArrowSelected, ivFullGridSelected, ivPartlyGridSelected, ivNoGridSelected;
+    MaterialIconView ivChangeBrushSize, ivSimple, ivLine, ivRectangle;
+    @ViewById
+    ImageView ivLineSelected,  ivRectangleSelected, ivTriangle, ivTriangleSelected, ivCircle, ivArrow, ivCircleSelected, ivArrowSelected, ivFullGridSelected, ivPartlyGridSelected, ivNoGridSelected,
+            ivColour0, ivColour1, ivColour2, ivColour3, ivColour4, ivColour5, ivColour6, ivColour7, ivColour8, ivColour9, ivColour10, ivColour11, ivSimpleSelected, ivCustomColour;
     @ViewById
     TextView tvTitle;
     @ViewById
-    RelativeLayout rlDashed, rlStandardDrawing, rlFillShape, rlDisplayLinesWhileDrawing, rlLine, rlRectangle, rlTriangle, rlCircle, rlBrushSize, rlArrow, rlColourPicker, rlColour, rlNoGrid, rlPartlyGrid, rlFullGrid;
+    RelativeLayout rlDashed, rlStandardDrawing, rlFillShape, rlDisplayLinesWhileDrawing, rlLine, rlRectangle, rlTriangle, rlCircle, rlBrushSize, rlArrow, rlColourPicker, rlNoGrid, rlPartlyGrid, rlFullGrid;
     @ViewById
     SeekBar sbBrushSize;
     @ViewById
@@ -77,6 +80,13 @@ public class FDrawingTools extends Fragment {
 
     @AfterViews
     void afterViews() {
+
+        // check activity for inheritance from OnSelectTypeOfShapeListener
+        try {
+            this.listener = (OnChangeDrawingSettingsListener) getActivity();
+        } catch (ClassCastException ex) {
+            throw new ClassCastException(getActivity().getLocalClassName() + "must implement OnSelectTypeOfShapeListener");
+        }
 
         cbDashed.setChecked(false);
         selectViewByTypesOfGrid(GridType.PARTLY_GRID);
@@ -91,7 +101,7 @@ public class FDrawingTools extends Fragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 drawingSettings.setBrushWidth(progress, (getActivity()).getResources().getDisplayMetrics());
-                // String.format("%s px", progress);
+                listener.onSetUpDrawingShapesOkClicked(drawingSettings);
             }
 
             @Override
@@ -125,15 +135,6 @@ public class FDrawingTools extends Fragment {
 
 
     public void setUpDrawingView(DrawingView drawingView, SuperActivity activity) {
-        // check activity for inheritance from OnSelectTypeOfShapeListener
-        try {
-            this.listener = (OnSelectTypeOfShapeListener) getActivity();
-        } catch (ClassCastException ex) {
-            throw new ClassCastException(getActivity().getLocalClassName() + "must implement OnSelectTypeOfShapeListener");
-        }
-
-
-
         drawingSettings.setBrushWidth(drawingView.getDrawingData().getShape().getBrushWidth(), activity.getResources().getDisplayMetrics());
         drawingSettings.setFillInside(drawingView.getDrawingData().getShape().isFillInside());
         drawingSettings.setCurrentColour(drawingView.getDrawingData().getShape().getCurrentColour());
@@ -190,6 +191,8 @@ public class FDrawingTools extends Fragment {
                 ivPartlyGridSelected.setVisibility(View.VISIBLE);
                 break;
         }
+        drawingSettings.setGridType(typeOfGrid);
+        listener.onSetUpDrawingShapesOkClicked(drawingSettings);
     }
 
     private void selectViewByTypesOfGrid(int gridType) {
@@ -213,6 +216,7 @@ public class FDrawingTools extends Fragment {
 
 
     private void selectViewByTypesOfShape(int typeOfShape) {
+        listener.onSetUpDrawingShapesOkClicked(drawingSettings);
         switch (typeOfShape) {
             case ShapesType.ARROW:
                 ivArrowSelected.setVisibility(View.VISIBLE);
@@ -244,7 +248,7 @@ public class FDrawingTools extends Fragment {
     /**
      * Any view has to implement current interface in order to interact with dialog
      */
-    public interface OnSelectTypeOfShapeListener {
+    public interface OnChangeDrawingSettingsListener {
         void onSetUpDrawingShapesOkClicked(DrawingSettings shape);
     }
 
@@ -280,6 +284,7 @@ public class FDrawingTools extends Fragment {
         AnimationUtils.animate(ivCustomColour, AnimationTechniques.FADE_IN);
         AnimationUtils.animate(view, AnimationTechniques.FADE_IN);
         drawingSettings.setCurrentColour(Color.parseColor(colour));
+        listener.onSetUpDrawingShapesOkClicked(drawingSettings);
     }
 
     @Click
@@ -343,27 +348,28 @@ public class FDrawingTools extends Fragment {
     }
 
 
-
-
     @CheckedChange
     void cbDashed(CompoundButton cb, boolean isChecked) {
         drawingSettings.setDashedState(isChecked);
+        listener.onSetUpDrawingShapesOkClicked(drawingSettings);
     }
 
     @Click
     void rlDashed() {
         AnimationUtils.animate(rlDashed, AnimationTechniques.BOUNCE_IN);
-         cbDashed.performClick();
+        cbDashed.performClick();
     }
 
     @CheckedChange
     void cbFillShapeInside(CompoundButton cb, boolean isChecked) {
         drawingSettings.setFillInside(isChecked);
+        listener.onSetUpDrawingShapesOkClicked(drawingSettings);
     }
 
     @CheckedChange
     void cbDisplayLinesWhileDrawing(CompoundButton cb, boolean isChecked) {
-         drawingSettings.setDisplayLinesWhileDrawing(isChecked);
+        drawingSettings.setDisplayLinesWhileDrawing(isChecked);
+        listener.onSetUpDrawingShapesOkClicked(drawingSettings);
     }
 
 
@@ -372,12 +378,6 @@ public class FDrawingTools extends Fragment {
         AnimationUtils.animate(rlDisplayLinesWhileDrawing, AnimationTechniques.BOUNCE_IN);
         cbDisplayLinesWhileDrawing.performClick();
     }
-
-    @Click
-    void rlColourPicker() {
-        AnimationUtils.animate(rlColourPicker, AnimationUtils.AnimationTechniques.BOUNCE_IN_UP);
-    }
-
 
     @Click
     void rlFillShape() {
@@ -447,8 +447,6 @@ public class FDrawingTools extends Fragment {
         drawingSettings.setGridType(GridType.FULL_GRID);
         selectViewByTypeOfGrid(GridType.FULL_GRID);
     }
-
-
 
 
 //    // Inflate the view for the fragment based on layout XML

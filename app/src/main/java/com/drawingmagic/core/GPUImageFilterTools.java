@@ -182,7 +182,7 @@ public class GPUImageFilterTools {
 
         filters.addFilter("Levels Min (Mid Adjust)", FilterType.LEVELS_FILTER_MIN);
 
-        filters. addFilter("Bilateral Blur", FilterType.BILATERAL_BLUR);
+        filters.addFilter("Bilateral Blur", FilterType.BILATERAL_BLUR);
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);

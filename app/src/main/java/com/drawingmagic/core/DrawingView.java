@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import jp.co.cyberagent.android.gpuimage.GPUImageView;
+
 
 /**
  * Project DrawingMagic.

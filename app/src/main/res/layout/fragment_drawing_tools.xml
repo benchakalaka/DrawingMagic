@@ -4,6 +4,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:background="@color/default_background_colour"
     android:layout_height="match_parent">
 
     <RelativeLayout
@@ -15,7 +16,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:background="@color/default_ab_background_colour"
+
         android:clipChildren="false"
         android:orientation="horizontal">
 
@@ -30,30 +31,21 @@
             android:textStyle="bold|italic" />
 
         <net.steamcrafted.materialiconlib.MaterialIconView
-            android:id="@+id/icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
-            android:background="@android:color/darker_gray"
+            android:layout_centerVertical="true"
             android:scaleType="center"
-            app:materialIcon="clipboard_arrow_down"
-            app:materialIconColor="#fff"
+            app:materialIcon="format_color_fill"
+            app:materialIconColor="@color/default_text_colour"
             app:materialIconSize="44dp" />
 
 
     </RelativeLayout>
 
-    <Button
-        android:id="@+id/bbOk"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:text="@android:string/ok" />
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/bbOk"
+        android:layout_alignParentBottom="true"
         android:layout_below="@+id/llTopMenu">
         <!-- Middle section -->
         <LinearLayout
@@ -78,15 +70,15 @@
                     android:layout_weight="1"
                     android:visibility="visible">
 
-                    <ImageView
+                    <net.steamcrafted.materialiconlib.MaterialIconView
                         android:id="@+id/ivSimple"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_centerInParent="true"
-                        android:layout_margin="3dp"
-
-                        android:padding="5dp"
-                        android:src="@drawable/ic_launcher" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:scaleType="center"
+                        app:materialIcon="brush"
+                        app:materialIconColor="@color/default_text_colour"
+                        app:materialIconSize="44dp" />
 
                     <ImageView
                         android:id="@+id/ivSimpleSelected"
@@ -104,15 +96,16 @@
                     android:layout_weight="1"
                     android:visibility="visible">
 
-                    <ImageView
+                    <net.steamcrafted.materialiconlib.MaterialIconView
                         android:id="@+id/ivLine"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_centerInParent="true"
-                        android:layout_margin="3dp"
-                        android:background="@drawable/ic_launcher"
-                        android:padding="5dp"
-                        android:src="@drawable/ic_launcher" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:scaleType="center"
+                        app:materialIcon="panorama"
+                        app:materialIconColor="@color/default_text_colour"
+                        app:materialIconSize="44dp" />
+
 
                     <ImageView
                         android:id="@+id/ivLineSelected"
@@ -130,15 +123,16 @@
                     android:layout_weight="1"
                     android:visibility="visible">
 
-                    <ImageView
+                    <net.steamcrafted.materialiconlib.MaterialIconView
                         android:id="@+id/ivRectangle"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_centerInParent="true"
-                        android:layout_margin="3dp"
-                        android:background="@drawable/ic_launcher"
-                        android:padding="5dp"
-                        android:src="@drawable/ic_launcher" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:scaleType="center"
+                        app:materialIcon="panorama_wide_angle"
+                        app:materialIconColor="@color/default_text_colour"
+                        app:materialIconSize="44dp" />
+
 
                     <ImageView
                         android:id="@+id/ivRectangleSelected"
@@ -156,14 +150,16 @@
                     android:layout_weight="1"
                     android:visibility="visible">
 
-                    <ImageView
+                    <net.steamcrafted.materialiconlib.MaterialIconView
                         android:id="@+id/ivTriangle"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_centerInParent="true"
-                        android:layout_margin="3dp"
-                        android:padding="5dp"
-                        android:src="@drawable/ic_launcher" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:scaleType="center"
+                        app:materialIcon="details"
+                        app:materialIconColor="@color/default_text_colour"
+                        app:materialIconSize="44dp" />
+
 
                     <ImageView
                         android:id="@+id/ivTriangleSelected"
@@ -181,14 +177,16 @@
                     android:layout_weight="1"
                     android:visibility="visible">
 
-                    <ImageView
+                    <net.steamcrafted.materialiconlib.MaterialIconView
                         android:id="@+id/ivCircle"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_centerInParent="true"
-                        android:layout_margin="3dp"
-                        android:padding="5dp"
-                        android:src="@drawable/ic_launcher" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:scaleType="center"
+                        app:materialIcon="panorama_fisheye"
+                        app:materialIconColor="@color/default_text_colour"
+                        app:materialIconSize="44dp" />
+
 
                     <ImageView
                         android:id="@+id/ivCircleSelected"
@@ -206,14 +204,16 @@
                     android:layout_weight="1"
                     android:visibility="visible">
 
-                    <ImageView
+                    <net.steamcrafted.materialiconlib.MaterialIconView
                         android:id="@+id/ivArrow"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_centerInParent="true"
-                        android:layout_margin="3dp"
-                        android:padding="5dp"
-                        android:src="@drawable/ic_launcher" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:scaleType="center"
+                        app:materialIcon="arrow_top_right"
+                        app:materialIconColor="@color/default_text_colour"
+                        app:materialIconSize="44dp" />
+
 
                     <ImageView
                         android:id="@+id/ivArrowSelected"
@@ -234,12 +234,16 @@
                 android:orientation="horizontal"
                 android:visibility="visible">
 
-                <ImageView
+                <net.steamcrafted.materialiconlib.MaterialIconView
                     android:id="@+id/ivChangeBrushSize"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:src="@drawable/ic_launcher" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:scaleType="center"
+                    app:materialIcon="brush"
+                    app:materialIconColor="@color/default_text_colour"
+                    app:materialIconSize="44dp" />
+
 
                 <TextView
                     android:layout_width="match_parent"
@@ -279,12 +283,14 @@
                 android:orientation="horizontal"
                 android:visibility="visible">
 
-                <ImageView
+                <net.steamcrafted.materialiconlib.MaterialIconView
                     android:id="@+id/ivGridType"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:src="@drawable/ic_launcher" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scaleType="center"
+                    app:materialIcon="border_all"
+                    app:materialIconColor="@color/default_text_colour"
+                    app:materialIconSize="44dp" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -313,14 +319,16 @@
                     android:layout_weight="1"
                     android:visibility="visible">
 
-                    <ImageView
+                    <net.steamcrafted.materialiconlib.MaterialIconView
                         android:id="@+id/ivNoGrid"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_centerInParent="true"
-                        android:gravity="center"
-                        android:padding="6dp"
-                        android:src="@drawable/ic_launcher" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:scaleType="center"
+                        app:materialIcon="select"
+                        app:materialIconColor="@color/default_text_colour"
+                        app:materialIconSize="44dp" />
+
 
                     <ImageView
                         android:id="@+id/ivNoGridSelected"
@@ -338,14 +346,16 @@
                     android:layout_weight="1"
                     android:visibility="visible">
 
-                    <ImageView
+                    <net.steamcrafted.materialiconlib.MaterialIconView
                         android:id="@+id/ivPartlyGrid"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_centerInParent="true"
-                        android:gravity="center"
-                        android:padding="6dp"
-                        android:src="@drawable/ic_launcher" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:scaleType="center"
+                        app:materialIcon="border_outside"
+                        app:materialIconColor="@color/default_text_colour"
+                        app:materialIconSize="44dp" />
+
 
                     <ImageView
                         android:id="@+id/ivPartlyGridSelected"
@@ -363,14 +373,15 @@
                     android:layout_weight="1"
                     android:visibility="visible">
 
-                    <ImageView
+                    <net.steamcrafted.materialiconlib.MaterialIconView
                         android:id="@+id/ivFullGrid"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_centerInParent="true"
-                        android:gravity="center"
-                        android:padding="6dp"
-                        android:src="@drawable/ic_launcher" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:scaleType="center"
+                        app:materialIcon="border_all"
+                        app:materialIconColor="@color/default_text_colour"
+                        app:materialIconSize="44dp" />
 
                     <ImageView
                         android:id="@+id/ivFullGridSelected"
@@ -392,12 +403,16 @@
                 android:orientation="horizontal"
                 android:visibility="visible">
 
-                <ImageView
+                <net.steamcrafted.materialiconlib.MaterialIconView
                     android:id="@+id/ivFillShape"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:src="@drawable/ic_launcher" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:scaleType="center"
+                    app:materialIcon="format_color_fill"
+                    app:materialIconColor="@color/default_text_colour"
+                    app:materialIconSize="44dp" />
+
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -428,14 +443,15 @@
                 android:orientation="horizontal"
                 android:visibility="visible">
 
-                <!--<com.beardedhen.androidbootstrap.FontAwesomeText-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_margin="5dp"-->
-                <!--android:padding="5dp"-->
-                <!--android:textColor="@color/buttons_background"-->
-                <!--android:textSize="32sp"-->
-                <!--fontawesometext:fa_icon="fa-hand-o-up" />-->
+                <net.steamcrafted.materialiconlib.MaterialIconView
+                    android:id="@+id/ff"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:scaleType="center"
+                    app:materialIcon="brush"
+                    app:materialIconColor="@color/default_text_colour"
+                    app:materialIconSize="44dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -507,35 +523,11 @@
                 android:visibility="visible">
 
                 <ImageView
-                    android:id="@+id/ivColorPicker"
+                    android:id="@+id/ivCustomColour"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:src="@drawable/ic_launcher" />
+                    android:layout_margin="5dp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:text="@string/choose_custom_color"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@android:color/white"
-                    android:textStyle="bold|italic" />
-
-                <RelativeLayout
-                    android:id="@+id/rlColour"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_margin="5dp">
-
-                    <ImageView
-                        android:id="@+id/ivCustomColour"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_margin="5dp" />
-                </RelativeLayout>
             </RelativeLayout>
 
             <LinearLayout

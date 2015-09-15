@@ -9,6 +9,7 @@ import android.widget.Button;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.daimajia.androidviewhover.BlurLayout;
+import com.drawingmagic.fragments.FEffectsTools;
 import com.drawingmagic.utils.Notification;
 import com.romainpiel.shimmer.Shimmer;
 import com.romainpiel.shimmer.ShimmerTextView;
@@ -32,7 +33,7 @@ public class AStart extends SuperActivity {
 
     @Click
     void bGallery() {
-        startActivity(new Intent(this, ActivityGallery.class));
+        startActivity(new Intent(this, FEffectsTools.class));
     }
 
     @Click
