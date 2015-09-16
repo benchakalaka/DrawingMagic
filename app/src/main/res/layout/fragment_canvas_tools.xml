@@ -3,9 +3,9 @@
   -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:background="@color/abs__background_holo_dark">
 
     <RelativeLayout
@@ -17,7 +17,6 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-
         android:clipChildren="false"
         android:orientation="horizontal">
 
@@ -42,7 +41,7 @@
 
     </RelativeLayout>
 
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
@@ -56,13 +55,6 @@
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:paddingTop="@dimen/activity_vertical_margin">
 
-            <com.theartofdev.edmodo.cropper.CropImageView
-                android:id="@+id/CropImageView"
-                android:layout_width="match_parent"
-                android:layout_height="280dp"
-                android:layout_gravity="center"
-                custom:imageResource="@drawable/daimajia" />
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -70,22 +62,12 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/Button_load"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Load" />
-
-                <Button
                     android:id="@+id/Button_rotate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Rotate" />
 
-                <Button
-                    android:id="@+id/Button_crop"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Crop" />
+
 
             </LinearLayout>
 
@@ -99,55 +81,34 @@
                 android:textOn="Crop shape: Oval" />
 
             <LinearLayout
-                android:id="@+id/fixedAspectRatioLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginTop="8dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"
                 android:orientation="horizontal">
 
-                <ToggleButton
-                    android:id="@+id/fixedAspectRatioToggle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textOff="Fixed AspectRatio: OFF"
-                    android:textOn="Fixed AspectRatio: ON" />
+                <net.steamcrafted.materialiconlib.MaterialIconView
+                    android:id="@+id/mivApply"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    app:materialIcon="check"
+                    app:materialIconColor="@color/default_text_colour"
+                    app:materialIconSize="44dp" />
 
-                <TextView
-                    android:id="@+id/aspectRatioNum"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="12dp"
-                    android:text="(20, 20)" />
-
+                <net.steamcrafted.materialiconlib.MaterialIconView
+                    android:id="@+id/mivCancel"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    app:materialIcon="close"
+                    app:materialIconColor="@color/default_text_colour"
+                    app:materialIconSize="44dp" />
             </LinearLayout>
 
-            <SeekBar
-                android:id="@+id/aspectRatioXSeek"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:max="100"
-                android:progress="20" />
 
-            <SeekBar
-                android:id="@+id/aspectRatioYSeek"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:max="100"
-                android:progress="20" />
-
-            <Spinner
-                android:id="@+id/showGuidelinesSpin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:entries="@array/showGuidelinesArray" />
-
-            <ImageView
-                android:id="@+id/croppedImageView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal" />
         </LinearLayout>
+
+
     </ScrollView>
 
 </RelativeLayout>

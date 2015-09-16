@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/default_text_colour">
+    android:background="@color/default_background_colour">
 
     <RelativeLayout
         android:id="@+id/llTopMenu"
@@ -16,7 +16,6 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-
         android:clipChildren="false"
         android:orientation="horizontal">
 
@@ -42,33 +41,66 @@
 
     </RelativeLayout>
 
-    <ListView
-        android:layout_below="@+id/llTopMenu"
-        android:id="@+id/lvEffects"
-        android:layout_above="@+id/bottom"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
 
-    <LinearLayout
-        android:id="@+id/bottom"
-        android:layout_alignParentBottom="true"
+    <GridView
+        android:id="@+id/gridView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal">
+        android:layout_above="@+id/llBottomFilterSettingsMenu"
+        android:layout_below="@+id/llTopMenu"
+        android:columnWidth="100dp"
+        android:gravity="center"
+        android:numColumns="4"
+        android:stretchMode="columnWidth" />
 
-        <Button
-            android:id="@+id/button_choose_filter"
-            android:layout_width="match_parent"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="Choose filter" />
+    <LinearLayout
+        android:id="@+id/llBottomFilterSettingsMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_alignParentBottom="true"
+        android:background="#33000000"
+        android:orientation="vertical">
 
-        <Button
-            android:id="@+id/button_save"
-            android:layout_weight="1"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Save" />
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <SeekBar
+                android:id="@+id/seekBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="100" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <net.steamcrafted.materialiconlib.MaterialIconView
+                android:id="@+id/mivApply"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:materialIcon="check"
+                app:materialIconColor="@color/default_text_colour"
+                app:materialIconSize="44dp" />
+
+            <net.steamcrafted.materialiconlib.MaterialIconView
+                android:id="@+id/mivCancel"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:materialIcon="close"
+                app:materialIconColor="@color/default_text_colour"
+                app:materialIconSize="44dp" />
+        </LinearLayout>
+
+
     </LinearLayout>
 
 

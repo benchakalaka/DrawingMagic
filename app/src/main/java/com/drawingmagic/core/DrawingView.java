@@ -201,7 +201,7 @@ public class DrawingView extends View {
         this.erase = isErase;
         if (erase) {
             currentPaint.setColor(Color.WHITE);
-// currentPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+            // currentPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
         } else {
             currentPaint.setXfermode(null);
         }
@@ -214,15 +214,15 @@ public class DrawingView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-// 1) draw simple bitmap
+        // 1) draw simple bitmap
         canvas.save();
         canvas.scale(mScaleFactor, mScaleFactor, scalePointX, scalePointY);
         canvas.getClipBounds(rect);
         canvas.drawBitmap(drawingData.getCanvasBitmap(), SOURCE_IMAGE_RECTANGLE, DESTINATION_IMAGE_RECT, PAINT_BITMAP);
 
-// 2) draw all previously stored paths
+        // 2) draw all previously stored paths
         for (PathSerializable path : drawingData.getPaths()) {
-// if current path is not a text draw simple path
+            // if current path is not a text draw simple path
             if (TextUtils.isEmpty(path.getTextToDraw())) {
                 PaintSerializable paint = path.getPaint().from(path.getPaint());
                 if (paint.isDashed) {
@@ -232,41 +232,39 @@ public class DrawingView extends View {
                 }
                 canvas.drawPath(path, paint);
             } else {
-// this is text, draw it
+                // this is text, draw it
                 canvas.drawText(path.getTextToDraw(), path.getTextX(), path.getTextY(), textPaint);
             }
         }
-// 3) Draw grid OVER paths and start bitmap
+        // 3) Draw grid OVER paths and start bitmap
         if (drawingData.isGridEnable() && (drawingData.shape.getGridType() != GridType.NO_GRID)) {
-// draw Y axis - LETTERS (start from 0es -> A)
-// TODO: replace magic number
+            // draw Y axis - LETTERS (start from 0es -> A)
+            // TODO: replace magic number
             for (int i = 0; i < (getHeight() / STEP) + 1; i++) {
                 canvas.drawLine(0, STEP * i, drawingData.getShape().getGridType() == GridType.PARTLY_GRID ? PARTLY_GRID_LINE_LENGTH : getWidth(), STEP * i, coordinatesPaint);
-                canvas.drawText(convertPositionToLetter(i), 17, STEP * i + 15, labelsPaint);
             }
 
-// draw X axis - NUMBERS (start from 0)
-// TODO: replace magic number
+            // draw X axis - NUMBERS (start from 0)
+            // TODO: replace magic number
             for (int i = 0; i < (getWidth() / STEP) + 1; i++) {
                 canvas.drawLine(STEP * i, 0, STEP * i, drawingData.getShape().getGridType() == GridType.PARTLY_GRID ? PARTLY_GRID_LINE_LENGTH : getHeight(), coordinatesPaint);
-                canvas.drawText(String.valueOf(i), STEP * i + 5, 20, labelsPaint);
             }
         }
 
-// When user want to draw a text BUT hasn't touched the canvas,
-// for convenience draw text in the middle of the screen
+        // When user want to draw a text BUT hasn't touched the canvas,
+        // for convenience draw text in the middle of the screen
         if (drawingData.getShape().getCurrentShape() == ShapesType.DRAW_TEXT && !isFingerTouchingCanvas) {
             canvas.drawText(drawingData.getTextToDrawOnCanvas(),
                     getWidth() / 2, getHeight() / 2, textPaint);
             canvas.drawCircle(getWidth() / 2, getHeight() / 2 + 30, 20, coordinatesPaint);
         }
 
-// !!! if user has released finger from canvas - do not need to draw any addition shapes/lines/text etc.
+        // !!! if user has released finger from canvas - do not need to draw any addition shapes/lines/text etc.
         if (!isFingerTouchingCanvas) {
             return;
         }
 
-// remove all previous drawn paths/shapes/lines etc...
+        // remove all previous drawn paths/shapes/lines etc...
         shapePath.reset();
 
         if (drawingData.getShape().getDashedState()) {
@@ -275,7 +273,7 @@ public class DrawingView extends View {
             currentPaint.setPathEffect(null);
         }
 
-// Draw current user shape
+        // Draw current user shape
         switch (drawingData.getShape().getCurrentShape()) {
             case ShapesType.STANDARD_DRAWING:
                 canvas.drawPath(currentPath, currentPaint);
@@ -310,20 +308,11 @@ public class DrawingView extends View {
 
         }
 
-// 3) if user draw something & drawing line are enabled, draw coordinates of moving finger OVER paths and start canvas
+        // 3) if user draw something & drawing line are enabled, draw coordinates of moving finger OVER paths and start canvas
         if ((drawingData.getShape().getCurrentColour() != Color.TRANSPARENT) && drawingData.getShape().isDisplayLinesWhileDrawing()) {
 
             coordinatesPaint.setTextSize(18);
-
-// draw label if enabled
-            if (!TextUtils.isEmpty(drawingData.getLabelWhenDrawing())) {
-                canvas.drawText(drawingData.getLabelWhenDrawing(), touchX + TEXT_SHIFT, touchY + TEXT_SHIFT, coordinatesPaint);
-            }
-
-// draw coordinates
-            canvas.drawText(("[ " + convertPositionToLetter((int) (touchY / STEP)) + " : " + formatter.format((int) touchX / STEP)) + "]", touchX - 90, touchY - 10, coordinatesPaint);
-
-// draw two crossing horizontal and vertical lines on finger touch position
+            // draw two crossing horizontal and vertical lines on finger touch position
             canvas.drawLine(0, touchY, getWidth(), touchY, coordinatesPaint);
             canvas.drawLine(touchX, 0, touchX, getHeight(), coordinatesPaint);
         }
@@ -407,7 +396,7 @@ public class DrawingView extends View {
                         currentPath.setSavedCanvasX(getWidth());
                         currentPath.setSavedCanvasY(getHeight());
                         drawingData.paths.add(currentPath);
-// Re init path in order to separate every free drawing
+                        // Re init path in order to separate every free drawing
                         currentPath = new PathSerializable();
                         break;
 
@@ -641,6 +630,8 @@ public class DrawingView extends View {
         textPaint.setUnderlineText(drawingData.getTextSettings().isUnderline());
         textPaint.setTypeface(drawingData.getTextSettings().getTextStyle());
         textPaint.setTextSize(drawingData.getTextSettings().getTextSize());
+
+        coordinatesPaint.setColor(Color.WHITE);
     }
 
     @Override
@@ -1128,8 +1119,7 @@ public class DrawingView extends View {
         // Display lines while user drawing
         private boolean displayLinesWhileDrawing = false;
         // Display lines while user drawing
-        private boolean
-                displayDashedMenu = true;
+        private boolean displayDashedMenu = true;
 
         public DialogCanvasSettings.CanvasSettings getCanvasSettings() {
             if (null == canvasSettings) {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.drawingmagic.core;
+package com.drawingmagic.helpers;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;

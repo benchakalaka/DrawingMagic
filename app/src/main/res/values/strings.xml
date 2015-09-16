@@ -16,4 +16,8 @@
     <string name="free_drawing">Free drawing</string>
     <string name="effects">Effects</string>
     <string name="canvas_tools">Canvas tools</string>
+    <string name="welcome_choose_an_action">Welcome to DrawingMagic, please select next action</string>
+    <string name="new_empty_canvas">Empty canvas</string>
+    <string name="choose_from_gallery">Pick up from Gallery</string>
+    <string name="camera">Camera</string>
 </resources>
