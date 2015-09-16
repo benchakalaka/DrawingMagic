@@ -7,4 +7,10 @@
         <item>@color/indicator_4</item>
     </array>
 
+    <string-array name="showGuidelinesArray">
+        <item>Guidelines=Off</item>
+        <item>Guidelines=On Touch</item>
+        <item>Guidelines=On</item>
+    </string-array>
+
 </resources>

@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.Button;
 
 import com.daimajia.androidanimations.library.Techniques;
-import com.daimajia.androidanimations.library.YoYo;
 import com.daimajia.androidviewhover.BlurLayout;
 import com.drawingmagic.fragments.FEffectsTools;
 import com.drawingmagic.utils.Notification;
@@ -18,6 +17,9 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
+
+import static com.drawingmagic.utils.AnimationUtils.AnimationTechniques;
+import static com.drawingmagic.utils.AnimationUtils.animate;
 
 @EActivity(R.layout.activity_start)
 public class AStart extends SuperActivity {
@@ -55,7 +57,7 @@ public class AStart extends SuperActivity {
                 setAnimatorListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
-
+                        ADrawingMagic_.intent(AStart.this).start();
                     }
 
                     @Override
@@ -87,10 +89,7 @@ public class AStart extends SuperActivity {
         hover.findViewById(R.id.heart).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // // TODO: 14/09/15 replace with my animayion
-                YoYo.with(Techniques.Tada)
-                        .duration(550)
-                        .playOn(v);
+                animate(v, AnimationTechniques.TADA);
             }
         });
 
@@ -98,10 +97,7 @@ public class AStart extends SuperActivity {
         hover.findViewById(R.id.share).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // // TODO: 14/09/15 replace with my animayion
-                YoYo.with(Techniques.Swing)
-                        .duration(550)
-                        .playOn(v);
+                animate(v, AnimationTechniques.SWING);
             }
         });
 

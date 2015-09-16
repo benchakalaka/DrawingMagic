@@ -2,11 +2,11 @@
 <resources>
     <color name="default_background_colour">#FF5FB5CA</color>
     <color name="default_ab_background_colour">#FF556699</color>
-    <color name="default_text_colour">#FFCCFFAA</color>
+    <color name="default_text_colour">#FF99AA22</color>
 
     <!--View Pager spring indicator-->
-    <color name="indicator_1">#55B3C2</color>
+    <color name="indicator_1">#55B</color>
     <color name="indicator_2">#64A4A4</color>
-    <color name="indicator_3">#66D7B9</color>
-    <color name="indicator_4">#FDBC7D</color>
+    <color name="indicator_3">#662341</color>
+    <color name="indicator_4">#BBAACC</color>
 </resources>

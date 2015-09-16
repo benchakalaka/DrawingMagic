@@ -17,7 +17,6 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -32,8 +31,6 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import jp.co.cyberagent.android.gpuimage.GPUImageView;
 
 
 /**
@@ -579,14 +576,14 @@ public class DrawingView extends View {
 
     public void setDrawingData(DrawingData drawingData) {
         this.drawingData = drawingData;
-// init brush's size, colour etc..
+        // init brush's size, colour etc..
         initPaint();
-// apply canvas settings
+        // apply canvas settings
         initCanvasSettings();
-// drawing settings has been changed, redraw everything
+        // drawing settings has been changed, redraw everything
         invalidate();
 
-// Set source rectangle
+        // Set source rectangle
         if (Conditions.isNotNull(drawingData.canvasBitmap)) {
             SOURCE_IMAGE_RECTANGLE = new Rect(0, 0, drawingData.getCanvasBitmap().getWidth(), drawingData.getCanvasBitmap().getHeight());
         }

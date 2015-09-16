@@ -4,40 +4,36 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.SeekBar;
 
-import com.ToxicBakery.viewpager.transforms.CubeInTransformer;
-import com.ToxicBakery.viewpager.transforms.RotateUpTransformer;
+import com.ToxicBakery.viewpager.transforms.CubeOutTransformer;
+import com.drawingmagic.adapters.ViewPagerAdapter;
 import com.drawingmagic.core.DrawingSettings;
 import com.drawingmagic.core.DrawingView;
 import com.drawingmagic.core.GPUImageFilterTools;
-import com.drawingmagic.fragments.FCanvasTools;
-import com.drawingmagic.fragments.FCanvasTools_;
 import com.drawingmagic.fragments.FDrawingTools;
 import com.drawingmagic.fragments.FDrawingTools.OnChangeDrawingSettingsListener;
-import com.drawingmagic.fragments.FDrawingTools_;
-import com.drawingmagic.fragments.FEffectsTools_;
+import com.drawingmagic.utils.Conditions;
 import com.drawingmagic.utils.Notification;
 
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.OnActivityResult;
+import org.androidannotations.annotations.SeekBarProgressChange;
 import org.androidannotations.annotations.ViewById;
 
 import github.chenupt.springindicator.SpringIndicator;
 import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageView;
 
-import static android.widget.SeekBar.*;
-import static com.drawingmagic.fragments.FCanvasTools.*;
-import static com.drawingmagic.fragments.FEffectsTools.*;
+import static android.widget.SeekBar.DRAWING_CACHE_QUALITY_HIGH;
+import static com.drawingmagic.adapters.ViewPagerAdapter.*;
 import static com.drawingmagic.core.DrawingView.ShapesType;
-import static jp.co.cyberagent.android.gpuimage.GPUImageView.*;
+import static com.drawingmagic.fragments.FCanvasTools.OnChangeCanvasSettingsListener;
+import static com.drawingmagic.fragments.FEffectsTools.OnChangeEffectListener;
+import static jp.co.cyberagent.android.gpuimage.GPUImageView.OnPictureSavedListener;
 
 /**
  * Project DrawingMagic.
@@ -45,7 +41,7 @@ import static jp.co.cyberagent.android.gpuimage.GPUImageView.*;
  * On 13/09/15 at 17:44.
  */
 @EActivity(R.layout.activity_drawing_magic)
-public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSettingsListener, OnChangeEffectListener, OnPictureSavedListener, OnSeekBarChangeListener, OnChangeCanvasSettingsListener {
+public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSettingsListener, OnChangeEffectListener, OnPictureSavedListener, OnChangeCanvasSettingsListener {
 
 
     private static final int DEFAULT_BRUSH_SIZE = 3;
@@ -66,28 +62,11 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
     @ViewById
     SeekBar seekBar;
 
-    MyPagerAdapter adapter = new MyPagerAdapter(getSupportFragmentManager());
+    // View pager adapter
+    private ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
 
     private GPUImageFilter mFilter;
     private GPUImageFilterTools.FilterAdjuster mFilterAdjuster;
-
-
-    @Override
-    public void onProgressChanged(final SeekBar seekBar, final int progress, final boolean fromUser) {
-        if (mFilterAdjuster != null) {
-            mFilterAdjuster.adjust(progress);
-        }
-
-        gpuImage.requestRender();
-    }
-
-    @Override
-    public void onStartTrackingTouch(final SeekBar seekBar) {
-    }
-
-    @Override
-    public void onStopTrackingTouch(final SeekBar seekBar) {
-    }
 
 
     @AfterViews
@@ -103,12 +82,9 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                 withColor(Color.BLACK).
                 withGridEnabled(true).build());
 
-        seekBar.setOnSeekBarChangeListener(this);
 
-
-        viewPager.setAdapter(adapter);
-
-        viewPager.setPageTransformer(true, new CubeInTransformer());
+        viewPager.setAdapter(viewPagerAdapter);
+        viewPager.setPageTransformer(true, new CubeOutTransformer());
 
         viewPagerIndicator.setViewPager(viewPager);
 
@@ -121,11 +97,18 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
             @Override
             public void onPageSelected(int i) {
                 switch (i) {
-                    case 0:
-                        updateView1();
+                    case DRAWING_TOOLS_FRAGMENT:
+                        drawingView.clearRedoPaths();
+                        drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(gpuImage.getGPUImage().getBitmapWithFilterApplied()).withPaths(null).build());
+                        gpuImage.setVisibility(View.GONE);
+                        seekBar.setVisibility(View.GONE);
                         break;
-                    case 1:
-                        updateView2();
+                    case EFFECTS_TOOLS_FRAGMENT:
+                        gpuImage.setVisibility(View.VISIBLE);
+                        seekBar.setVisibility(View.VISIBLE);
+                        drawingView.buildDrawingCache();
+                        Bitmap b = drawingView.getDrawingCache();
+                        gpuImage.setImage(b);
                         break;
                 }
 
@@ -137,43 +120,27 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
             }
         });
 
-        ((FDrawingTools) adapter.getItem(0)).setUpDrawingView(drawingView, this);
+        ((FDrawingTools) viewPagerAdapter.getItem(DRAWING_TOOLS_FRAGMENT)).setUpDrawingView(drawingView, this);
     }
 
-    @Background void updateView1 (){
-        drawingView.clearRedoPaths();
-        drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(gpuImage.getGPUImage().getBitmapWithFilterApplied()).withPaths(null).build());
-        gpuImage.setVisibility(View.GONE);
-        seekBar.setVisibility(View.GONE);
-    }
-
-
-    @Background void updateView2 (){
-        gpuImage.setVisibility(View.VISIBLE);
-        seekBar.setVisibility(View.VISIBLE);
-        drawingView.buildDrawingCache();
-        Bitmap b = drawingView.getDrawingCache();
-        gpuImage.setImage(b);
-    }
-
-    @Override
-    // TODO: 15/09/2015 Replace with AA
-    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        switch (requestCode) {
-            case REQUEST_PICK_IMAGE:
-                if (resultCode == RESULT_OK) {
-                    gpuImage.setImage(data.getData());
-                } else {
-                    finish();
-                }
-                break;
-
-            default:
-                super.onActivityResult(requestCode, resultCode, data);
-                break;
+    @SeekBarProgressChange
+    void seekBar() {
+        if (Conditions.isNotNull(mFilterAdjuster)) {
+            mFilterAdjuster.adjust(seekBar.getProgress());
         }
+
+        gpuImage.requestRender();
     }
 
+
+    @OnActivityResult(REQUEST_PICK_IMAGE)
+    void onResult(int resultCode, Intent data) {
+        if (resultCode != RESULT_OK) {
+            finish();
+            return;
+        }
+        gpuImage.setImage(data.getData());
+    }
 
     @Override
     public void onSetUpDrawingShapesOkClicked(DrawingSettings shape) {
@@ -189,7 +156,6 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
     private void saveImage() {
         String fileName = System.currentTimeMillis() + ".jpg";
         gpuImage.saveToPictures("GPUImage", fileName, this);
-//        gpuImage.saveToPictures("GPUImage", fileName, 1600, 1600, this);
     }
 
     private void switchFilterTo(final GPUImageFilter filter) {
@@ -197,7 +163,6 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
             mFilter = filter;
             gpuImage.setFilter(mFilter);
             mFilterAdjuster = new GPUImageFilterTools.FilterAdjuster(mFilter);
-
             seekBar.setVisibility(mFilterAdjuster.canAdjust() ? View.VISIBLE : View.GONE);
         }
     }
@@ -211,41 +176,4 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
     public void onCanvasSettingsChanged() {
 
     }
-
-    public static class MyPagerAdapter extends FragmentPagerAdapter {
-        private static int NUM_ITEMS = 3;
-
-        public MyPagerAdapter(FragmentManager fragmentManager) {
-            super(fragmentManager);
-        }
-
-        // Returns total number of pages
-        @Override
-        public int getCount() {
-            return NUM_ITEMS;
-        }
-
-        // Returns the fragment to display for that page
-        @Override
-        public Fragment getItem(int position) {
-            switch (position) {
-                case 0:
-                    return new FDrawingTools_();
-                case 1:
-                    return new FEffectsTools_();
-                case 2: // Fragment # 1 - This will show SecondFragment
-                    return new FCanvasTools_();
-                default:
-                    return null;
-            }
-        }
-
-        // Returns the page title for the top indicator
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return "Page " + position;
-        }
-
-    }
-
 }
