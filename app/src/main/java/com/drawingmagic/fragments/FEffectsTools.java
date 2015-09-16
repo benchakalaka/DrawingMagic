@@ -16,41 +16,75 @@
 
 package com.drawingmagic.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
-import android.widget.ListView;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.GridView;
+import android.widget.LinearLayout;
+import android.widget.SeekBar;
 
 import com.drawingmagic.ADrawingMagic;
 import com.drawingmagic.R;
-import com.drawingmagic.adapters.EffectsAdapter;
-import com.drawingmagic.core.GPUImageFilterTools;
+import com.drawingmagic.helpers.FilterItemHolder;
+import com.drawingmagic.utils.Conditions;
+import com.drawingmagic.views.HoverView;
+import com.drawingmagic.views.ImageFilterPreview;
+import com.drawingmagic.views.ImageFilterPreview_;
 
+import net.steamcrafted.materialiconlib.MaterialIconView;
+
+import org.androidannotations.annotations.AfterExtras;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.ItemClick;
+import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.SeekBarProgressChange;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
-
-import static com.drawingmagic.adapters.EffectsAdapter.*;
 import static com.drawingmagic.core.GPUImageFilterTools.FilterType;
+import static com.drawingmagic.views.HoverView.*;
 
 @EFragment(R.layout.fragment_effects)
 public class FEffectsTools extends Fragment {
 
-    @ViewById
-    ListView lvEffects;
+    ArrayList<FilterItemHolder> filters = new ArrayList<>();
 
+    @ViewById
+    GridView gridView;
+
+    @ViewById
+    MaterialIconView mivApply, mivCancel;
+
+    @ViewById
+    SeekBar seekBar;
+
+    @ViewById
+    LinearLayout llBottomFilterSettingsMenu;
 
     private OnChangeEffectListener changeEffectListener;
 
-    public interface OnChangeEffectListener {
-        void onNewFilterSelected(final GPUImageFilter filter);
+    @SeekBarProgressChange
+    void seekBar() {
+        this.changeEffectListener.onChangeSeekBarProgress(seekBar.getProgress());
     }
 
+    public void setCanAdjustStatus(boolean canAdjust) {
+        seekBar.setVisibility(canAdjust ? View.VISIBLE : View.GONE);
+        llBottomFilterSettingsMenu.setVisibility(View.VISIBLE);
+    }
+
+
+    public interface OnChangeEffectListener {
+        void onNewFilterSelected(final FilterItemHolder filter);
+
+        void onChangeSeekBarProgress(int progress);
+    }
 
     @AfterViews
     void afterViews() {
@@ -60,90 +94,111 @@ public class FEffectsTools extends Fragment {
             throw new ClassCastException(getActivity().getLocalClassName() + "must implement OnChangeEffectListener");
         }
 
-        ArrayList<FilterItem> filters = new ArrayList<>();
+        /// TODO: 16/09/2015 name to resources
+        filters.add(new FilterItemHolder("Contrast", FilterType.CONTRAST));
+        filters.add(new FilterItemHolder("Invert", FilterType.INVERT));
+        filters.add(new FilterItemHolder("Pixelation", FilterType.PIXELATION));
+        filters.add(new FilterItemHolder("Hue", FilterType.HUE));
+        filters.add(new FilterItemHolder("Gamma", FilterType.GAMMA));
+        filters.add(new FilterItemHolder("Brightness", FilterType.BRIGHTNESS));
+        filters.add(new FilterItemHolder("Sepia", FilterType.SEPIA));
+        filters.add(new FilterItemHolder("Grayscale", FilterType.GRAYSCALE));
+        filters.add(new FilterItemHolder("Sharpness", FilterType.SHARPEN));
+        filters.add(new FilterItemHolder("Sobel Edge Detection", FilterType.SOBEL_EDGE_DETECTION));
+        filters.add(new FilterItemHolder("3x3 Convolution", FilterType.THREE_X_THREE_CONVOLUTION));
+        filters.add(new FilterItemHolder("Emboss", FilterType.EMBOSS));
+        filters.add(new FilterItemHolder("Posterize", FilterType.POSTERIZE));
+        filters.add(new FilterItemHolder("Grouped filters", FilterType.FILTER_GROUP));
+        filters.add(new FilterItemHolder("Saturation", FilterType.SATURATION));
+        filters.add(new FilterItemHolder("Exposure", FilterType.EXPOSURE));
+        filters.add(new FilterItemHolder("Highlight Shadow", FilterType.HIGHLIGHT_SHADOW));
+        filters.add(new FilterItemHolder("Monochrome", FilterType.MONOCHROME));
+        filters.add(new FilterItemHolder("Opacity", FilterType.OPACITY));
+        filters.add(new FilterItemHolder("RGB", FilterType.RGB));
+        filters.add(new FilterItemHolder("White Balance", FilterType.WHITE_BALANCE));
+        filters.add(new FilterItemHolder("Vignette", FilterType.VIGNETTE));
+        filters.add(new FilterItemHolder("ToneCurve", FilterType.TONE_CURVE));
+        filters.add(new FilterItemHolder("Blend (Difference)", FilterType.BLEND_DIFFERENCE));
+        filters.add(new FilterItemHolder("Blend (Source Over)", FilterType.BLEND_SOURCE_OVER));
+        filters.add(new FilterItemHolder("Blend (Color Burn)", FilterType.BLEND_COLOR_BURN));
+        filters.add(new FilterItemHolder("Blend (Color Dodge)", FilterType.BLEND_COLOR_DODGE));
+        filters.add(new FilterItemHolder("Blend (Darken)", FilterType.BLEND_DARKEN));
+        filters.add(new FilterItemHolder("Blend (Dissolve)", FilterType.BLEND_DISSOLVE));
+        filters.add(new FilterItemHolder("Blend (Exclusion)", FilterType.BLEND_EXCLUSION));
+        filters.add(new FilterItemHolder("Blend (Hard Light)", FilterType.BLEND_HARD_LIGHT));
+        filters.add(new FilterItemHolder("Blend (Lighten)", FilterType.BLEND_LIGHTEN));
+        filters.add(new FilterItemHolder("Blend (Add)", FilterType.BLEND_ADD));
+        filters.add(new FilterItemHolder("Blend (Divide)", FilterType.BLEND_DIVIDE));
+        filters.add(new FilterItemHolder("Blend (Multiply)", FilterType.BLEND_MULTIPLY));
+        filters.add(new FilterItemHolder("Blend (Overlay)", FilterType.BLEND_OVERLAY));
+        filters.add(new FilterItemHolder("new FilterItemHolder(Blend (Screen)", FilterType.BLEND_SCREEN));
+        filters.add(new FilterItemHolder("Blend (Alpha)", FilterType.BLEND_ALPHA));
+        filters.add(new FilterItemHolder("Blend (Color)", FilterType.BLEND_COLOR));
+        filters.add(new FilterItemHolder("Blend (Hue)", FilterType.BLEND_HUE));
+        filters.add(new FilterItemHolder("Blend (Saturation)", FilterType.BLEND_SATURATION));
+        filters.add(new FilterItemHolder("Blend (Luminosity)", FilterType.BLEND_LUMINOSITY));
+        filters.add(new FilterItemHolder("Blend (Linear Burn)", FilterType.BLEND_LINEAR_BURN));
+        filters.add(new FilterItemHolder("Blend (Soft Light)", FilterType.BLEND_SOFT_LIGHT));
+        filters.add(new FilterItemHolder("Blend (Subtract)", FilterType.BLEND_SUBTRACT));
+        filters.add(new FilterItemHolder("Blend (Chroma Key)", FilterType.BLEND_CHROMA_KEY));
+        filters.add(new FilterItemHolder("Blend (Normal)", FilterType.BLEND_NORMAL));
+        filters.add(new FilterItemHolder("Lookup (Amatorka)", FilterType.LOOKUP_AMATORKA));
+        filters.add(new FilterItemHolder("Gaussian Blur", FilterType.GAUSSIAN_BLUR));
+        filters.add(new FilterItemHolder("Crosshatch", FilterType.CROSSHATCH));
+        filters.add(new FilterItemHolder("Box Blur", FilterType.BOX_BLUR));
+        filters.add(new FilterItemHolder("CGA Color Space", FilterType.CGA_COLORSPACE));
+        filters.add(new FilterItemHolder("Dilation", FilterType.DILATION));
+        filters.add(new FilterItemHolder("Kuwahara", FilterType.KUWAHARA));
+        filters.add(new FilterItemHolder("RGB Dilation", FilterType.RGB_DILATION));
+        filters.add(new FilterItemHolder("Sketch", FilterType.SKETCH));
+        filters.add(new FilterItemHolder("Toon", FilterType.TOON));
+        filters.add(new FilterItemHolder("Smooth Toon", FilterType.SMOOTH_TOON));
+        filters.add(new FilterItemHolder("Bulge Distortion", FilterType.BULGE_DISTORTION));
+        filters.add(new FilterItemHolder("Glass Sphere", FilterType.GLASS_SPHERE));
+        filters.add(new FilterItemHolder("Haze", FilterType.HAZE));
+        filters.add(new FilterItemHolder("Laplacian", FilterType.LAPLACIAN));
+        filters.add(new FilterItemHolder("Non Maximum Suppression", FilterType.NON_MAXIMUM_SUPPRESSION));
+        filters.add(new FilterItemHolder("Sphere Refraction", FilterType.SPHERE_REFRACTION));
+        filters.add(new FilterItemHolder("Swirl", FilterType.SWIRL));
+        filters.add(new FilterItemHolder("Weak Pixel Inclusion", FilterType.WEAK_PIXEL_INCLUSION));
+        filters.add(new FilterItemHolder("False Color", FilterType.FALSE_COLOR));
+        filters.add(new FilterItemHolder("Color Balance", FilterType.COLOR_BALANCE));
+        filters.add(new FilterItemHolder("Levels Min (Mid Adjust)", FilterType.LEVELS_FILTER_MIN));
+        filters.add(new FilterItemHolder("Bilateral Blur", FilterType.BILATERAL_BLUR));
 
-        filters.add(new FilterItem("Contrast", FilterType.CONTRAST));
-        filters.add(new FilterItem("Invert", FilterType.INVERT));
-        filters.add(new FilterItem("Pixelation", FilterType.PIXELATION));
-        filters.add(new FilterItem("Hue", FilterType.HUE));
-        filters.add(new FilterItem("Gamma", FilterType.GAMMA));
-        filters.add(new FilterItem("Brightness", FilterType.BRIGHTNESS));
-        filters.add(new FilterItem("Sepia", FilterType.SEPIA));
-        filters.add(new FilterItem("Grayscale", FilterType.GRAYSCALE));
-        filters.add(new FilterItem("Sharpness", FilterType.SHARPEN));
-        filters.add(new FilterItem("Sobel Edge Detection", FilterType.SOBEL_EDGE_DETECTION));
-        filters.add(new FilterItem("3x3 Convolution", FilterType.THREE_X_THREE_CONVOLUTION));
-        filters.add(new FilterItem("Emboss", FilterType.EMBOSS));
-        filters.add(new FilterItem("Posterize", FilterType.POSTERIZE));
-        filters.add(new FilterItem("Grouped filters", FilterType.FILTER_GROUP));
-        filters.add(new FilterItem("Saturation", FilterType.SATURATION));
-        filters.add(new FilterItem("Exposure", FilterType.EXPOSURE));
-        filters.add(new FilterItem("Highlight Shadow", FilterType.HIGHLIGHT_SHADOW));
-        filters.add(new FilterItem("Monochrome", FilterType.MONOCHROME));
-        filters.add(new FilterItem("Opacity", FilterType.OPACITY));
-        filters.add(new FilterItem("RGB", FilterType.RGB));
-        filters.add(new FilterItem("White Balance", FilterType.WHITE_BALANCE));
-        filters.add(new FilterItem("Vignette", FilterType.VIGNETTE));
-        filters.add(new FilterItem("ToneCurve", FilterType.TONE_CURVE));
-        filters.add(new FilterItem("Blend (Difference)", FilterType.BLEND_DIFFERENCE));
-        filters.add(new FilterItem("Blend (Source Over)", FilterType.BLEND_SOURCE_OVER));
-        filters.add(new FilterItem("Blend (Color Burn)", FilterType.BLEND_COLOR_BURN));
-        filters.add(new FilterItem("Blend (Color Dodge)", FilterType.BLEND_COLOR_DODGE));
-        filters.add(new FilterItem("Blend (Darken)", FilterType.BLEND_DARKEN));
-        filters.add(new FilterItem("Blend (Dissolve)", FilterType.BLEND_DISSOLVE));
-        filters.add(new FilterItem("Blend (Exclusion)", FilterType.BLEND_EXCLUSION));
-        filters.add(new FilterItem("Blend (Hard Light)", FilterType.BLEND_HARD_LIGHT));
-        filters.add(new FilterItem("Blend (Lighten)", FilterType.BLEND_LIGHTEN));
-        filters.add(new FilterItem("Blend (Add)", FilterType.BLEND_ADD));
-        filters.add(new FilterItem("Blend (Divide)", FilterType.BLEND_DIVIDE));
-        filters.add(new FilterItem("Blend (Multiply)", FilterType.BLEND_MULTIPLY));
-        filters.add(new FilterItem("Blend (Overlay)", FilterType.BLEND_OVERLAY));
-        filters.add(new FilterItem("new FilterItem(Blend (Screen)", FilterType.BLEND_SCREEN));
-        filters.add(new FilterItem("Blend (Alpha)", FilterType.BLEND_ALPHA));
-        filters.add(new FilterItem("Blend (Color)", FilterType.BLEND_COLOR));
-        filters.add(new FilterItem("Blend (Hue)", FilterType.BLEND_HUE));
-        filters.add(new FilterItem("Blend (Saturation)", FilterType.BLEND_SATURATION));
-        filters.add(new FilterItem("Blend (Luminosity)", FilterType.BLEND_LUMINOSITY));
-        filters.add(new FilterItem("Blend (Linear Burn)", FilterType.BLEND_LINEAR_BURN));
-        filters.add(new FilterItem("Blend (Soft Light)", FilterType.BLEND_SOFT_LIGHT));
-        filters.add(new FilterItem("Blend (Subtract)", FilterType.BLEND_SUBTRACT));
-        filters.add(new FilterItem("Blend (Chroma Key)", FilterType.BLEND_CHROMA_KEY));
-        filters.add(new FilterItem("Blend (Normal)", FilterType.BLEND_NORMAL));
-        filters.add(new FilterItem("Lookup (Amatorka)", FilterType.LOOKUP_AMATORKA));
-        filters.add(new FilterItem("Gaussian Blur", FilterType.GAUSSIAN_BLUR));
-        filters.add(new FilterItem("Crosshatch", FilterType.CROSSHATCH));
-        filters.add(new FilterItem("Box Blur", FilterType.BOX_BLUR));
-        filters.add(new FilterItem("CGA Color Space", FilterType.CGA_COLORSPACE));
-        filters.add(new FilterItem("Dilation", FilterType.DILATION));
-        filters.add(new FilterItem("Kuwahara", FilterType.KUWAHARA));
-        filters.add(new FilterItem("RGB Dilation", FilterType.RGB_DILATION));
-        filters.add(new FilterItem("Sketch", FilterType.SKETCH));
-        filters.add(new FilterItem("Toon", FilterType.TOON));
-        filters.add(new FilterItem("Smooth Toon", FilterType.SMOOTH_TOON));
-        filters.add(new FilterItem("Bulge Distortion", FilterType.BULGE_DISTORTION));
-        filters.add(new FilterItem("Glass Sphere", FilterType.GLASS_SPHERE));
-        filters.add(new FilterItem("Haze", FilterType.HAZE));
-        filters.add(new FilterItem("Laplacian", FilterType.LAPLACIAN));
-        filters.add(new FilterItem("Non Maximum Suppression", FilterType.NON_MAXIMUM_SUPPRESSION));
-        filters.add(new FilterItem("Sphere Refraction", FilterType.SPHERE_REFRACTION));
-        filters.add(new FilterItem("Swirl", FilterType.SWIRL));
-        filters.add(new FilterItem("Weak Pixel Inclusion", FilterType.WEAK_PIXEL_INCLUSION));
-        filters.add(new FilterItem("False Color", FilterType.FALSE_COLOR));
-        filters.add(new FilterItem("Color Balance", FilterType.COLOR_BALANCE));
-        filters.add(new FilterItem("Levels Min (Mid Adjust)", FilterType.LEVELS_FILTER_MIN));
-        filters.add(new FilterItem("Bilateral Blur", FilterType.BILATERAL_BLUR));
-
-        lvEffects.setAdapter(new EffectsAdapter(getActivity(), filters));
+        gridView.setAdapter(new GridViewImageFilterAdapter(getActivity(), R.layout.image_filter_preview, filters));
     }
 
-    @ItemClick void lvEffects(FilterItem item){
-        changeEffectListener.onNewFilterSelected(GPUImageFilterTools.createFilterForType(getActivity(), item.filter));
+
+    /**
+     * Adapter for grid view
+     */
+    private class GridViewImageFilterAdapter extends ArrayAdapter<FilterItemHolder> {
+
+        public GridViewImageFilterAdapter(Context context, int resource, List<FilterItemHolder> objects) {
+            super(context, resource, objects);
+        }
+
+        @Override
+        public View getView(final int position, View convertView, ViewGroup parent) {
+            if (Conditions.isNull(convertView)) {
+                convertView = ImageFilterPreview_.build(getActivity(), getItem(position), changeEffectListener);
+            }
+            ((ImageFilterPreview) convertView).setUpView(getItem(position), changeEffectListener);
+            return convertView;
+        }
     }
 
     @Click
-    void button_save() {
-        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-        photoPickerIntent.setType("image/*");
-        getActivity().startActivityForResult(photoPickerIntent, ADrawingMagic.REQUEST_PICK_IMAGE);
+    void mivCancel() {
+//        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+//        photoPickerIntent.setType("image/*");
+//        getActivity().startActivityForResult(photoPickerIntent, ADrawingMagic.REQUEST_PICK_IMAGE);
+        changeEffectListener.onNewFilterSelected(null);
+    }
+
+    @Click
+    void mivApply() {
+
     }
 }

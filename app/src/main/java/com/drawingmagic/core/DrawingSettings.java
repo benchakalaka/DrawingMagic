@@ -22,7 +22,7 @@ public class DrawingSettings {
     private boolean fillInside = false;
     private boolean dashed = false;
     private boolean displayLinesWhileDrawing = false;
-    private int gridType = GridType.PARTLY_GRID;
+    private int gridType = GridType.FULL_GRID;
 
     public boolean getDashedState() {
         return this.dashed;

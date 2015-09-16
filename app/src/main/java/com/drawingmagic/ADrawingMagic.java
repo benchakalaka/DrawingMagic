@@ -4,24 +4,29 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Bundle;
+import android.os.PersistableBundle;
+import android.provider.MediaStore;
 import android.support.v4.view.ViewPager;
 import android.view.View;
-import android.widget.SeekBar;
 
 import com.ToxicBakery.viewpager.transforms.CubeOutTransformer;
 import com.drawingmagic.adapters.ViewPagerAdapter;
 import com.drawingmagic.core.DrawingSettings;
 import com.drawingmagic.core.DrawingView;
 import com.drawingmagic.core.GPUImageFilterTools;
-import com.drawingmagic.fragments.FDrawingTools;
+import com.drawingmagic.eventbus.Event;
 import com.drawingmagic.fragments.FDrawingTools.OnChangeDrawingSettingsListener;
+import com.drawingmagic.helpers.FilterItemHolder;
 import com.drawingmagic.utils.Conditions;
 import com.drawingmagic.utils.Notification;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
+import org.androidannotations.annotations.AfterExtras;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OnActivityResult;
-import org.androidannotations.annotations.SeekBarProgressChange;
 import org.androidannotations.annotations.ViewById;
 
 import github.chenupt.springindicator.SpringIndicator;
@@ -29,10 +34,15 @@ import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageView;
 
 import static android.widget.SeekBar.DRAWING_CACHE_QUALITY_HIGH;
-import static com.drawingmagic.adapters.ViewPagerAdapter.*;
+import static com.drawingmagic.adapters.ViewPagerAdapter.CANVAS_SETTINGS_TOOLS_FRAGMENT;
+import static com.drawingmagic.adapters.ViewPagerAdapter.DRAWING_TOOLS_FRAGMENT;
+import static com.drawingmagic.adapters.ViewPagerAdapter.EFFECTS_TOOLS_FRAGMENT;
 import static com.drawingmagic.core.DrawingView.ShapesType;
 import static com.drawingmagic.fragments.FCanvasTools.OnChangeCanvasSettingsListener;
 import static com.drawingmagic.fragments.FEffectsTools.OnChangeEffectListener;
+import static com.drawingmagic.views.HoverView.MENU_ITEM_CAMERA;
+import static com.drawingmagic.views.HoverView.MENU_ITEM_EMPTY_CANVAS;
+import static com.drawingmagic.views.HoverView.MENU_ITEM_GALLERY;
 import static jp.co.cyberagent.android.gpuimage.GPUImageView.OnPictureSavedListener;
 
 /**
@@ -42,10 +52,6 @@ import static jp.co.cyberagent.android.gpuimage.GPUImageView.OnPictureSavedListe
  */
 @EActivity(R.layout.activity_drawing_magic)
 public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSettingsListener, OnChangeEffectListener, OnPictureSavedListener, OnChangeCanvasSettingsListener {
-
-
-    private static final int DEFAULT_BRUSH_SIZE = 3;
-    public static final int REQUEST_PICK_IMAGE = 1001;
 
     @ViewById
     DrawingView drawingView;
@@ -60,13 +66,23 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
     GPUImageView gpuImage;
 
     @ViewById
-    SeekBar seekBar;
+    public
+    CropImageView cropImageView;
+
+    @Extra
+    int selectedMenuItem;
+
+    private static Bitmap ORIGIN_BITMAP;
 
     // View pager adapter
     private ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
 
-    private GPUImageFilter mFilter;
-    private GPUImageFilterTools.FilterAdjuster mFilterAdjuster;
+
+    private static final int DEFAULT_BRUSH_SIZE = 3;
+    public static final int REQUEST_PICK_IMAGE = 1001;
+
+    private GPUImageFilter currentFilter;
+    private GPUImageFilterTools.FilterAdjuster filterAdjuster;
 
 
     @AfterViews
@@ -82,7 +98,6 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                 withColor(Color.BLACK).
                 withGridEnabled(true).build());
 
-
         viewPager.setAdapter(viewPagerAdapter);
         viewPager.setPageTransformer(true, new CubeOutTransformer());
 
@@ -95,20 +110,32 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
             }
 
             @Override
-            public void onPageSelected(int i) {
-                switch (i) {
+            public void onPageSelected(int position) {
+                switch (position) {
                     case DRAWING_TOOLS_FRAGMENT:
                         drawingView.clearRedoPaths();
-                        drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(gpuImage.getGPUImage().getBitmapWithFilterApplied()).withPaths(null).build());
+                        //drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(gpuImage.getGPUImage().getBitmapWithFilterApplied()).withPaths(null).build());
+
                         gpuImage.setVisibility(View.GONE);
-                        seekBar.setVisibility(View.GONE);
+                        cropImageView.setVisibility(View.GONE);
+                        drawingView.setVisibility(View.VISIBLE);
                         break;
+
                     case EFFECTS_TOOLS_FRAGMENT:
                         gpuImage.setVisibility(View.VISIBLE);
-                        seekBar.setVisibility(View.VISIBLE);
-                        drawingView.buildDrawingCache();
-                        Bitmap b = drawingView.getDrawingCache();
-                        gpuImage.setImage(b);
+                       // drawingView.buildDrawingCache();
+                       // Bitmap b = drawingView.getDrawingCache();
+                        gpuImage.setImage(ORIGIN_BITMAP);
+                        gpuImage.requestRender();
+                        cropImageView.setVisibility(View.GONE);
+                        drawingView.setVisibility(View.GONE);
+                        break;
+
+                    case CANVAS_SETTINGS_TOOLS_FRAGMENT:
+                        cropImageView.setVisibility(View.VISIBLE);
+                        gpuImage.setVisibility(View.GONE);
+                        drawingView.setVisibility(View.GONE);
+                        cropImageView.setImageBitmap(ORIGIN_BITMAP);
                         break;
                 }
 
@@ -120,16 +147,46 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
             }
         });
 
-        ((FDrawingTools) viewPagerAdapter.getItem(DRAWING_TOOLS_FRAGMENT)).setUpDrawingView(drawingView, this);
+        viewPagerAdapter.getDrawingToolsFragment().setUpDrawingView(drawingView, this);
+        switch (selectedMenuItem) {
+            case MENU_ITEM_CAMERA:
+                ActivityCamera_.intent(this).start();
+                break;
+
+            case MENU_ITEM_EMPTY_CANVAS:
+
+                break;
+
+            case MENU_ITEM_GALLERY:
+                pickUpImageFromGallery();
+                break;
+
+            default:
+                break;
+        }
     }
 
-    @SeekBarProgressChange
-    void seekBar() {
-        if (Conditions.isNotNull(mFilterAdjuster)) {
-            mFilterAdjuster.adjust(seekBar.getProgress());
-        }
 
+    @AfterExtras
+    void afterExtras() {
+
+    }
+
+    @Override
+    public void onChangeSeekBarProgress(int progress) {
+        if (Conditions.isNotNull(filterAdjuster)) {
+            filterAdjuster.adjust(progress);
+        }
         gpuImage.requestRender();
+    }
+
+    private void switchFilterTo(final GPUImageFilter filter) {
+        if (Conditions.isNull(currentFilter) || (!currentFilter.getClass().equals(filter.getClass()))) {
+            currentFilter = filter;
+            gpuImage.setFilter(currentFilter);
+            filterAdjuster = new GPUImageFilterTools.FilterAdjuster(currentFilter);
+            viewPagerAdapter.getEffectsToolsFragment().setCanAdjustStatus(filterAdjuster.canAdjust());
+        }
     }
 
 
@@ -140,6 +197,13 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
             return;
         }
         gpuImage.setImage(data.getData());
+        try {
+            ORIGIN_BITMAP = MediaStore.Images.Media.getBitmap(this.getContentResolver(), data.getData());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(ORIGIN_BITMAP).withPaths(null).build());
     }
 
     @Override
@@ -148,23 +212,22 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
     }
 
     @Override
-    public void onNewFilterSelected(GPUImageFilter filter) {
-        switchFilterTo(filter);
+    public void onNewFilterSelected(FilterItemHolder filterItemHolder) {
+        // User pressed X
+        if (filterItemHolder == null) {
+            gpuImage.getFilter().destroy();
+            gpuImage.requestRender();
+            return;
+        }
+
+        switchFilterTo(GPUImageFilterTools.createFilterForType(this, filterItemHolder.filter));
         gpuImage.requestRender();
+        Notification.showSuccess(this, filterItemHolder.filterName);
     }
 
     private void saveImage() {
         String fileName = System.currentTimeMillis() + ".jpg";
         gpuImage.saveToPictures("GPUImage", fileName, this);
-    }
-
-    private void switchFilterTo(final GPUImageFilter filter) {
-        if (mFilter == null || (filter != null && !mFilter.getClass().equals(filter.getClass()))) {
-            mFilter = filter;
-            gpuImage.setFilter(mFilter);
-            mFilterAdjuster = new GPUImageFilterTools.FilterAdjuster(mFilter);
-            seekBar.setVisibility(mFilterAdjuster.canAdjust() ? View.VISIBLE : View.GONE);
-        }
     }
 
     @Override
@@ -175,5 +238,17 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
     @Override
     public void onCanvasSettingsChanged() {
 
+    }
+
+    @Override
+    public void onEventMainThread(Event event) {
+
+    }
+
+
+    private void pickUpImageFromGallery() {
+        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+        photoPickerIntent.setType("image/*");
+        startActivityForResult(photoPickerIntent, ADrawingMagic.REQUEST_PICK_IMAGE);
     }
 }

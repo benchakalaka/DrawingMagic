@@ -1,4 +1,4 @@
-package com.drawingmagic.core;
+package com.drawingmagic.helpers;
 
 
 import android.annotation.TargetApi;

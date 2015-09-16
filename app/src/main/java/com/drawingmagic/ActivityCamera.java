@@ -32,7 +32,7 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
-import com.drawingmagic.core.CameraHelper;
+import com.drawingmagic.helpers.CameraHelper;
 import com.drawingmagic.core.GPUImageFilterTools;
 
 import org.androidannotations.annotations.AfterViews;
@@ -51,7 +51,7 @@ import jp.co.cyberagent.android.gpuimage.GPUImage;
 import jp.co.cyberagent.android.gpuimage.GPUImage.OnPictureSavedListener;
 import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
 
-import static com.drawingmagic.core.CameraHelper.CameraInfo2;
+import static com.drawingmagic.helpers.CameraHelper.CameraInfo2;
 import static com.drawingmagic.core.GPUImageFilterTools.FilterAdjuster;
 import static com.drawingmagic.core.GPUImageFilterTools.OnGpuImageFilterChosenListener;
 
