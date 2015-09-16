@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="indicator_colors">
+        <item>@color/indicator_1</item>
+        <item>@color/indicator_2</item>
+        <item>@color/indicator_3</item>
+        <item>@color/indicator_4</item>
+    </array>
+
+    <string-array name="showGuidelinesArray">
+        <item>Guidelines=Off</item>
+        <item>Guidelines=On Touch</item>
+        <item>Guidelines=On</item>
+    </string-array>
+
+</resources>
