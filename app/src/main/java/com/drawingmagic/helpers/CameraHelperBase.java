@@ -45,10 +45,7 @@ public class CameraHelperBase implements CameraHelper.CameraHelperImpl {
 
     @Override
     public boolean hasCamera(final int facing) {
-        if (facing == CameraInfo.CAMERA_FACING_BACK) {
-            return hasCameraSupport();
-        }
-        return false;
+        return facing == CameraInfo.CAMERA_FACING_BACK && hasCameraSupport();
     }
 
     @Override

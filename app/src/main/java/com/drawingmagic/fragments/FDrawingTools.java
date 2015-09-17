@@ -3,8 +3,6 @@ package com.drawingmagic.fragments;
 import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.view.View;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -16,12 +14,12 @@ import com.drawingmagic.SuperActivity;
 import com.drawingmagic.core.DrawingSettings;
 import com.drawingmagic.core.DrawingView;
 import com.drawingmagic.utils.AnimationUtils;
+import com.drawingmagic.utils.Notification;
 import com.drawingmagic.utils.Utils;
 
 import net.steamcrafted.materialiconlib.MaterialIconView;
 
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.CheckedChange;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
@@ -41,8 +39,7 @@ import static com.drawingmagic.utils.AnimationUtils.AnimationTechniques;
 public class FDrawingTools extends Fragment {
 
     // default values for round bitmap (background for imageviews)
-    private static final int ROUND_BITMAP_WIDTH = 50;
-    private static final int ROUND_BITMAP_HEIGHT = 50;
+    private static final int ROUND_BITMAP_DIAMETER = 50;
 
     // String resources
     @StringRes(R.string.draw_arrow)
@@ -59,24 +56,27 @@ public class FDrawingTools extends Fragment {
     static String freeDrawing;
 
 
-    private DrawingSettings drawingSettings = new DrawingSettings();
+    private final DrawingSettings drawingSettings = new DrawingSettings();
     private OnChangeDrawingSettingsListener listener;
-    @ViewById
-    MaterialIconView ivChangeBrushSize, ivSimple, ivLine, ivRectangle;
-    @ViewById
-    ImageView ivLineSelected,  ivRectangleSelected, ivTriangle, ivTriangleSelected, ivCircle, ivArrow, ivCircleSelected, ivArrowSelected, ivFullGridSelected, ivPartlyGridSelected, ivNoGridSelected,
-            ivColour0, ivColour1, ivColour2, ivColour3, ivColour4, ivColour5, ivColour6, ivColour7, ivColour8, ivColour9, ivColour10, ivColour11, ivSimpleSelected, ivCustomColour;
-    @ViewById
-    TextView tvTitle;
-    @ViewById
-    RelativeLayout rlDashed, rlStandardDrawing, rlFillShape, rlDisplayLinesWhileDrawing, rlLine, rlRectangle, rlTriangle, rlCircle, rlBrushSize, rlArrow, rlColourPicker, rlNoGrid, rlPartlyGrid, rlFullGrid;
-    @ViewById
-    SeekBar sbBrushSize;
-    @ViewById
-    CheckBox cbFillShapeInside, cbDisplayLinesWhileDrawing, cbDashed;
 
     @ViewById
-    LinearLayout llTypeOfShapes, llCustomColours, llBrushSize, llGridTypeHeader, llGridType;
+    MaterialIconView ivChangeBrushSize, ivSimple, ivLine, ivRectangle;
+
+    @ViewById
+    ImageView ivLineSelected, ivRectangleSelected, ivTriangle, ivTriangleSelected, ivCircle, ivArrow, ivCircleSelected, ivArrowSelected,
+            ivColour0, ivColour1, ivColour2, ivColour3, ivColour4, ivColour5, ivColour6, ivColour7, ivColour8, ivColour9, ivColour10, ivColour11, ivSimpleSelected;
+
+    @ViewById
+    TextView tvTitle;
+
+    @ViewById
+    RelativeLayout rlStandardDrawing, rlLine, rlRectangle, rlTriangle, rlCircle, rlArrow;
+
+    @ViewById
+    SeekBar sbBrushSize;
+
+    @ViewById
+    LinearLayout llTypeOfShapes, llGridType, llFillShape;
 
     @AfterViews
     void afterViews() {
@@ -88,12 +88,7 @@ public class FDrawingTools extends Fragment {
             throw new ClassCastException(getActivity().getLocalClassName() + "must implement OnSelectTypeOfShapeListener");
         }
 
-        cbDashed.setChecked(false);
-        selectViewByTypesOfGrid(GridType.PARTLY_GRID);
-        cbDisplayLinesWhileDrawing.setChecked(true);
-        // Fill shape inside view
-        cbFillShapeInside.setChecked(false);
-
+        selectViewByTypeOfGrid(GridType.FULL_GRID);
 
         // set current brush size
         sbBrushSize.setProgress(5);
@@ -117,20 +112,19 @@ public class FDrawingTools extends Fragment {
 
 
         // color picker view
-        ivCustomColour.setImageBitmap(Utils.createRoundImage(Color.BLUE, 50, 50));
 
-        ivColour0.setImageBitmap(Utils.createRoundImage(ivColour0.getTag().toString(), ROUND_BITMAP_WIDTH, ROUND_BITMAP_HEIGHT));
-        ivColour1.setImageBitmap(Utils.createRoundImage(ivColour1.getTag().toString(), ROUND_BITMAP_WIDTH, ROUND_BITMAP_HEIGHT));
-        ivColour2.setImageBitmap(Utils.createRoundImage(ivColour2.getTag().toString(), ROUND_BITMAP_WIDTH, ROUND_BITMAP_HEIGHT));
-        ivColour3.setImageBitmap(Utils.createRoundImage(ivColour3.getTag().toString(), ROUND_BITMAP_WIDTH, ROUND_BITMAP_HEIGHT));
-        ivColour4.setImageBitmap(Utils.createRoundImage(ivColour4.getTag().toString(), ROUND_BITMAP_WIDTH, ROUND_BITMAP_HEIGHT));
-        ivColour5.setImageBitmap(Utils.createRoundImage(ivColour5.getTag().toString(), ROUND_BITMAP_WIDTH, ROUND_BITMAP_HEIGHT));
-        ivColour6.setImageBitmap(Utils.createRoundImage(ivColour6.getTag().toString(), ROUND_BITMAP_WIDTH, ROUND_BITMAP_HEIGHT));
-        ivColour7.setImageBitmap(Utils.createRoundImage(ivColour7.getTag().toString(), ROUND_BITMAP_WIDTH, ROUND_BITMAP_HEIGHT));
-        ivColour8.setImageBitmap(Utils.createRoundImage(ivColour8.getTag().toString(), ROUND_BITMAP_WIDTH, ROUND_BITMAP_HEIGHT));
-        ivColour9.setImageBitmap(Utils.createRoundImage(ivColour9.getTag().toString(), ROUND_BITMAP_WIDTH, ROUND_BITMAP_HEIGHT));
-        ivColour10.setImageBitmap(Utils.createRoundImage(ivColour10.getTag().toString(), ROUND_BITMAP_WIDTH, ROUND_BITMAP_HEIGHT));
-        ivColour11.setImageBitmap(Utils.createRoundImage(ivColour11.getTag().toString(), ROUND_BITMAP_WIDTH, ROUND_BITMAP_HEIGHT));
+        ivColour0.setImageBitmap(Utils.createRoundImage(ivColour0.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        ivColour1.setImageBitmap(Utils.createRoundImage(ivColour1.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        ivColour2.setImageBitmap(Utils.createRoundImage(ivColour2.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        ivColour3.setImageBitmap(Utils.createRoundImage(ivColour3.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        ivColour4.setImageBitmap(Utils.createRoundImage(ivColour4.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        ivColour5.setImageBitmap(Utils.createRoundImage(ivColour5.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        ivColour6.setImageBitmap(Utils.createRoundImage(ivColour6.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        ivColour7.setImageBitmap(Utils.createRoundImage(ivColour7.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        ivColour8.setImageBitmap(Utils.createRoundImage(ivColour8.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        ivColour9.setImageBitmap(Utils.createRoundImage(ivColour9.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        ivColour10.setImageBitmap(Utils.createRoundImage(ivColour10.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        ivColour11.setImageBitmap(Utils.createRoundImage(ivColour11.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
     }
 
 
@@ -156,7 +150,7 @@ public class FDrawingTools extends Fragment {
 
     private void playAnimationOnViewAndUnselectAllGrids(View target) {
         AnimationUtils.animate(target, AnimationTechniques.BOUNCE_IN_UP);
-        unselectAllTypeOfGrids();
+        deselectAllTypeOfGrids();
     }
 
     /**
@@ -171,49 +165,29 @@ public class FDrawingTools extends Fragment {
         ivArrowSelected.setVisibility(View.INVISIBLE);
     }
 
-    private void unselectAllTypeOfGrids() {
-        ivNoGridSelected.setVisibility(View.INVISIBLE);
-        ivFullGridSelected.setVisibility(View.INVISIBLE);
-        ivPartlyGridSelected.setVisibility(View.INVISIBLE);
+    private void deselectAllTypeOfGrids() {
+        // ivNoGridSelected.setVisibility(View.INVISIBLE);
+        //  ivFullGridSelected.setVisibility(View.INVISIBLE);
+        //  ivPartlyGridSelected.setVisibility(View.INVISIBLE);
     }
 
     private void selectViewByTypeOfGrid(int typeOfGrid) {
         switch (typeOfGrid) {
             case GridType.NO_GRID:
-                ivNoGridSelected.setVisibility(View.VISIBLE);
+                //  ivNoGridSelected.setVisibility(View.VISIBLE);
                 break;
 
             case GridType.FULL_GRID:
-                ivFullGridSelected.setVisibility(View.VISIBLE);
+                // ivFullGridSelected.setVisibility(View.VISIBLE);
                 break;
 
             case GridType.PARTLY_GRID:
-                ivPartlyGridSelected.setVisibility(View.VISIBLE);
+                // ivPartlyGridSelected.setVisibility(View.VISIBLE);
                 break;
         }
         drawingSettings.setGridType(typeOfGrid);
         listener.onSetUpDrawingShapesOkClicked(drawingSettings);
     }
-
-    private void selectViewByTypesOfGrid(int gridType) {
-        switch (gridType) {
-            case GridType.NO_GRID:
-                ivNoGridSelected.setVisibility(View.VISIBLE);
-                rlNoGrid.performClick();
-                break;
-
-            case GridType.FULL_GRID:
-                ivFullGridSelected.setVisibility(View.VISIBLE);
-                rlFullGrid.performClick();
-                break;
-
-            case GridType.PARTLY_GRID:
-                rlPartlyGrid.performClick();
-                ivPartlyGridSelected.setVisibility(View.VISIBLE);
-                break;
-        }
-    }
-
 
     private void selectViewByTypesOfShape(int typeOfShape) {
         listener.onSetUpDrawingShapesOkClicked(drawingSettings);
@@ -243,7 +217,6 @@ public class FDrawingTools extends Fragment {
                 break;
         }
     }
-
 
     /**
      * Any view has to implement current interface in order to interact with dialog
@@ -279,12 +252,12 @@ public class FDrawingTools extends Fragment {
 
 
     private void setUpCustomColourAndPlayAnimation(View view) {
-        String colour = view.getTag().toString();
-        ivCustomColour.setImageBitmap(Utils.createRoundImage(colour, ROUND_BITMAP_WIDTH, ROUND_BITMAP_HEIGHT));
-        AnimationUtils.animate(ivCustomColour, AnimationTechniques.FADE_IN);
-        AnimationUtils.animate(view, AnimationTechniques.FADE_IN);
-        drawingSettings.setCurrentColour(Color.parseColor(colour));
+        //ivCustomColour.setImageBitmap(Utils.createRoundImage(colour, ROUND_BITMAP_DIAMETER, ROUND_BITMAP_HEIGHT));
+        //AnimationUtils.animate(ivCustomColour, AnimationTechniques.FADE_IN);
+        //AnimationUtils.animate(view, AnimationTechniques.FADE_IN);
+        drawingSettings.setCurrentColour(Color.parseColor(view.getTag().toString()));
         listener.onSetUpDrawingShapesOkClicked(drawingSettings);
+        Notification.showSuccess(getActivity(), "TODO SELECTION");
     }
 
     @Click
@@ -348,42 +321,25 @@ public class FDrawingTools extends Fragment {
     }
 
 
-    @CheckedChange
-    void cbDashed(CompoundButton cb, boolean isChecked) {
-        drawingSettings.setDashedState(isChecked);
-        listener.onSetUpDrawingShapesOkClicked(drawingSettings);
-    }
-
     @Click
     void rlDashed() {
-        AnimationUtils.animate(rlDashed, AnimationTechniques.BOUNCE_IN);
-        cbDashed.performClick();
-    }
-
-    @CheckedChange
-    void cbFillShapeInside(CompoundButton cb, boolean isChecked) {
-        drawingSettings.setFillInside(isChecked);
+        drawingSettings.setDashedState(!drawingSettings.getDashedState());
         listener.onSetUpDrawingShapesOkClicked(drawingSettings);
     }
 
-    @CheckedChange
-    void cbDisplayLinesWhileDrawing(CompoundButton cb, boolean isChecked) {
-        drawingSettings.setDisplayLinesWhileDrawing(isChecked);
-        listener.onSetUpDrawingShapesOkClicked(drawingSettings);
-    }
-
-
-    @Click
-    void rlDisplayLinesWhileDrawing() {
-        AnimationUtils.animate(rlDisplayLinesWhileDrawing, AnimationTechniques.BOUNCE_IN);
-        cbDisplayLinesWhileDrawing.performClick();
-    }
 
     @Click
     void rlFillShape() {
-        AnimationUtils.animate(rlFillShape, AnimationTechniques.BOUNCE_IN);
-        cbFillShapeInside.performClick();
+        drawingSettings.setFillInside(!drawingSettings.isFillInside());
+        listener.onSetUpDrawingShapesOkClicked(drawingSettings);
     }
+
+    @Click
+    void rlDisplayLinesWhileDrawing() {
+        drawingSettings.setDisplayLinesWhileDrawing(!drawingSettings.isDisplayLinesWhileDrawing());
+        listener.onSetUpDrawingShapesOkClicked(drawingSettings);
+    }
+
 
     @Click
     void ivSimple() {
@@ -425,27 +381,6 @@ public class FDrawingTools extends Fragment {
         playAnimationOnViewAndUnselectAllShapes(ivArrow);
         drawingSettings.setCurrentShape(ShapesType.ARROW);
         selectViewByTypesOfShape(ShapesType.ARROW);
-    }
-
-    @Click
-    void rlNoGrid() {
-        playAnimationOnViewAndUnselectAllGrids(rlNoGrid);
-        drawingSettings.setGridType(GridType.NO_GRID);
-        selectViewByTypeOfGrid(GridType.NO_GRID);
-    }
-
-    @Click
-    void rlPartlyGrid() {
-        playAnimationOnViewAndUnselectAllGrids(rlPartlyGrid);
-        drawingSettings.setGridType(GridType.PARTLY_GRID);
-        selectViewByTypeOfGrid(GridType.PARTLY_GRID);
-    }
-
-    @Click
-    void rlFullGrid() {
-        playAnimationOnViewAndUnselectAllGrids(rlFullGrid);
-        drawingSettings.setGridType(GridType.FULL_GRID);
-        selectViewByTypeOfGrid(GridType.FULL_GRID);
     }
 
 

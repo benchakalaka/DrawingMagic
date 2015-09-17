@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    name="Android Application Rules"
+    xmlns="http://pmd.sf.net/ruleset/1.0.0"
+    xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd"
+    xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0 
+                        http://pmd.sf.net/ruleset_xml_schema.xsd" >
+
+    <rule ref="rulesets/logging-java.xml" />
+    <rule ref="rulesets/basic.xml" />
+    <rule ref="rulesets/braces.xml" />
+    <rule ref="rulesets/codesize.xml" >
+        <exclude name="TooManyMethods" />
+    </rule>
+    <rule ref="rulesets/controversial.xml">
+        <exclude name="UseConcurrentHashMap" />
+        <exclude name="AvoidLiteralsInIfCondition" />
+        <exclude name="DataflowAnomalyAnalysis" />
+        <exclude name="CallSuperInConstructor" />
+        <exclude name="AtLeastOneConstructor" />
+        <exclude name="NullAssignment" />
+    </rule>
+    <!-- etc... -->
+</ruleset>

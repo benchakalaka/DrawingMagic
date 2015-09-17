@@ -1,4 +1,4 @@
-package drawingmagic.com.drawingmagic;
+package com.drawingmagic;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

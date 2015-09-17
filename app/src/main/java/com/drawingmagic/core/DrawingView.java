@@ -13,6 +13,7 @@ import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.support.annotation.NonNull;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -48,7 +49,7 @@ public class DrawingView extends View {
     // Shift from finger while drawing
     private static final int TEXT_SHIFT = 20;
     // Canvas BITMAP paint
-    private static Paint PAINT_BITMAP = new Paint();
+    private static final Paint PAINT_BITMAP = new Paint();
     // default paint for grid drawing
     private final TextPaint labelsPaint = new TextPaint();
     // paint for drawing text
@@ -61,9 +62,9 @@ public class DrawingView extends View {
     private final Matrix m = new Matrix();
     private final Paint paint = new Paint();
     // Dashed effect for all shapes
-    DashPathEffect dashedEffect = new DashPathEffect(new float[]{15, 15, 15, 15}, 0);
+    private final DashPathEffect dashedEffect = new DashPathEffect(new float[]{15, 15, 15, 15}, 0);
     long lastDoubleTouchTime = 0;
-    long ONE_SECOND_IN_MILLISECONDS = 300;
+    private final long ONE_SECOND_IN_MILLISECONDS = 300;
     // zooming
     float zoom = 1.0f;
     float smoothZoom = 1.0f;
@@ -72,7 +73,7 @@ public class DrawingView extends View {
     // listener
     OnZoomCanvasCallback zoomListener;
     // current paint which contains user's brush settings
-    private PaintSerializable currentPaint = new PaintSerializable();
+    private final PaintSerializable currentPaint = new PaintSerializable();
     // current X,Y position lives in touchX/Y, start position is in touchDownX/Y
     private float touchX, touchY, touchDownX, touchDownY;
     // settings object
@@ -86,16 +87,15 @@ public class DrawingView extends View {
     // list of paths for undo/redo operations
     private List<PathSerializable> redoPaths = new ArrayList<>();
     // path for any shape
-    private PathSerializable shapePath = new PathSerializable();
+    private final PathSerializable shapePath = new PathSerializable();
     // Activity/Dialog/Fragment which will be notified in case of event arise
     private OnTouchCanvasCallback listener;
     // Rectangle for source image
     private Rect SOURCE_IMAGE_RECTANGLE;
     private Rect DESTINATION_IMAGE_RECT;
-    private boolean erase = false;
-    private Rect rect = new Rect();
+    private final Rect rect = new Rect();
     // Scaling objects
-    private ScaleGestureDetector mScaleDetector;
+    private final ScaleGestureDetector mScaleDetector;
     private float mScaleFactor = 1.0f;
     private float scalePointX, scalePointY;
     /**
@@ -198,8 +198,7 @@ public class DrawingView extends View {
      * @param isErase enable eraser or not
      */
     public void setErase(boolean isErase) {
-        this.erase = isErase;
-        if (erase) {
+        if (isErase) {
             currentPaint.setColor(Color.WHITE);
             // currentPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
         } else {
@@ -319,11 +318,12 @@ public class DrawingView extends View {
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
+    public boolean onTouchEvent(@NonNull MotionEvent event) {
         if (event.getPointerCount() == 2) {
             Log.e("TWO FINGERS DRAWING VIEW, IGNORE");
 
             isFingerTouchingCanvas = false;
+            event.setLocation(event.getX() / mScaleFactor + rect.left, event.getY() / mScaleFactor + rect.top);
             mScaleDetector.onTouchEvent(event);
             processDoubleTouchEvent(event);
 
@@ -579,9 +579,9 @@ public class DrawingView extends View {
     }
 
     private void initCanvasSettings() {
-// if rotate factor != 0, there is an rotation required the bitmap
+        // if rotate factor != 0, there is an rotation required the bitmap
         if (0 != drawingData.getCanvasSettings().getRotateDegree()) {
-// rotate with same zoom, and specific rotate factor
+            // rotate with same zoom, and specific rotate factor
             drawingData.setCanvasBitmap(rotateBitmapZoom(drawingData.getCanvasBitmap(), drawingData.getCanvasSettings().getRotateDegree(), 1, drawingData.getCanvasSettings().isKeepAspectRatio()));
             drawingData.getCanvasSettings().setRotateDegree(0);
         }
@@ -792,7 +792,7 @@ public class DrawingView extends View {
         final float dy2 = y2 - lastdy2;
         lastdy2 = y2;
 
-// pointers distance
+        // pointers distance
         final float d = (float) Math.hypot(x2 - x1, y2 - y1);
         final float dd = d - lastd;
         lastd = d;

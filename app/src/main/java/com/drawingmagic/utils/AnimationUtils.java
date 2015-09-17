@@ -21,7 +21,7 @@ public class AnimationUtils {
     /**
      * Default duration of animations
      */
-    private static int SLOW = 1000, NORMAL = 500, FAST = 300, VERY_FAST = 150;
+    private static final int SLOW = 1000, NORMAL = 500, FAST = 300, VERY_FAST = 150;
 
     /**
      * Animation techniques
