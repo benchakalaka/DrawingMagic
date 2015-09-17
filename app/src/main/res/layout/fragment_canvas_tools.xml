@@ -36,7 +36,7 @@
             android:scaleType="center"
             app:materialIcon="format_color_fill"
             app:materialIconColor="@color/default_text_colour"
-            app:materialIconSize="44dp" />
+            app:materialIconSize="@dimen/default_icon_size" />
 
     </RelativeLayout>
 
@@ -89,7 +89,7 @@
                     android:layout_weight="1"
                     app:materialIcon="check"
                     app:materialIconColor="@color/default_text_colour"
-                    app:materialIconSize="44dp" />
+                    app:materialIconSize="@dimen/default_icon_size" />
 
                 <net.steamcrafted.materialiconlib.MaterialIconView
                     android:id="@+id/mivCancel"
@@ -98,7 +98,7 @@
                     android:layout_weight="1"
                     app:materialIcon="close"
                     app:materialIconColor="@color/default_text_colour"
-                    app:materialIconSize="44dp" />
+                    app:materialIconSize="@dimen/default_icon_size" />
             </LinearLayout>
 
 
