@@ -24,7 +24,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     public static final int EFFECTS_TOOLS_FRAGMENT = 1;
     public static final int CANVAS_SETTINGS_TOOLS_FRAGMENT = 2;
 
-    private ArrayList<Fragment> fragments = new ArrayList<>();
+    private final ArrayList<Fragment> fragments = new ArrayList<>();
 
     public ViewPagerAdapter(FragmentManager fragmentManager) {
         super(fragmentManager);

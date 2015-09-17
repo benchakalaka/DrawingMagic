@@ -22,8 +22,8 @@ public class PaintSerializable extends Paint implements Serializable {
     /**
      * Obtain new instance of paint from existing one
      *
-     * @param paint
-     * @return
+     * @param paint origin pain
+     * @return PaintSerializable object created from given paint
      */
     public PaintSerializable from(PaintSerializable paint) {
         paint.setStrokeWidth(paint.brushStrokeWith);

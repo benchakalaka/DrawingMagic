@@ -11,6 +11,7 @@
         android:id="@+id/llTwoPanelHolder"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:baselineAligned="false"
         android:orientation="horizontal">
 
         <!-- CANVAS HOLDER LAYOUT-->
@@ -27,17 +28,16 @@
 
             <jp.co.cyberagent.android.gpuimage.GPUImageView
                 android:id="@+id/gpuImage"
-                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
             <com.theartofdev.edmodo.cropper.CropImageView
                 android:id="@+id/cropImageView"
-                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                custom:imageResource="@drawable/daimajia" />
+                android:visibility="gone"
+                custom:imageResource="@drawable/kid" />
         </RelativeLayout>
 
 

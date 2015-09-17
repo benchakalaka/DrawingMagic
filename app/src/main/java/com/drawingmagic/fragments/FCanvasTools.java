@@ -68,7 +68,7 @@ public class FCanvasTools extends Fragment {
 
     @Click
     void mivCancel() {
-        ((ADrawingMagic) getActivity()).cropImageView.setImageResource(R.drawable.daimajia);
+        ((ADrawingMagic) getActivity()).cropImageView.setImageBitmap(ADrawingMagic.ORIGIN_BITMAP.copy(Bitmap.Config.ARGB_8888, true));
     }
 
 

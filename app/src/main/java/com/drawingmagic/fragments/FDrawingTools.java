@@ -59,12 +59,12 @@ public class FDrawingTools extends Fragment {
     static String freeDrawing;
 
 
-    private DrawingSettings drawingSettings = new DrawingSettings();
+    private final DrawingSettings drawingSettings = new DrawingSettings();
     private OnChangeDrawingSettingsListener listener;
     @ViewById
     MaterialIconView ivChangeBrushSize, ivSimple, ivLine, ivRectangle;
     @ViewById
-    ImageView ivLineSelected,  ivRectangleSelected, ivTriangle, ivTriangleSelected, ivCircle, ivArrow, ivCircleSelected, ivArrowSelected, ivFullGridSelected, ivPartlyGridSelected, ivNoGridSelected,
+    ImageView ivLineSelected, ivRectangleSelected, ivTriangle, ivTriangleSelected, ivCircle, ivArrow, ivCircleSelected, ivArrowSelected, ivFullGridSelected, ivPartlyGridSelected, ivNoGridSelected,
             ivColour0, ivColour1, ivColour2, ivColour3, ivColour4, ivColour5, ivColour6, ivColour7, ivColour8, ivColour9, ivColour10, ivColour11, ivSimpleSelected, ivCustomColour;
     @ViewById
     TextView tvTitle;
@@ -89,7 +89,7 @@ public class FDrawingTools extends Fragment {
         }
 
         cbDashed.setChecked(false);
-        selectViewByTypesOfGrid(GridType.PARTLY_GRID);
+        selectViewByTypesOfGrid(GridType.FULL_GRID);
         cbDisplayLinesWhileDrawing.setChecked(true);
         // Fill shape inside view
         cbFillShapeInside.setChecked(false);

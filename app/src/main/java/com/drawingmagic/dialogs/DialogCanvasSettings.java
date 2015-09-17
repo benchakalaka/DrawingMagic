@@ -225,7 +225,7 @@ public class DialogCanvasSettings extends RelativeLayout {
         /**
          * For configuring purposes
          */
-        public static int[] ALL_TYPES_OF_ROTATION = {_90, _180, _270};
+        public static final int[] ALL_TYPES_OF_ROTATION = {_90, _180, _270};
 
         // hide constructor, only static constants exposed
         private RotateBy() {
@@ -370,12 +370,5 @@ public class DialogCanvasSettings extends RelativeLayout {
             displayBitmapInfo = true;
             return this;
         }
-
-        public DialogCanvasSettings build(SuperActivity activity) {
-            withDialog(Utils.getConfiguredDialog(activity));
-            return null;//DialogCanvasSettings_.build(activity, this);
-        }
-
-
     }
 }

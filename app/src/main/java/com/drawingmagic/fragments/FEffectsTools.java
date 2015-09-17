@@ -17,7 +17,6 @@
 package com.drawingmagic.fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,21 +25,17 @@ import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
-import com.drawingmagic.ADrawingMagic;
 import com.drawingmagic.R;
 import com.drawingmagic.helpers.FilterItemHolder;
 import com.drawingmagic.utils.Conditions;
-import com.drawingmagic.views.HoverView;
 import com.drawingmagic.views.ImageFilterPreview;
 import com.drawingmagic.views.ImageFilterPreview_;
 
 import net.steamcrafted.materialiconlib.MaterialIconView;
 
-import org.androidannotations.annotations.AfterExtras;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.SeekBarProgressChange;
 import org.androidannotations.annotations.ViewById;
 
@@ -48,12 +43,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.drawingmagic.core.GPUImageFilterTools.FilterType;
-import static com.drawingmagic.views.HoverView.*;
 
 @EFragment(R.layout.fragment_effects)
 public class FEffectsTools extends Fragment {
 
-    ArrayList<FilterItemHolder> filters = new ArrayList<>();
+    private final ArrayList<FilterItemHolder> filters = new ArrayList<>();
 
     @ViewById
     GridView gridView;
@@ -191,9 +185,6 @@ public class FEffectsTools extends Fragment {
 
     @Click
     void mivCancel() {
-//        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-//        photoPickerIntent.setType("image/*");
-//        getActivity().startActivityForResult(photoPickerIntent, ADrawingMagic.REQUEST_PICK_IMAGE);
         changeEffectListener.onNewFilterSelected(null);
     }
 
