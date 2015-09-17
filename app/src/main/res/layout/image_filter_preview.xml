@@ -15,7 +15,7 @@
         android:scaleType="center"
         app:materialIcon="format_color_fill"
         app:materialIconColor="@color/default_text_colour"
-        app:materialIconSize="44dp" />
+        app:materialIconSize="@dimen/default_icon_size" />
 
     <TextView
         android:id="@+id/tvDescription"

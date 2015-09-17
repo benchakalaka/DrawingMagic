@@ -28,8 +28,22 @@ public class Utils {
         return d;
     }
 
+    // TODO: 17/09/2015 Replace with circle image view library
+
+    /**
+     * Create round bitmap
+     *
+     * @param colour
+     * @param bitmapW
+     * @param bitmapH
+     * @return
+     */
     public static Bitmap createRoundImage(String colour, int bitmapW, int bitmapH) {
         return createRoundImage(Color.parseColor(colour), bitmapW, bitmapH);
+    }
+
+    public static Bitmap createRoundImage(String colour, int diametr) {
+        return createRoundImage(Color.parseColor(colour), diametr, diametr);
     }
 
     public static Bitmap createRoundImage(int colour, int bitmapW, int bitmapH) {

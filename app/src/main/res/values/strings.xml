@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">DrawingMagic</string>
     <string name="drawing_tools">Drawing tools</string>
-    <string name="display_lines_while_drawing">Display lines during drawing</string>
+    <string name="lines_on_touch">Lines on touch</string>
     <string name="dashed">Dashed line</string>
     <string name="change_brush_size">Brush size</string>
     <string name="type_of_grid">Type of grid</string>
-    <string name="fill_shape">Fill shape inside</string>
+    <string name="fill_shape">Fill shape</string>
     <string name="draw_arrow">Draw arrow</string>
     <string name="draw_rect">Draw rectangle</string>
     <string name="draw_triangle">Draw triangle</string>
@@ -20,4 +20,10 @@
     <string name="camera">Camera</string>
     <string name="rotate">Rotate</string>
     <string name="choose_filter">Choose Filter</string>
+    <string name="grid_off">Grid off</string>
+    <string name="only_edges">Only edges</string>
+    <string name="grid_on">Grid on</string>
+    <string name="undo">Undo</string>
+    <string name="redo">Redo</string>
+    <string name="clear_all">Clear all</string>
 </resources>
