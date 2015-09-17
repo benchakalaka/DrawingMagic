@@ -73,7 +73,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
     public static Bitmap ORIGIN_BITMAP;
 
     // View pager adapter
-    private ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+    private final ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
 
 
     private static final int DEFAULT_BRUSH_SIZE = 3;

@@ -16,6 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/source"
             android:layout_centerInParent="true"
+            android:contentDescription="@null"
             android:scaleType="fitXY"
             android:src="@drawable/kid" />
     </com.daimajia.androidviewhover.BlurLayout>

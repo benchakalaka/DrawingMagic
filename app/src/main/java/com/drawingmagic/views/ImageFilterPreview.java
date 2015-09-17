@@ -1,17 +1,12 @@
 package com.drawingmagic.views;
 
-import android.app.Activity;
 import android.content.Context;
-import android.util.AttributeSet;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.drawingmagic.R;
-import com.drawingmagic.core.GPUImageFilterTools;
-import com.drawingmagic.fragments.FEffectsTools;
 import com.drawingmagic.helpers.FilterItemHolder;
 import com.drawingmagic.utils.Log;
-import com.drawingmagic.utils.Notification;
 
 import net.steamcrafted.materialiconlib.MaterialIconView;
 
@@ -20,7 +15,7 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
 
-import static com.drawingmagic.fragments.FEffectsTools.*;
+import static com.drawingmagic.fragments.FEffectsTools.OnChangeEffectListener;
 import static net.steamcrafted.materialiconlib.MaterialDrawableBuilder.IconValue;
 
 /**

@@ -8,7 +8,7 @@ import android.graphics.Color;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 
-import static com.drawingmagic.core.DrawingView.*;
+import static com.drawingmagic.core.DrawingView.GridType;
 import static com.drawingmagic.core.DrawingView.ShapesType;
 
 /**

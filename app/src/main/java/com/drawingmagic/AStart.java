@@ -1,14 +1,11 @@
 package com.drawingmagic;
 
 import android.animation.Animator;
-import android.content.Intent;
-import android.view.LayoutInflater;
 import android.view.View;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidviewhover.BlurLayout;
 import com.drawingmagic.eventbus.Event;
-import com.drawingmagic.views.HoverView;
 import com.drawingmagic.views.HoverView_;
 import com.romainpiel.shimmer.Shimmer;
 import com.romainpiel.shimmer.ShimmerTextView;
@@ -17,8 +14,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
-import static com.drawingmagic.utils.AnimationUtils.animate;
-import static com.drawingmagic.views.HoverView.*;
+import static com.drawingmagic.views.HoverView.HooverMenuClickListener;
 
 @EActivity(R.layout.activity_start)
 public class AStart extends SuperActivity implements HooverMenuClickListener {

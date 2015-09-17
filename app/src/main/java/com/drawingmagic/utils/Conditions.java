@@ -18,8 +18,8 @@ public class Conditions {
     /**
      * Check list to null or empty value
      *
-     * @param jArray
-     * @return
+     * @param jArray array to be checked
+     * @return true if array is null or empty, false otherwise
      */
     public static boolean isNullOrEmpty(Set<?> jArray) {
         return (isNull(jArray)) || (jArray.isEmpty());
@@ -28,11 +28,11 @@ public class Conditions {
     /**
      * Check list to null or empty value
      *
-     * @param jArray
-     * @return
+     * @param list list to be checked
+     * @return true if list is null or empty, false otherwise
      */
-    public static boolean isNullOrEmpty(List<?> jArray) {
-        return (isNull(jArray)) || (jArray.isEmpty());
+    public static boolean isNullOrEmpty(List<?> list) {
+        return (isNull(list)) || (list.isEmpty());
     }
 
     /**

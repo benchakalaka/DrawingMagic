@@ -32,8 +32,8 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
-import com.drawingmagic.helpers.CameraHelper;
 import com.drawingmagic.core.GPUImageFilterTools;
+import com.drawingmagic.helpers.CameraHelper;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
@@ -46,21 +46,22 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import jp.co.cyberagent.android.gpuimage.GPUImage;
 import jp.co.cyberagent.android.gpuimage.GPUImage.OnPictureSavedListener;
 import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
 
-import static com.drawingmagic.helpers.CameraHelper.CameraInfo2;
 import static com.drawingmagic.core.GPUImageFilterTools.FilterAdjuster;
 import static com.drawingmagic.core.GPUImageFilterTools.OnGpuImageFilterChosenListener;
+import static com.drawingmagic.helpers.CameraHelper.CameraInfo2;
 
 
 @EActivity(R.layout.activity_camera)
 public class ActivityCamera extends Activity implements OnSeekBarChangeListener {
 
-    public static final int MEDIA_TYPE_IMAGE = 1;
-    public static final int MEDIA_TYPE_VIDEO = 2;
+    private static final int MEDIA_TYPE_IMAGE = 1;
+    private static final int MEDIA_TYPE_VIDEO = 2;
     @ViewById
     SeekBar seekBar;
     @ViewById
@@ -93,7 +94,7 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener 
         }
 
         // Create a media file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         File mediaFile;
         if (type == MEDIA_TYPE_IMAGE) {
             mediaFile = new File(mediaStorageDir.getPath() + File.separator +
@@ -214,7 +215,7 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener 
 
                                     @Override
                                     public void onPictureSaved(final Uri
-                                            uri) {
+                                                                       uri) {
                                         pictureFile.delete();
                                         camera.startPreview();
                                         view.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
@@ -235,7 +236,7 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener 
 
     @Override
     public void onProgressChanged(final SeekBar seekBar, final int progress,
-            final boolean fromUser) {
+                                  final boolean fromUser) {
         if (mFilterAdjuster != null) {
             mFilterAdjuster.adjust(progress);
         }
@@ -287,7 +288,9 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener 
             mGPUImage.setUpCamera(mCameraInstance, orientation, flipHorizontal, false);
         }
 
-        /** A safe way to get an instance of the Camera object. */
+        /**
+         * A safe way to get an instance of the Camera object.
+         */
         private Camera getCameraInstance(final int id) {
             Camera c = null;
             try {
