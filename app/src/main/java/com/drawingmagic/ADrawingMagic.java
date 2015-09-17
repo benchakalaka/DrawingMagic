@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.provider.MediaStore;
 import android.support.v4.view.ViewPager;
 import android.view.View;
@@ -33,13 +31,13 @@ import github.chenupt.springindicator.SpringIndicator;
 import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageView;
 
-import static android.widget.SeekBar.DRAWING_CACHE_QUALITY_HIGH;
 import static com.drawingmagic.adapters.ViewPagerAdapter.CANVAS_SETTINGS_TOOLS_FRAGMENT;
 import static com.drawingmagic.adapters.ViewPagerAdapter.DRAWING_TOOLS_FRAGMENT;
 import static com.drawingmagic.adapters.ViewPagerAdapter.EFFECTS_TOOLS_FRAGMENT;
 import static com.drawingmagic.core.DrawingView.ShapesType;
 import static com.drawingmagic.fragments.FCanvasTools.OnChangeCanvasSettingsListener;
 import static com.drawingmagic.fragments.FEffectsTools.OnChangeEffectListener;
+import static com.drawingmagic.views.HoverView.DRAWING_CACHE_QUALITY_HIGH;
 import static com.drawingmagic.views.HoverView.MENU_ITEM_CAMERA;
 import static com.drawingmagic.views.HoverView.MENU_ITEM_EMPTY_CANVAS;
 import static com.drawingmagic.views.HoverView.MENU_ITEM_GALLERY;
@@ -72,7 +70,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
     @Extra
     int selectedMenuItem;
 
-    private static Bitmap ORIGIN_BITMAP;
+    public static Bitmap ORIGIN_BITMAP;
 
     // View pager adapter
     private ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
@@ -87,20 +85,24 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 
     @AfterViews
     void afterViews() {
-        drawingView.setDrawingCacheEnabled(true);
-        drawingView.setDrawingCacheQuality(DRAWING_CACHE_QUALITY_HIGH);
-        drawingView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
-        drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).
-                withBrushWidth(DEFAULT_BRUSH_SIZE, getResources().getDisplayMetrics()).
-                withLinesWhileDrawing(false).
-                withShape(ShapesType.STANDARD_DRAWING).
-                withColor(Color.BLACK).
-                withGridEnabled(true).build());
+        // init drawing view
+        initDrawingView();
 
+        // init view pager
+        initViewPager();
+
+        // for some unknown reason, if gpuImage had visibility GONE defined
+        // in xml layout file, setImage will not work
+        gpuImage.setVisibility(View.GONE);
+    }
+
+    /**
+     * Init View Pager
+     */
+    private void initViewPager() {
         viewPager.setAdapter(viewPagerAdapter);
         viewPager.setPageTransformer(true, new CubeOutTransformer());
-
         viewPagerIndicator.setViewPager(viewPager);
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -114,7 +116,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                 switch (position) {
                     case DRAWING_TOOLS_FRAGMENT:
                         drawingView.clearRedoPaths();
-                        //drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(gpuImage.getGPUImage().getBitmapWithFilterApplied()).withPaths(null).build());
+                        drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(gpuImage.getGPUImage().getBitmapWithFilterApplied()).withPaths(null).build());
 
                         gpuImage.setVisibility(View.GONE);
                         cropImageView.setVisibility(View.GONE);
@@ -123,10 +125,12 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 
                     case EFFECTS_TOOLS_FRAGMENT:
                         gpuImage.setVisibility(View.VISIBLE);
-                       // drawingView.buildDrawingCache();
-                       // Bitmap b = drawingView.getDrawingCache();
-                        gpuImage.setImage(ORIGIN_BITMAP);
+
+                        gpuImage.setImage(ORIGIN_BITMAP.copy(Bitmap.Config.ARGB_8888, true));
                         gpuImage.requestRender();
+
+                        //Log.e(gpuImage.getWidth() + " h : "+gpuImage.getHeight());
+
                         cropImageView.setVisibility(View.GONE);
                         drawingView.setVisibility(View.GONE);
                         break;
@@ -135,7 +139,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                         cropImageView.setVisibility(View.VISIBLE);
                         gpuImage.setVisibility(View.GONE);
                         drawingView.setVisibility(View.GONE);
-                        cropImageView.setImageBitmap(ORIGIN_BITMAP);
+                        cropImageView.setImageBitmap(ORIGIN_BITMAP.copy(Bitmap.Config.ARGB_8888, true));
                         break;
                 }
 
@@ -146,8 +150,27 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 
             }
         });
+    }
 
-        viewPagerAdapter.getDrawingToolsFragment().setUpDrawingView(drawingView, this);
+    /**
+     * Init Drawing View
+     */
+    private void initDrawingView() {
+        drawingView.setDrawingCacheEnabled(true);
+        drawingView.setDrawingCacheQuality(DRAWING_CACHE_QUALITY_HIGH);
+        drawingView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+
+        drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).
+                withBrushWidth(DEFAULT_BRUSH_SIZE, getResources().getDisplayMetrics()).
+                withLinesWhileDrawing(false).
+                withShape(ShapesType.STANDARD_DRAWING).
+                withColor(Color.BLACK).
+                withGridEnabled(true).build());
+    }
+
+
+    @AfterExtras
+    void afterExtras() {
         switch (selectedMenuItem) {
             case MENU_ITEM_CAMERA:
                 ActivityCamera_.intent(this).start();
@@ -164,12 +187,6 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
             default:
                 break;
         }
-    }
-
-
-    @AfterExtras
-    void afterExtras() {
-
     }
 
     @Override
@@ -196,13 +213,13 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
             finish();
             return;
         }
-        gpuImage.setImage(data.getData());
+
         try {
             ORIGIN_BITMAP = MediaStore.Images.Media.getBitmap(this.getContentResolver(), data.getData());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
+        gpuImage.setImage(data.getData());
         drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(ORIGIN_BITMAP).withPaths(null).build());
     }
 
