@@ -9,6 +9,7 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.drawingmagic.ADrawingMagic;
 import com.drawingmagic.R;
 import com.drawingmagic.core.DrawingSettings;
 import com.drawingmagic.eventbus.Event;
@@ -21,6 +22,7 @@ import net.steamcrafted.materialiconlib.MaterialIconView;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.SeekBarProgressChange;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.StringRes;
 
@@ -71,14 +73,22 @@ public class FDrawingTools extends Fragment {
     TextView tvTitle;
 
     @ViewById
-    RelativeLayout rlClearCanvas, rlUndo, rlRedo, rlDashed, rlFillShape, rlDisplayLinesWhileDrawing,rlStandardDrawing, rlLine, rlRectangle, rlTriangle, rlCircle, rlArrow, rlNoGrid, rlPartlyGrid, rlFullGrid;
+    RelativeLayout rlClearCanvas, rlUndo, rlRedo, rlDashed, rlFillShape, rlDisplayLinesWhileDrawing, rlStandardDrawing, rlLine, rlRectangle, rlTriangle, rlCircle, rlArrow, rlNoGrid, rlPartlyGrid, rlFullGrid;
 
     @ViewById
-    SeekBar sbBrushSize;
+    SeekBar sbBrushSize, sbSkew;
 
     @ViewById
     LinearLayout llTypeOfShapes, llGridType, llFillShape;
 
+
+    @SeekBarProgressChange
+    void sbSkew(SeekBar seekBar, int progress) {
+        // // TODO: 18/09/2015  NAFIG YBRAT'
+        float skewFactor = (float) progress / 100f;
+        ((ADrawingMagic) getActivity()).setSkewFactor(skewFactor);
+
+    }
 
     @AfterViews
     void afterViews() {
@@ -112,7 +122,6 @@ public class FDrawingTools extends Fragment {
             }
         });
 
-
         // color picker view
 
         ivColour0.setImageBitmap(Utils.createRoundImage(ivColour0.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
@@ -132,17 +141,20 @@ public class FDrawingTools extends Fragment {
     public FDrawingTools() {
     }
 
-    @Click void rlNoGrid(){
+    @Click
+    void rlNoGrid() {
         playAnimationOnView(rlNoGrid);
         selectViewByTypeOfGrid(GridType.NO_GRID);
     }
 
-    @Click void rlPartlyGrid(){
+    @Click
+    void rlPartlyGrid() {
         playAnimationOnView(rlPartlyGrid);
         selectViewByTypeOfGrid(GridType.PARTLY_GRID);
     }
 
-    @Click void rlFullGrid(){
+    @Click
+    void rlFullGrid() {
         playAnimationOnView(rlFullGrid);
         selectViewByTypeOfGrid(GridType.FULL_GRID);
     }
@@ -329,7 +341,6 @@ public class FDrawingTools extends Fragment {
         EventBus.getDefault().post(new Event(Event.ON_CLEAR_CANVAS));
         playAnimationOnView(rlClearCanvas);
     }
-
 
 
     @Click

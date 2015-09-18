@@ -381,4 +381,9 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
         photoPickerIntent.setType("image/*");
         startActivityForResult(photoPickerIntent, ADrawingMagic.REQUEST_PICK_IMAGE);
     }
+
+    public void setSkewFactor(float skewFactor) {
+        Log.e("Skew factor : " + skewFactor);
+        drawingView.setSkewFactor(skewFactor);
+    }
 }

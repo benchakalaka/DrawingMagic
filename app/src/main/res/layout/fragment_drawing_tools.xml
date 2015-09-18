@@ -550,6 +550,28 @@
             </LinearLayout>
 
 
+            <RelativeLayout
+                android:id="@+id/rlSkew"
+                style="@style/drawing_tools_row">
+
+                <net.steamcrafted.materialiconlib.MaterialIconView
+                    android:id="@+id/ivSkew"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scaleType="center"
+                    app:materialIcon="brush"
+                    app:materialIconColor="@color/default_text_colour"
+                    app:materialIconSize="@dimen/default_icon_size" />
+
+                <SeekBar
+                    android:id="@+id/sbSkew"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@+id/ivSkew"
+                    android:layout_toRightOf="@+id/ivSkew"
+                    android:max="100" />
+            </RelativeLayout>
+
         </LinearLayout>
     </ScrollView>
 
