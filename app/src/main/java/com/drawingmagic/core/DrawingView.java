@@ -4,6 +4,7 @@ package com.drawingmagic.core;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Camera;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
@@ -21,6 +22,8 @@ import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
 
 import com.drawingmagic.SuperActivity;
 import com.drawingmagic.dialogs.DialogCanvasSettings;
@@ -120,11 +123,13 @@ public class DrawingView extends View {
         super(context, attrs);
         setDrawingCacheEnabled(true);
         setDrawingCacheQuality(DRAWING_CACHE_QUALITY_HIGH);
-// init user's paint settings
+
+        // init user's paint settings
         currentPaint.setStyle(Paint.Style.STROKE);
         currentPaint.setStrokeJoin(Paint.Join.ROUND);
         currentPaint.setStrokeCap(Paint.Cap.ROUND);
-// init text paint
+
+        // init text paint
         labelsPaint.setFakeBoldText(true);
         labelsPaint.setTypeface(Typeface.SANS_SERIF);
 
@@ -133,63 +138,12 @@ public class DrawingView extends View {
         textPaint.setTextSize(30);
         textPaint.setUnderlineText(true);
 
-// init Bitmap paint
+        // init Bitmap paint
         PAINT_BITMAP.setAntiAlias(true);
         PAINT_BITMAP.setFilterBitmap(true);
         PAINT_BITMAP.setDither(true);
 
         mScaleDetector = new ScaleGestureDetector(this.getContext(), new ScaleListener());
-    }
-
-    /**
-     * Convert position of canvas to letter using next map:
-     * 1 -> A
-     * 2 -> B
-     * ...
-     * 13 -> N
-     * default: Z
-     *
-     * @param position int representation of position to be converted
-     * @return string representation of letter
-     */
-    public static String convertPositionToLetter(int position) {
-        switch (position) {
-            case 0:
-                return "A";
-            case 1:
-                return "B";
-            case 2:
-                return "C";
-            case 3:
-                return "D";
-            case 4:
-                return "E";
-            case 5:
-                return "F";
-            case 6:
-                return "G";
-            case 7:
-                return "H";
-            case 8:
-                return "I";
-            case 9:
-                return "J";
-            case 10:
-                return "K";
-            case 11:
-                return "L";
-            case 12:
-                return "M";
-            case 13:
-                return "N";
-            case 14:
-                return "O";
-            case 15:
-                return "P";
-// ...
-            default:
-                return "Z";
-        }
     }
 
     /**
@@ -206,6 +160,59 @@ public class DrawingView extends View {
         }
     }
 
+
+    //////// // TODO: 18/09/15 Mozher nado ybrat'
+    public class Rotate3dAnimation extends Animation {
+        private final float mFromDegrees;
+        private final float mToDegrees;
+        private final float mCenterX;
+        private final float mCenterY;
+        private final float mDepthZ;
+        private final boolean mReverse;
+        private Camera mCamera;
+
+        public Rotate3dAnimation(float fromDegrees, float toDegrees, float centerX, float centerY, float depthZ, boolean reverse) {
+            mFromDegrees = fromDegrees;
+            mToDegrees = toDegrees;
+            mCenterX = centerX;
+            mCenterY = centerY;
+            mDepthZ = depthZ;
+            mReverse = reverse;
+        }
+
+        @Override
+        public void initialize(int width, int height, int parentWidth, int parentHeight) {
+            super.initialize(width, height, parentWidth, parentHeight);
+            mCamera = new Camera();
+        }
+
+        @Override
+        protected void applyTransformation(float interpolatedTime, Transformation t) {
+            final float fromDegrees = mFromDegrees;
+            float degrees = fromDegrees + ((mToDegrees - fromDegrees) * interpolatedTime);
+
+            final float centerX = mCenterX;
+            final float centerY = mCenterY;
+            final Camera camera = mCamera;
+
+            final Matrix matrix = t.getMatrix();
+
+            camera.save();
+            if (mReverse) {
+                camera.translate(0.0f, 0.0f, mDepthZ * interpolatedTime);
+            } else {
+                camera.translate(0.0f, 0.0f, mDepthZ * (1.0f - interpolatedTime));
+            }
+            camera.rotateY(degrees);
+            camera.getMatrix(matrix);
+            camera.restore();
+
+            matrix.preTranslate(-centerX, -centerY);
+            matrix.postTranslate(centerX, centerY);
+        }
+    }
+    ///
+
     /**
      * onDraw will be called after any touch event or invalidating drawing surface
      */
@@ -217,6 +224,9 @@ public class DrawingView extends View {
         canvas.save();
         canvas.scale(mScaleFactor, mScaleFactor, scalePointX, scalePointY);
         canvas.getClipBounds(rect);
+
+
+
         canvas.drawBitmap(drawingData.getCanvasBitmap(), SOURCE_IMAGE_RECTANGLE, DESTINATION_IMAGE_RECT, PAINT_BITMAP);
 
         // 2) draw all previously stored paths
@@ -257,6 +267,8 @@ public class DrawingView extends View {
                     getWidth() / 2, getHeight() / 2, textPaint);
             canvas.drawCircle(getWidth() / 2, getHeight() / 2 + 30, 20, coordinatesPaint);
         }
+
+        //canvas.skew(1.0f, 0.3f);
 
         // !!! if user has released finger from canvas - do not need to draw any addition shapes/lines/text etc.
         if (!isFingerTouchingCanvas) {

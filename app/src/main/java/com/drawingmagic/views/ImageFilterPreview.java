@@ -6,7 +6,6 @@ import android.widget.TextView;
 
 import com.drawingmagic.R;
 import com.drawingmagic.helpers.FilterItemHolder;
-import com.drawingmagic.utils.Log;
 
 import net.steamcrafted.materialiconlib.MaterialIconView;
 
@@ -56,7 +55,7 @@ public class ImageFilterPreview extends RelativeLayout {
     void afterViews() {
         tvDescription.setText(filterDescriptor.filterName);
         mivImage.setIcon(IconValue.XBOX_CONTROLLER);
-        Log.e("Create preview for Filter : " + filterDescriptor.filterName);
+        //Log.e("Create preview for Filter : " + filterDescriptor.filterName);
     }
 
     public FilterItemHolder getFilter() {
