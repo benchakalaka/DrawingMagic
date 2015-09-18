@@ -10,9 +10,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.drawingmagic.R;
-import com.drawingmagic.SuperActivity;
 import com.drawingmagic.core.DrawingSettings;
-import com.drawingmagic.core.DrawingView;
+import com.drawingmagic.eventbus.Event;
 import com.drawingmagic.utils.AnimationUtils;
 import com.drawingmagic.utils.Notification;
 import com.drawingmagic.utils.Utils;
@@ -24,6 +23,8 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.StringRes;
+
+import de.greenrobot.event.EventBus;
 
 import static com.drawingmagic.core.DrawingView.GridType;
 import static com.drawingmagic.core.DrawingView.ShapesType;
@@ -70,13 +71,14 @@ public class FDrawingTools extends Fragment {
     TextView tvTitle;
 
     @ViewById
-    RelativeLayout rlStandardDrawing, rlLine, rlRectangle, rlTriangle, rlCircle, rlArrow;
+    RelativeLayout rlClearCanvas, rlUndo, rlRedo, rlDashed, rlFillShape, rlDisplayLinesWhileDrawing,rlStandardDrawing, rlLine, rlRectangle, rlTriangle, rlCircle, rlArrow, rlNoGrid, rlPartlyGrid, rlFullGrid;
 
     @ViewById
     SeekBar sbBrushSize;
 
     @ViewById
     LinearLayout llTypeOfShapes, llGridType, llFillShape;
+
 
     @AfterViews
     void afterViews() {
@@ -127,30 +129,31 @@ public class FDrawingTools extends Fragment {
         ivColour11.setImageBitmap(Utils.createRoundImage(ivColour11.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
     }
 
-
-    public void setUpDrawingView(DrawingView drawingView, SuperActivity activity) {
-        drawingSettings.setBrushWidth(drawingView.getDrawingData().getShape().getBrushWidth(), activity.getResources().getDisplayMetrics());
-        drawingSettings.setFillInside(drawingView.getDrawingData().getShape().isFillInside());
-        drawingSettings.setCurrentColour(drawingView.getDrawingData().getShape().getCurrentColour());
-        drawingSettings.setDashedState(drawingView.getDrawingData().getShape().getDashedState());
-        drawingSettings.setGridType(drawingView.getDrawingData().getShape().getGridType());
-        drawingSettings.setCurrentShape(drawingView.getDrawingData().getShape().getCurrentShape());
-        drawingSettings.setDisplayLinesWhileDrawing(drawingView.getDrawingData().getShape().isDisplayLinesWhileDrawing());
+    public FDrawingTools() {
     }
 
-    public FDrawingTools() {
+    @Click void rlNoGrid(){
+        playAnimationOnView(rlNoGrid);
+        selectViewByTypeOfGrid(GridType.NO_GRID);
+    }
 
+    @Click void rlPartlyGrid(){
+        playAnimationOnView(rlPartlyGrid);
+        selectViewByTypeOfGrid(GridType.PARTLY_GRID);
+    }
 
+    @Click void rlFullGrid(){
+        playAnimationOnView(rlFullGrid);
+        selectViewByTypeOfGrid(GridType.FULL_GRID);
     }
 
     private void playAnimationOnViewAndUnselectAllShapes(View target) {
-        AnimationUtils.animate(target, AnimationTechniques.BOUNCE_IN_UP);
+        AnimationUtils.animate(target, AnimationTechniques.ZOOM_IN);
         unselectAllTypesOfShapes();
     }
 
-    private void playAnimationOnViewAndUnselectAllGrids(View target) {
-        AnimationUtils.animate(target, AnimationTechniques.BOUNCE_IN_UP);
-        deselectAllTypeOfGrids();
+    private void playAnimationOnView(View target) {
+        AnimationUtils.animate(target, AnimationTechniques.ZOOM_IN);
     }
 
     /**
@@ -165,26 +168,7 @@ public class FDrawingTools extends Fragment {
         ivArrowSelected.setVisibility(View.INVISIBLE);
     }
 
-    private void deselectAllTypeOfGrids() {
-        // ivNoGridSelected.setVisibility(View.INVISIBLE);
-        //  ivFullGridSelected.setVisibility(View.INVISIBLE);
-        //  ivPartlyGridSelected.setVisibility(View.INVISIBLE);
-    }
-
     private void selectViewByTypeOfGrid(int typeOfGrid) {
-        switch (typeOfGrid) {
-            case GridType.NO_GRID:
-                //  ivNoGridSelected.setVisibility(View.VISIBLE);
-                break;
-
-            case GridType.FULL_GRID:
-                // ivFullGridSelected.setVisibility(View.VISIBLE);
-                break;
-
-            case GridType.PARTLY_GRID:
-                // ivPartlyGridSelected.setVisibility(View.VISIBLE);
-                break;
-        }
         drawingSettings.setGridType(typeOfGrid);
         listener.onSetUpDrawingShapesOkClicked(drawingSettings);
     }
@@ -325,19 +309,41 @@ public class FDrawingTools extends Fragment {
     void rlDashed() {
         drawingSettings.setDashedState(!drawingSettings.getDashedState());
         listener.onSetUpDrawingShapesOkClicked(drawingSettings);
+        playAnimationOnView(rlDashed);
     }
+
+    @Click
+    void rlUndo() {
+        EventBus.getDefault().post(new Event(Event.ON_UNDO));
+        playAnimationOnView(rlUndo);
+    }
+
+    @Click
+    void rlRedo() {
+        EventBus.getDefault().post(new Event(Event.ON_REDO));
+        playAnimationOnView(rlRedo);
+    }
+
+    @Click
+    void rlClearCanvas() {
+        EventBus.getDefault().post(new Event(Event.ON_CLEAR_CANVAS));
+        playAnimationOnView(rlClearCanvas);
+    }
+
 
 
     @Click
     void rlFillShape() {
         drawingSettings.setFillInside(!drawingSettings.isFillInside());
         listener.onSetUpDrawingShapesOkClicked(drawingSettings);
+        playAnimationOnView(rlFillShape);
     }
 
     @Click
     void rlDisplayLinesWhileDrawing() {
         drawingSettings.setDisplayLinesWhileDrawing(!drawingSettings.isDisplayLinesWhileDrawing());
         listener.onSetUpDrawingShapesOkClicked(drawingSettings);
+        playAnimationOnView(rlDisplayLinesWhileDrawing);
     }
 
 
@@ -382,14 +388,4 @@ public class FDrawingTools extends Fragment {
         drawingSettings.setCurrentShape(ShapesType.ARROW);
         selectViewByTypesOfShape(ShapesType.ARROW);
     }
-
-
-//    // Inflate the view for the fragment based on layout XML
-//    @Override
-//    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-//        View view = inflater.inflate(R.layout.hover_sample, container, false);
-//        TextView tvLabel = (TextView) view.findViewById(R.id.description);
-//        tvLabel.setText(page + " -- " + title);
-//        return view;
-//    }
 }

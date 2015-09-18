@@ -7,7 +7,10 @@ import android.os.Bundle;
  * that can be sent to EventBus. Differentiation is possible by type class field
  */
 public final class Event {
-    public static final int ON_HOTSPOT_STATE_CHANGED = 1;
+    public static final int ON_UNDO = 1;
+    public static final int ON_REDO = 2;
+    public static final int ON_CLEAR_CANVAS = 3;
+
 
     /**
      * Type of created event. Used for specifying type of event without creating class hierarchy of
@@ -70,10 +73,10 @@ public final class Event {
     @Override
     public String toString() {
         switch (type) {
-            case ON_HOTSPOT_STATE_CHANGED:
-                return getClass().getCanonicalName() + " ON_HOTSPOT_STATE_CHANGED";
-//            case ON_DELETE_HOTSPOT:
-//                return getClass().getCanonicalName() + " ON_DELETE_HOTSPOT";
+            case ON_UNDO:
+                return getClass().getCanonicalName() + " ON_UNDO";
+            case ON_REDO:
+                return getClass().getCanonicalName() + " ON_REDO";
 //            case ON_CALENDAR_PLANNING_CLICKED:
 //                return getClass().getCanonicalName() + " ON_CALENDAR_PLANNING_CLICKED";
 //            case ON_GO_TO_DAILY_PLANNING_CLICKED:

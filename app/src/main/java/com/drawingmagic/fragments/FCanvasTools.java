@@ -42,6 +42,7 @@ public class FCanvasTools extends Fragment {
     // Static final constants
     private static final int DEFAULT_ASPECT_RATIO_VALUES = 20;
     private static final int ROTATE_NINETY_DEGREES = 90;
+
     @ViewById
     MaterialIconView mivApply, mivCancel;
 
