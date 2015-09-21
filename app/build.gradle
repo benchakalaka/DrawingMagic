@@ -6,6 +6,7 @@ apply plugin: 'findbugs'
 buildscript {
     repositories {
         mavenCentral()
+
     }
 
     dependencies {
@@ -96,58 +97,42 @@ dependencies {
     // Android annotations
     apt 'org.androidannotations:androidannotations:3.2'
     compile 'org.androidannotations:androidannotations-api:3.2'
-
+    // Joystick for rotation of View
+    compile 'com.jmedeisis:bugstick:0.2.1'
     // View page transformer
     compile 'com.ToxicBakery.viewpager.transforms:view-pager-transforms:1.2.32@aar'
-
     // View pager spring indicator
     compile 'com.github.chenupt.android:springindicator:1.0.2@aar'
-
     // Image processing effect
     compile 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.3.0'
-
     // Shimmer effect
     compile 'com.romainpiel.shimmer:library:1.4.0@aar'
-
     // Circle image view for avatar
     compile 'de.hdodenhof:circleimageview:1.3.0'
-
-    // Iconic textview
-    // todo get rid of this library, appcampat not found if using this
-    compile 'com.joanzapata.iconify:android-iconify-fontawesome:2.1.0'
-
     // Image cropper
     compile 'com.theartofdev.edmodo:android-image-cropper:1.0.+'
-
     // Material icons
     compile 'net.steamcrafted:materialiconlib:1.0.4'
-
     // Orm
     compile 'com.github.satyan:sugar:1.3'
-
     // Log
     compile 'com.mauriciotogneri:trail:1.0.0'
-
     // Abs
-    compile('com.actionbarsherlock:actionbarsherlock:4.4.0@aar')
-//            {
-//        exclude group: 'com.android.support', module: 'appcompat-v7'
-//    }
+    compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
+    compile 'com.android.support:support-v4:21.0.+'
 
     // Event bus
     compile 'de.greenrobot:eventbus:2.4.0'
-
     // Splash screen
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.daimajia.easing:library:1.0.0@aar'
     compile 'com.daimajia.androidanimations:library:1.1.2@aar'
     compile 'com.daimajia.androidviewhover:library:1.0.4@aar'
-
+    //compile 'com.android.support:appcompat-v7:21.0.+'
     // Toast notification
     compile('com.github.Pierry:SimpleToast:v1.6') {
         exclude group: 'com.android.support', module: 'appcompat-v7'
     }
-
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }
 

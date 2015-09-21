@@ -5,6 +5,15 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="tilt_seek_bar_text_appearance" parent="android:TextAppearance.Small">
+        <item name="android:textSize">9sp</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:shadowColor">#FFFF0000</item>
+        <item name="android:shadowRadius">4</item>
+        <item name="android:shadowDx">1</item>
+        <item name="android:shadowDy">3</item>
+    </style>
+
     <style name="colour_image">
         <item name="android:layout_width">40dp</item>
         <item name="android:layout_height">40dp</item>

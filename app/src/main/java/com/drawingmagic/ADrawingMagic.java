@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.view.ViewPager;
+import android.widget.FrameLayout;
 
 import com.ToxicBakery.viewpager.transforms.CubeOutTransformer;
 import com.drawingmagic.adapters.ViewPagerAdapter;
@@ -18,13 +19,13 @@ import com.drawingmagic.core.DrawingView;
 import com.drawingmagic.core.GPUImageFilterTools;
 import com.drawingmagic.eventbus.Event;
 import com.drawingmagic.fragments.FDrawingTools.OnChangeDrawingSettingsListener;
+import com.drawingmagic.fragments.FTiltFragmentController_;
 import com.drawingmagic.helpers.FilterItemHolder;
 import com.drawingmagic.utils.Conditions;
 import com.drawingmagic.utils.Log;
 import com.drawingmagic.utils.Notification;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
-import org.androidannotations.annotations.AfterExtras;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
@@ -44,8 +45,11 @@ import static com.drawingmagic.adapters.ViewPagerAdapter.CANVAS_SETTINGS_TOOLS_F
 import static com.drawingmagic.adapters.ViewPagerAdapter.DRAWING_TOOLS_FRAGMENT;
 import static com.drawingmagic.adapters.ViewPagerAdapter.EFFECTS_TOOLS_FRAGMENT;
 import static com.drawingmagic.core.DrawingView.ShapesType;
+import static com.drawingmagic.eventbus.Event.ON_ADJUSTER_VALUE_CHANGED;
 import static com.drawingmagic.eventbus.Event.ON_CLEAR_CANVAS;
 import static com.drawingmagic.eventbus.Event.ON_REDO;
+import static com.drawingmagic.eventbus.Event.ON_TILT_FACTOR_X_CHANGED;
+import static com.drawingmagic.eventbus.Event.ON_TILT_FACTOR_Y_CHANGED;
 import static com.drawingmagic.eventbus.Event.ON_UNDO;
 import static com.drawingmagic.fragments.FCanvasTools.OnChangeCanvasSettingsListener;
 import static com.drawingmagic.fragments.FEffectsTools.OnChangeEffectListener;
@@ -79,6 +83,9 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
     @ViewById
     public
     CropImageView cropImageView;
+
+    @ViewById
+    FrameLayout flFragmentHolder;
 
     @Extra
     int selectedMenuItem;
@@ -126,7 +133,12 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
             default:
                 break;
         }
+
+        getSupportFragmentManager().beginTransaction().add(R.id.flFragmentHolder, new FTiltFragmentController_()).commit();
+
+        //getSupportFragmentManager().beginTransaction().add(R.id.flFragmentHolder, new FAdjuster_()).commit();
     }
+
 
     /**
      * Init View Pager
@@ -137,7 +149,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
         viewPager.setPageTransformer(true, new CubeOutTransformer());
         viewPagerIndicator.setViewPager(viewPager);
 
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i1) {
 
@@ -197,12 +209,6 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                 withGridEnabled(true).build());
     }
 
-
-    @AfterExtras
-    void afterExtras() {
-
-    }
-
     @Override
     public void onChangeSeekBarProgress(int progress) {
         if (Conditions.isNotNull(filterAdjuster)) {
@@ -221,9 +227,6 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
     }
 
 
-    private File bitmap;
-
-
     @OnActivityResult(REQUEST_PICK_IMAGE)
     void onResult(int resultCode, final Intent data) {
         if (resultCode != RESULT_OK) {
@@ -232,18 +235,14 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
         }
 
         try {
-
             drawingView.post(new Runnable() {
                 @Override
                 public void run() {
-
-                    bitmap = new File(getRealPathFromURI(data.getData()));
-
                     if (ORIGIN_BITMAP != null) {
                         ORIGIN_BITMAP.recycle();
                     }
 
-                    ORIGIN_BITMAP = decodeSampledBitmapFromResource(bitmap.getAbsolutePath(), drawingView.getWidth(), drawingView.getHeight());
+                    ORIGIN_BITMAP = decodeSampledBitmapFromResource(new File(getRealPathFromURI(data.getData())).getAbsolutePath(), drawingView.getWidth(), drawingView.getHeight());
                     drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(ORIGIN_BITMAP).withPaths(null).build());
                 }
             });
@@ -356,19 +355,46 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
     public void onEventMainThread(Event event) {
         Log.e(event.toString());
         switch (event.type) {
-            case ON_UNDO:
+
+            case ON_ADJUSTER_VALUE_CHANGED: {
+                drawingView.setRotationDegree((int) event.payload);
+                break;
+            }
+
+            case ON_TILT_FACTOR_X_CHANGED: {
+                float tiltFactorX = (int) event.payload;
+                // if progress more then a half (tiltFactorX % 50) / 100f  ====> i.e (55 % 50 = 5 and 5 / 100 ==0.05), tiltFactor == 0.05
+                // if progress less then a half (tiltFactorX - 50) / 100f ====> i.e - (23 - 50 = 17 and 17/100)== -0.17)
+                //// TODO: 21/09/2015 Replace magic numbers
+                tiltFactorX = tiltFactorX > 50 ? (tiltFactorX % 50 / 100f) : ((tiltFactorX - 50) / 100f);
+                drawingView.setTiltFactorX((int) event.payload == 100 ? 0.5f : tiltFactorX);
+                Log.e("  ON_TILT_FACTOR_X_CHANGED : " + tiltFactorX);
+                break;
+            }
+
+            case ON_TILT_FACTOR_Y_CHANGED: {
+                float tiltFactorY = (int) event.payload;
+                tiltFactorY = tiltFactorY > 50 ? (tiltFactorY % 50 / 100f) : ((tiltFactorY - 50) / 100f);
+                drawingView.setTiltFactorY((int) event.payload == 100 ? 0.5f : tiltFactorY);
+                Log.e("  ON_TILT_FACTOR_Y_CHANGED : " + tiltFactorY);
+                break;
+            }
+
+            case ON_UNDO: {
                 drawingView.undo();
                 break;
+            }
 
-            case ON_REDO:
+            case ON_REDO: {
                 drawingView.redo();
                 break;
+            }
 
-            case ON_CLEAR_CANVAS:
+            case ON_CLEAR_CANVAS: {
                 drawingView.clearRedoPaths();
                 drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withPaths(null).build());
-
                 break;
+            }
 
             default:
                 Log.e("Unknown event " + event);
@@ -382,8 +408,10 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
         startActivityForResult(photoPickerIntent, ADrawingMagic.REQUEST_PICK_IMAGE);
     }
 
-    public void setSkewFactor(float skewFactor) {
-        Log.e("Skew factor : " + skewFactor);
-        drawingView.setSkewFactor(skewFactor);
+    public void setRotationDegree(float degree) {
+        //drawingView.setRotationY(45 + skewFactor);
+        //drawingView.setRotationY(skewFactor-10);
+        // drawingView.setRotationDegree(skewFactor);
+        drawingView.setRotationDegree(degree);
     }
 }

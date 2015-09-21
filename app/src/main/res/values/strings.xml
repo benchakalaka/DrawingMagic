@@ -26,4 +26,7 @@
     <string name="undo">Undo</string>
     <string name="redo">Redo</string>
     <string name="clear_all">Clear all</string>
+    <string name="x">X</string>
+    <string name="y">Y</string>
+    <string name="tilt_level">Tilt level</string>
 </resources>

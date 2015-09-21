@@ -18,6 +18,7 @@ public abstract class SuperActivity extends SherlockFragmentActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
         EventBus.getDefault().register(this);
     }
 

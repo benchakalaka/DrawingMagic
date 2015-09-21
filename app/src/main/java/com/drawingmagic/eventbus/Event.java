@@ -10,6 +10,9 @@ public final class Event {
     public static final int ON_UNDO = 1;
     public static final int ON_REDO = 2;
     public static final int ON_CLEAR_CANVAS = 3;
+    public static final int ON_TILT_FACTOR_X_CHANGED = 4;
+    public static final int ON_TILT_FACTOR_Y_CHANGED = 5;
+    public static final int ON_ADJUSTER_VALUE_CHANGED = 6;
 
 
     /**
@@ -77,10 +80,10 @@ public final class Event {
                 return getClass().getCanonicalName() + " ON_UNDO";
             case ON_REDO:
                 return getClass().getCanonicalName() + " ON_REDO";
-//            case ON_CALENDAR_PLANNING_CLICKED:
-//                return getClass().getCanonicalName() + " ON_CALENDAR_PLANNING_CLICKED";
-//            case ON_GO_TO_DAILY_PLANNING_CLICKED:
-//                return getClass().getCanonicalName() + " ON_GO_TO_DAILY_PLANNING_CLICKED";
+            case ON_TILT_FACTOR_X_CHANGED:
+                return getClass().getCanonicalName() + " ON_TILT_FACTOR_X_CHANGED";
+            case ON_TILT_FACTOR_Y_CHANGED:
+                return getClass().getCanonicalName() + " ON_TILT_FACTOR_Y_CHANGED";
 //            case ON_GO_TO_TV_CLICKED:
 //                return getClass().getCanonicalName() + " ON_GO_TO_TV_CLICKED";
 //            case ON_UPDATE_APP:
