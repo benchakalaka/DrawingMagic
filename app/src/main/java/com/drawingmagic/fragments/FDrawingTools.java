@@ -83,15 +83,37 @@ public class FDrawingTools extends Fragment {
 
 
     @SeekBarProgressChange
-    void sbSkew(SeekBar seekBar, int progress) {
+    void sbSkew(int progress) {
+        float skewFactor = 0f;
+
+
+
+        switch (progress){
+            case 0: {
+                skewFactor = 180;
+                break;
+            }
+
+            case 360: {
+                skewFactor = -180;
+                break;
+            }
+
+            default:
+                skewFactor = progress > 180 ? progress % 180 : progress - 180;
+                break;
+        }
         // // TODO: 18/09/2015  NAFIG YBRAT'
-        float skewFactor = (float) progress / 100f;
+
+
         ((ADrawingMagic) getActivity()).setSkewFactor(skewFactor);
 
     }
 
     @AfterViews
     void afterViews() {
+        sbSkew.setMax(360);
+        sbSkew.setProgress(180);
 
         // check activity for inheritance from OnSelectTypeOfShapeListener
         try {

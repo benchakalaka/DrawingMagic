@@ -26,8 +26,6 @@ import com.drawingmagic.dialogs.DialogCanvasSettings;
 import com.drawingmagic.utils.Conditions;
 import com.drawingmagic.utils.Log;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,8 +47,6 @@ public class DrawingView extends View {
     private static final int TEXT_SHIFT = 20;
     // Canvas BITMAP paint
     private static final Paint PAINT_BITMAP = new Paint();
-    // default paint for grid drawing
-    private final TextPaint labelsPaint = new TextPaint();
     // paint for drawing text
     private final TextPaint textPaint = new TextPaint();
     // default paint for grid drawing
@@ -59,12 +55,10 @@ public class DrawingView extends View {
     private final RectF rectangleOfDrawing = new RectF();
     // drawing
     private final Matrix SCALE_TO_FIT_CENTER_MATRIX = new Matrix();
-    private final Paint paint = new Paint();
     // Dashed effect for all shapes
     private final DashPathEffect dashedEffect = new DashPathEffect(new float[]{15, 15, 15, 15}, 0);
     long lastDoubleTouchTime = 0;
     private final static long ONE_SECOND_IN_MILLISECONDS = 300;
-
     // current paint which contains user's brush settings
     private final PaintSerializable currentPaint = new PaintSerializable();
     // current X,Y position lives in touchX/Y, start position is in touchDownX/Y
@@ -73,8 +67,6 @@ public class DrawingView extends View {
     private DrawingData drawingData = new DrawingData();
     // is user's finger touching canvas
     private boolean isFingerTouchingCanvas = false;
-    // formatting int to two digits after dot
-    private NumberFormat formatter = new DecimalFormat("#0.00");
     // Current path drawing contains shape drawing by user
     private PathSerializable currentPath = new PathSerializable();
     // list of paths for undo/redo operations
@@ -85,15 +77,26 @@ public class DrawingView extends View {
     private OnTouchCanvasCallback listener;
     // Rectangle for source image
     private final Rect rect = new Rect();
+    // Default brush zie
+    public static final int DEFAULT_BRUSH_SIZE = 5;
+    // Default text size
+    public static final int DEFAULT_TEXT_SIZE = 30;
+    // Flip type direction
+    public static final int FLIP_VERTICAL = 1;
+    public static final int FLIP_HORIZONTAL = 2;
     // Scaling objects
     private final ScaleGestureDetector mScaleDetector;
     private float mScaleFactor = 1.0f;
     private float scalePointX, scalePointY;
-    /**
-     * Maximum Zoom value
-     */
+    // Max zoom value
     private final static float MAX_ZOOM_FACTOR = 5.0f;
+    // rotation factor X
+    private int rotationFactorX = 0;
+    // rotation factor Y
+    private int rotationFactorY = 0;
 
+    // // TODO: 19/09/15 Replace with only one matrix
+    Matrix rotateMatrix = new Matrix();
 
     public DrawingView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -105,13 +108,9 @@ public class DrawingView extends View {
         currentPaint.setStrokeJoin(Paint.Join.ROUND);
         currentPaint.setStrokeCap(Paint.Cap.ROUND);
 
-        // init text paint
-        labelsPaint.setFakeBoldText(true);
-        labelsPaint.setTypeface(Typeface.SANS_SERIF);
-
         textPaint.setFakeBoldText(true);
         textPaint.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
-        textPaint.setTextSize(30);
+        textPaint.setTextSize(DEFAULT_TEXT_SIZE);
         textPaint.setUnderlineText(true);
 
         // init Bitmap paint
@@ -120,27 +119,6 @@ public class DrawingView extends View {
         PAINT_BITMAP.setDither(true);
 
         mScaleDetector = new ScaleGestureDetector(this.getContext(), new ScaleListener());
-    }
-
-    /**
-     * Setter for eraser
-     *
-     * @param isErase enable eraser or not
-     */
-    public void setErase(boolean isErase) {
-        if (isErase) {
-            currentPaint.setColor(Color.WHITE);
-            // currentPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-        } else {
-            currentPaint.setXfermode(null);
-        }
-    }
-
-    float skewfactor = 1f;
-
-    public void setSkewFactor(float skewFactor) {
-        this.skewfactor = skewFactor;
-        invalidate();
     }
 
 
@@ -154,10 +132,18 @@ public class DrawingView extends View {
         invalidate();
 
         // Set source rectangle
-        scaleBitmapToCenter(drawingData.canvasBitmap);
+        scaleBitmapToCenter();
+
+        // // TODO: 20/09/15  Improve speed by replaceing some calculation from onDraw to here
     }
 
-    private void scaleBitmapToCenter(Bitmap canvasBitmap) {
+    public void setSkewFactor(float skewFactor) {
+        rotateMatrix.reset();
+        rotateMatrix.setRotate(skewFactor, getWidth() / 2, getHeight() / 2);
+        invalidate();
+    }
+
+    private void scaleBitmapToCenter() {
         if (Conditions.isNotNull(drawingData.canvasBitmap)) {
             SCALE_TO_FIT_CENTER_MATRIX.reset();
             RectF sourceRect = new RectF(0, 0, (float) drawingData.canvasBitmap.getWidth(), (float) drawingData.canvasBitmap.getHeight());
@@ -166,26 +152,49 @@ public class DrawingView extends View {
         }
     }
 
+    public static Bitmap flip(Bitmap src, int type) {
+        // create new matrix for transformation
+        Matrix matrix = new Matrix();
+        // if vertical
+        if (type == FLIP_VERTICAL) {
+            // y = y * -1
+            matrix.preScale(1.0f, -1.0f);
+        }
+        // if horizonal
+        else if (type == FLIP_HORIZONTAL) {
+            // x = x * -1
+            matrix.preScale(-1.0f, 1.0f);
+            // unknown type
+        } else {
+            return null;
+        }
+
+        // return transformed image
+        return Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), matrix, true);
+    }
+
 
     /**
      * onDraw will be called after any touch event or invalidating drawing surface
      */
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        canvas.translate(getWidth() / 2, getHeight() / 2);
-        canvas.skew(0.0f, skewfactor);
-        canvas.translate(0f, 0f);
+        // already implemented
+        // flip()
 
+        canvas.setMatrix(rotateMatrix);
         canvas.drawColor(Color.BLACK);
+
         // 1) draw simple bitmap
-        canvas.save();
         canvas.scale(mScaleFactor, mScaleFactor, scalePointX, scalePointY);
         canvas.getClipBounds(rect);
 
         canvas.drawBitmap(drawingData.getCanvasBitmap(), SCALE_TO_FIT_CENTER_MATRIX, PAINT_BITMAP);
 
+        //canvas.restore();
         // 2) draw all previously stored paths
         for (PathSerializable path : drawingData.getPaths()) {
             // if current path is not a text draw simple path
@@ -202,14 +211,14 @@ public class DrawingView extends View {
                 canvas.drawText(path.getTextToDraw(), path.getTextX(), path.getTextY(), textPaint);
             }
         }
+
+
         // 3) Draw grid OVER paths and start bitmap
         if (drawingData.isGridEnable() && (drawingData.shape.getGridType() != GridType.NO_GRID)) {
-            // TODO: replace magic number
             for (int i = 0; i < (getHeight() / STEP) + 1; i++) {
                 canvas.drawLine(0, STEP * i, drawingData.getShape().getGridType() == GridType.PARTLY_GRID ? PARTLY_GRID_LINE_LENGTH : getWidth(), STEP * i, coordinatesPaint);
             }
 
-            // TODO: replace magic number
             for (int i = 0; i < (getWidth() / STEP) + 1; i++) {
                 canvas.drawLine(STEP * i, 0, STEP * i, drawingData.getShape().getGridType() == GridType.PARTLY_GRID ? PARTLY_GRID_LINE_LENGTH : getHeight(), coordinatesPaint);
             }
@@ -226,7 +235,6 @@ public class DrawingView extends View {
                     getWidth() / 2, getHeight() / 2, textPaint);
             canvas.drawCircle(getWidth() / 2, getHeight() / 2 + 30, 20, coordinatesPaint);
         }
-
 
         // !!! if user has released finger from canvas - do not need to draw any addition shapes/lines/text etc.
         if (!isFingerTouchingCanvas) {
@@ -353,6 +361,7 @@ public class DrawingView extends View {
                 ps.colour = currentPaint.getColor();
                 ps.isFillInside = currentPaint.isFillInside;
                 ps.isDashed = this.drawingData.getShape().getDashedState();
+
 
                 PathSerializable newPath = new PathSerializable();
                 newPath.setPaint(ps);
@@ -622,6 +631,22 @@ public class DrawingView extends View {
             invalidate();
             return true;
         }
+    }
+
+    public int getRotationFactorX() {
+        return rotationFactorX;
+    }
+
+    public void setRotationFactorX(int rotationFactorX) {
+        this.rotationFactorX = rotationFactorX;
+    }
+
+    public int getRotationFactorY() {
+        return rotationFactorY;
+    }
+
+    public void setRotationFactorY(int rotationFactorY) {
+        this.rotationFactorY = rotationFactorY;
     }
 
     public class DrawingDataBuilder {

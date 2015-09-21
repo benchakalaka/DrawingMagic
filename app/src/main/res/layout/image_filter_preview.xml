@@ -4,8 +4,8 @@
     android:id="@+id/rlRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="3dp"
-    android:background="@drawable/white_rectangle_background">
+    android:padding="3dp"
+    android:layout_margin="3dp">
 
     <net.steamcrafted.materialiconlib.MaterialIconView
         android:id="@+id/mivImage"

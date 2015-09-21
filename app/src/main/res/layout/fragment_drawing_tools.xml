@@ -569,8 +569,10 @@
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@+id/ivSkew"
                     android:layout_toRightOf="@+id/ivSkew"
-                    android:max="100" />
+                     />
             </RelativeLayout>
+
+
 
         </LinearLayout>
     </ScrollView>
