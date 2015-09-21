@@ -12,7 +12,7 @@ public final class Event {
     public static final int ON_CLEAR_CANVAS = 3;
     public static final int ON_TILT_FACTOR_X_CHANGED = 4;
     public static final int ON_TILT_FACTOR_Y_CHANGED = 5;
-
+    public static final int ON_ADJUSTER_VALUE_CHANGED = 6;
 
 
     /**

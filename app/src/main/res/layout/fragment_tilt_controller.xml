@@ -14,9 +14,9 @@
 
     <RelativeLayout
         android:id="@+id/rlTiltXHolder"
-        android:layout_below="@+id/tvTitle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvTitle">
 
         <TextView
             android:id="@+id/tvX"
@@ -28,7 +28,8 @@
         <SeekBar
             android:id="@+id/seekBarTiltFactorX"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:progress="50" />
 
     </RelativeLayout>
 
@@ -49,7 +50,8 @@
         <SeekBar
             android:id="@+id/seekBarTiltFactorY"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:progress="50" />
 
 
     </RelativeLayout>

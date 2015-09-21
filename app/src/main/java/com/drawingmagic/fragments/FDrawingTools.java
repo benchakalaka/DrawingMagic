@@ -86,8 +86,6 @@ public class FDrawingTools extends Fragment {
     void sbSkew(int progress) {
         float skewFactor = 0f;
 
-
-
         switch (progress){
             case 0: {
                 skewFactor = 180;
@@ -106,7 +104,7 @@ public class FDrawingTools extends Fragment {
         // // TODO: 18/09/2015  NAFIG YBRAT'
 
 
-        ((ADrawingMagic) getActivity()).setSkewFactor(skewFactor);
+        ((ADrawingMagic) getActivity()).setRotationDegree(skewFactor);
 
     }
 

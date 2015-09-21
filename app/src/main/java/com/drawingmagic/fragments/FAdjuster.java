@@ -7,9 +7,15 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.drawingmagic.R;
+import com.drawingmagic.eventbus.Event;
 
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.SeekBarProgressChange;
 import org.androidannotations.annotations.ViewById;
+
+import de.greenrobot.event.EventBus;
+
+import static com.drawingmagic.eventbus.Event.ON_ADJUSTER_VALUE_CHANGED;
 
 /**
  * Project DrawingMagic.
@@ -23,10 +29,6 @@ public class FAdjuster extends Fragment {
     TextView tvTitle, tvSeekBarTitle;
     @ViewById
     SeekBar sBar;
-
-    public String title, seekBarTitle;
-
-
 
     /**
      * Set seek bar string title
@@ -51,5 +53,10 @@ public class FAdjuster extends Fragment {
     public void setSeekBarCurrentMinMaxValues(int max, int value) {
         sBar.setMax(max);
         sBar.setProgress(value);
+    }
+
+    @SeekBarProgressChange
+    void sBar(int progress) {
+        EventBus.getDefault().post(new Event(ON_ADJUSTER_VALUE_CHANGED, progress));
     }
 }
