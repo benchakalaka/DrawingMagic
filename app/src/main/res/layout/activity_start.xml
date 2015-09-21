@@ -1,44 +1,44 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context=".AStart">
+    android:background="@color/default_background_colour"
+    android:padding="3dp">
 
+    <com.daimajia.androidviewhover.BlurLayout
+        android:id="@+id/blProfile"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/activity_horizontal_margin">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/source"
+            android:layout_centerInParent="true"
+            android:contentDescription="@null"
+            android:scaleType="fitXY"
+            android:src="@drawable/kid" />
+    </com.daimajia.androidviewhover.BlurLayout>
 
 
     <com.romainpiel.shimmer.ShimmerTextView
         android:id="@+id/stv"
-        android:text="Texts igsjdfj ksndfkn skjdf "
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="#444"
+        android:background="#66000000"
+        android:text="@string/app_name"
+        android:textColor="@color/default_text_colour"
         android:textSize="50sp"
-        app:reflectionColor="#f00"/>
+        app:reflectionColor="@color/white" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/civ"
         android:layout_width="96dp"
-        android:layout_centerInParent="true"
         android:layout_height="96dp"
+        android:layout_centerInParent="true"
         android:src="@drawable/ic_launcher"
-        app:border_width="2dp"
-        app:border_color="#FFAA0000"/>
-
-    <com.joanzapata.iconify.widget.IconTextView
-        android:text="I {fa-heart-o} to {fa-code} on {fa-android}"
-        android:shadowColor="#22000000"
-        android:shadowDx="3"
-        android:shadowDy="3"
-        android:shadowRadius="1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="40sp"
-        android:textColor="#FFAABBCC" />
-
+        app:border_color="#FFAA0000"
+        app:border_width="2dp" />
 
 </RelativeLayout>

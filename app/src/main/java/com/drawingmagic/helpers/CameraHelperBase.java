@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.drawingmagic.utils;
+package com.drawingmagic.helpers;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
@@ -45,10 +45,7 @@ public class CameraHelperBase implements CameraHelper.CameraHelperImpl {
 
     @Override
     public boolean hasCamera(final int facing) {
-        if (facing == CameraInfo.CAMERA_FACING_BACK) {
-            return hasCameraSupport();
-        }
-        return false;
+        return facing == CameraInfo.CAMERA_FACING_BACK && hasCameraSupport();
     }
 
     @Override

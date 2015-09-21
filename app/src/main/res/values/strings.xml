@@ -1,4 +1,32 @@
 <resources>
     <string name="app_name">DrawingMagic</string>
-    <string name="action_settings">Settings</string>
+    <string name="drawing_tools">Drawing tools</string>
+    <string name="lines_on_touch">Lines on touch</string>
+    <string name="dashed">Dashed line</string>
+    <string name="change_brush_size">Brush size</string>
+    <string name="type_of_grid">Type of grid</string>
+    <string name="fill_shape">Fill shape</string>
+    <string name="draw_arrow">Draw arrow</string>
+    <string name="draw_rect">Draw rectangle</string>
+    <string name="draw_triangle">Draw triangle</string>
+    <string name="draw_circle">Draw circle</string>
+    <string name="draw_line">Draw line</string>
+    <string name="free_drawing">Free drawing</string>
+    <string name="effects">Effects</string>
+    <string name="canvas_tools">Canvas tools</string>
+    <string name="welcome_choose_an_action">Welcome to DrawingMagic, please select next action</string>
+    <string name="new_empty_canvas">Empty canvas</string>
+    <string name="choose_from_gallery">Pick up from Gallery</string>
+    <string name="camera">Camera</string>
+    <string name="rotate">Rotate</string>
+    <string name="choose_filter">Choose Filter</string>
+    <string name="grid_off">Grid off</string>
+    <string name="only_edges">Only edges</string>
+    <string name="grid_on">Grid on</string>
+    <string name="undo">Undo</string>
+    <string name="redo">Redo</string>
+    <string name="clear_all">Clear all</string>
+    <string name="x">X</string>
+    <string name="y">Y</string>
+    <string name="tilt_level">Tilt level</string>
 </resources>

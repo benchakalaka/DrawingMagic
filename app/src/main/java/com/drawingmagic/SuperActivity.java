@@ -1,20 +1,33 @@
 package com.drawingmagic;
 
-import android.support.v7.app.ActionBarActivity;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.drawingmagic.eventbus.Event;
 
-import com.joanzapata.iconify.Iconify;
-import com.joanzapata.iconify.fonts.FontAwesomeModule;
+import de.greenrobot.event.EventBus;
 
 /**
  * Project DrawingMagic.
  * Created by ihorkarpachev.
  * On 13/09/15 at 18:11.
  */
-public abstract class SuperActivity extends ActionBarActivity {
+public abstract class SuperActivity extends SherlockFragmentActivity {
+
+    /**
+     * Start manager on activity start
+     */
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        EventBus.getDefault().register(this);
+    }
+
 
     @Override
-    protected void onResume() {
-        Iconify.with(new FontAwesomeModule());
-        super.onResume();
+    protected void onPause() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
     }
+
+    public abstract void onEventMainThread(Event event);
 }

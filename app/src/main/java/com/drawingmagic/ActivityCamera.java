@@ -24,16 +24,21 @@ import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
 import android.net.Uri;
 import android.opengl.GLSurfaceView;
-import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
-import com.drawingmagic.utils.CameraHelper;
-import com.drawingmagic.utils.GPUImageFilterTools;
+import com.drawingmagic.core.GPUImageFilterTools;
+import com.drawingmagic.helpers.CameraHelper;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.ViewById;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -41,48 +46,93 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import jp.co.cyberagent.android.gpuimage.GPUImage;
 import jp.co.cyberagent.android.gpuimage.GPUImage.OnPictureSavedListener;
 import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
 
-import static com.drawingmagic.utils.CameraHelper.*;
-import static com.drawingmagic.utils.GPUImageFilterTools.*;
+import static com.drawingmagic.core.GPUImageFilterTools.FilterAdjuster;
+import static com.drawingmagic.core.GPUImageFilterTools.OnGpuImageFilterChosenListener;
+import static com.drawingmagic.helpers.CameraHelper.CameraInfo2;
 
 
-public class ActivityCamera extends Activity implements OnSeekBarChangeListener, OnClickListener {
+@EActivity(R.layout.activity_camera)
+public class ActivityCamera extends Activity implements OnSeekBarChangeListener {
 
+    private static final int MEDIA_TYPE_IMAGE = 1;
+    private static final int MEDIA_TYPE_VIDEO = 2;
+    @ViewById
+    SeekBar seekBar;
+    @ViewById
+    Button button_choose_filter, button_capture;
+    @ViewById
+    ImageView img_switch_camera;
+    @ViewById
+    GLSurfaceView surfaceView;
     private GPUImage mGPUImage;
     private CameraHelper mCameraHelper;
     private CameraLoader mCamera;
     private GPUImageFilter mFilter;
     private FilterAdjuster mFilterAdjuster;
 
-    @Override
-    public void onCreate(final Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_camera);
-        ((SeekBar) findViewById(R.id.seekBar)).setOnSeekBarChangeListener(this);
-        findViewById(R.id.button_choose_filter).setOnClickListener(this);
-        findViewById(R.id.button_capture).setOnClickListener(this);
+    private static File getOutputMediaFile(final int type) {
+        // To be safe, you should check that the SDCard is mounted
+        // using Environment.getExternalStorageState() before doing this.
+
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), "MyCameraApp");
+        // This location works best if you want the created images to be shared
+        // between applications and persist after your app has been uninstalled.
+
+        // Create the storage directory if it does not exist
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                Log.d("MyCameraApp", "failed to create directory");
+                return null;
+            }
+        }
+
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+        File mediaFile;
+        if (type == MEDIA_TYPE_IMAGE) {
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+                    "IMG_" + timeStamp + ".jpg");
+        } else if (type == MEDIA_TYPE_VIDEO) {
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+                    "VID_" + timeStamp + ".mp4");
+        } else {
+            return null;
+        }
+
+        return mediaFile;
+    }
+
+    @AfterViews
+    public void afterViews() {
+
+        seekBar.setOnSeekBarChangeListener(this);
 
         mGPUImage = new GPUImage(this);
-        mGPUImage.setGLSurfaceView((GLSurfaceView) findViewById(R.id.surfaceView));
+        mGPUImage.setGLSurfaceView(surfaceView);
 
-        mCameraHelper = new CameraHelper(this);
-        mCamera = new CameraLoader();
 
-        View cameraSwitchView = findViewById(R.id.img_switch_camera);
-        cameraSwitchView.setOnClickListener(this);
-        if (!mCameraHelper.hasFrontCamera() || !mCameraHelper.hasBackCamera()) {
-            cameraSwitchView.setVisibility(View.GONE);
-        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        mCameraHelper = new CameraHelper(this);
+
+        mCamera = new CameraLoader();
+
+
+        if (!mCameraHelper.hasFrontCamera() || !mCameraHelper.hasBackCamera()) {
+            img_switch_camera.setVisibility(View.GONE);
+        }
         mCamera.onResume();
+
     }
 
     @Override
@@ -91,38 +141,36 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
         super.onPause();
     }
 
-    @Override
-    public void onClick(final View v) {
-        switch (v.getId()) {
-            case R.id.button_choose_filter:
-                GPUImageFilterTools.showDialog(this, new OnGpuImageFilterChosenListener() {
+    @Click
+    void button_choose_filter() {
+        GPUImageFilterTools.showDialog(this, new OnGpuImageFilterChosenListener() {
 
-                    @Override
-                    public void onGpuImageFilterChosenListener(final GPUImageFilter filter) {
-                        switchFilterTo(filter);
-                    }
-                });
-                break;
+            @Override
+            public void onGpuImageFilterChosenListener(final GPUImageFilter filter) {
+                switchFilterTo(filter);
+            }
+        });
+    }
 
-            case R.id.button_capture:
-                if (mCamera.mCameraInstance.getParameters().getFocusMode().equals(
-                        Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+    @Click
+    void button_capture() {
+        if (mCamera.mCameraInstance.getParameters().getFocusMode().equals(
+                Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+            takePicture();
+        } else {
+            mCamera.mCameraInstance.autoFocus(new Camera.AutoFocusCallback() {
+
+                @Override
+                public void onAutoFocus(final boolean success, final Camera camera) {
                     takePicture();
-                } else {
-                    mCamera.mCameraInstance.autoFocus(new Camera.AutoFocusCallback() {
-
-                        @Override
-                        public void onAutoFocus(final boolean success, final Camera camera) {
-                            takePicture();
-                        }
-                    });
                 }
-                break;
-
-            case R.id.img_switch_camera:
-                mCamera.switchCamera();
-                break;
+            });
         }
+    }
+
+    @Click
+    void img_switch_camera() {
+        mCamera.switchCamera();
     }
 
     private void takePicture() {
@@ -167,7 +215,7 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
 
                                     @Override
                                     public void onPictureSaved(final Uri
-                                            uri) {
+                                                                       uri) {
                                         pictureFile.delete();
                                         camera.startPreview();
                                         view.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
@@ -175,42 +223,6 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
                                 });
                     }
                 });
-    }
-
-    public static final int MEDIA_TYPE_IMAGE = 1;
-    public static final int MEDIA_TYPE_VIDEO = 2;
-
-    private static File getOutputMediaFile(final int type) {
-        // To be safe, you should check that the SDCard is mounted
-        // using Environment.getExternalStorageState() before doing this.
-
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), "MyCameraApp");
-        // This location works best if you want the created images to be shared
-        // between applications and persist after your app has been uninstalled.
-
-        // Create the storage directory if it does not exist
-        if (!mediaStorageDir.exists()) {
-            if (!mediaStorageDir.mkdirs()) {
-                Log.d("MyCameraApp", "failed to create directory");
-                return null;
-            }
-        }
-
-        // Create a media file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        File mediaFile;
-        if (type == MEDIA_TYPE_IMAGE) {
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "IMG_" + timeStamp + ".jpg");
-        } else if (type == MEDIA_TYPE_VIDEO) {
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "VID_" + timeStamp + ".mp4");
-        } else {
-            return null;
-        }
-
-        return mediaFile;
     }
 
     private void switchFilterTo(final GPUImageFilter filter) {
@@ -224,7 +236,7 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
 
     @Override
     public void onProgressChanged(final SeekBar seekBar, final int progress,
-            final boolean fromUser) {
+                                  final boolean fromUser) {
         if (mFilterAdjuster != null) {
             mFilterAdjuster.adjust(progress);
         }
@@ -276,7 +288,9 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
             mGPUImage.setUpCamera(mCameraInstance, orientation, flipHorizontal, false);
         }
 
-        /** A safe way to get an instance of the Camera object. */
+        /**
+         * A safe way to get an instance of the Camera object.
+         */
         private Camera getCameraInstance(final int id) {
             Camera c = null;
             try {

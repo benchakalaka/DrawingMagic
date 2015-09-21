@@ -14,8 +14,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:padding="10dp"
-        android:src="@drawable/ic_switch_camera" />
+        android:contentDescription="@null"
+        android:src="@drawable/ic_launcher" />
 
     <LinearLayout
         android:id="@+id/bar"
@@ -37,9 +39,9 @@
             android:id="@+id/button_choose_filter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Choose Filter" />
+            android:text="@string/choose_filter" />
 
-        <ImageButton
+        <Button
             android:id="@+id/button_capture"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
