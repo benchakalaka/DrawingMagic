@@ -4,6 +4,7 @@
     android:id="@+id/rlRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/default_transparency"
     android:padding="3dp"
     android:layout_margin="3dp">
 

@@ -93,7 +93,6 @@ public class DrawingView extends View {
     // rotation factor
     private float rotationDegree = 0f;
 
-    // // TODO: 19/09/15 Replace with only one matrix
     Matrix transformMatrix = new Matrix();
 
 
@@ -213,7 +212,14 @@ public class DrawingView extends View {
                 canvas.drawLine(STEP * i, 0, STEP * i, drawingData.getShape().getGridType() == GridType.PARTLY_GRID ? PARTLY_GRID_LINE_LENGTH : getHeight(), coordinatesPaint);
             }
 
+            // draw rectangle border around image
+            // left border
+            canvas.drawLine(0, 0, 0, getHeight() - 1, coordinatesPaint);
+            // right border
             canvas.drawLine(getWidth() - 1, 0, getWidth() - 1, getHeight() - 1, coordinatesPaint);
+            // top border
+            canvas.drawLine(0, 0, getWidth() - 1, 0, coordinatesPaint);
+            // bottom border
             canvas.drawLine(0, getHeight() - 1, getWidth() - 1, getHeight() - 1, coordinatesPaint);
 
         }

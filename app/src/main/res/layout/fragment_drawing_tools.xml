@@ -17,173 +17,76 @@
                 android:id="@+id/llTypeOfShapes"
                 style="@style/drawing_tools_row">
 
-                <RelativeLayout
-                    android:id="@+id/rlStandardDrawing"
+                <net.steamcrafted.materialiconlib.MaterialIconView
+                    android:id="@+id/mivSimple"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:visibility="visible">
+                    android:scaleType="center"
+                    android:tag="-1"
+                    app:materialIcon="border_color"
+                    app:materialIconColor="@color/default_text_colour"
+                    app:materialIconSize="@dimen/default_icon_size" />
 
-                    <net.steamcrafted.materialiconlib.MaterialIconView
-                        android:id="@+id/ivSimple"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:scaleType="center"
-                        app:materialIcon="border_color"
-                        app:materialIconColor="@color/default_text_colour"
-                        app:materialIconSize="@dimen/default_icon_size" />
 
-                    <ImageView
-                        android:id="@+id/ivSimpleSelected"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_alignEnd="@+id/ivSimple"
-                        android:layout_alignRight="@+id/ivSimple"
-                        android:contentDescription="@null"
-                        android:src="@drawable/ic_launcher"
-                        android:visibility="invisible" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/rlLine"
+                <net.steamcrafted.materialiconlib.MaterialIconView
+                    android:id="@+id/mivLine"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:visibility="visible">
-
-                    <net.steamcrafted.materialiconlib.MaterialIconView
-                        android:id="@+id/ivLine"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:scaleType="center"
-                        app:materialIcon="minus"
-                        app:materialIconColor="@color/default_text_colour"
-                        app:materialIconSize="@dimen/default_icon_size" />
+                    android:scaleType="center"
+                    app:materialIcon="minus"
+                    android:tag="3"
+                    app:materialIconColor="@color/default_text_colour"
+                    app:materialIconSize="@dimen/default_icon_size" />
 
 
-                    <ImageView
-                        android:id="@+id/ivLineSelected"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_alignEnd="@+id/ivLine"
-                        android:layout_alignRight="@+id/ivLine"
-                        android:contentDescription="@null"
-                        android:src="@drawable/ic_launcher"
-                        android:visibility="invisible" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/rlRectangle"
+                <net.steamcrafted.materialiconlib.MaterialIconView
+                    android:id="@+id/mivRectangle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1">
-
-                    <net.steamcrafted.materialiconlib.MaterialIconView
-                        android:id="@+id/ivRectangle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:scaleType="center"
-                        app:materialIcon="panorama_wide_angle"
-                        app:materialIconColor="@color/default_text_colour"
-                        app:materialIconSize="@dimen/default_icon_size" />
+                    android:layout_weight="1"
+                    android:scaleType="center"
+                    android:tag="1"
+                    app:materialIcon="panorama_wide_angle"
+                    app:materialIconColor="@color/default_text_colour"
+                    app:materialIconSize="@dimen/default_icon_size" />
 
 
-                    <ImageView
-                        android:id="@+id/ivRectangleSelected"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_alignEnd="@+id/ivRectangle"
-                        android:layout_alignRight="@+id/ivRectangle"
-                        android:contentDescription="@null"
-                        android:src="@drawable/ic_launcher"
-                        android:visibility="invisible" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/rlTriangle"
+                <net.steamcrafted.materialiconlib.MaterialIconView
+                    android:id="@+id/mivTriangle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1">
-
-                    <net.steamcrafted.materialiconlib.MaterialIconView
-                        android:id="@+id/ivTriangle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:scaleType="center"
-                        app:materialIcon="details"
-                        app:materialIconColor="@color/default_text_colour"
-                        app:materialIconSize="@dimen/default_icon_size" />
+                    android:layout_weight="1"
+                    android:scaleType="center"
+                    android:tag="2"
+                    app:materialIcon="details"
+                    app:materialIconColor="@color/default_text_colour"
+                    app:materialIconSize="@dimen/default_icon_size" />
 
 
-                    <ImageView
-                        android:id="@+id/ivTriangleSelected"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_alignEnd="@+id/ivTriangle"
-                        android:layout_alignRight="@+id/ivTriangle"
-                        android:contentDescription="@null"
-                        android:src="@drawable/ic_launcher"
-                        android:visibility="invisible" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/rlCircle"
+                <net.steamcrafted.materialiconlib.MaterialIconView
+                    android:id="@+id/mivCircle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1">
+                    android:layout_weight="1"
+                    android:scaleType="center"
+                    android:tag="0"
+                    app:materialIcon="panorama_fisheye"
+                    app:materialIconColor="@color/default_text_colour"
+                    app:materialIconSize="@dimen/default_icon_size" />
 
-                    <net.steamcrafted.materialiconlib.MaterialIconView
-                        android:id="@+id/ivCircle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:scaleType="center"
-                        app:materialIcon="panorama_fisheye"
-                        app:materialIconColor="@color/default_text_colour"
-                        app:materialIconSize="@dimen/default_icon_size" />
 
-                    <ImageView
-                        android:id="@+id/ivCircleSelected"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_alignEnd="@+id/ivCircle"
-                        android:layout_alignRight="@+id/ivCircle"
-                        android:contentDescription="@null"
-                        android:src="@drawable/ic_launcher"
-                        android:visibility="invisible" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/rlArrow"
+                <net.steamcrafted.materialiconlib.MaterialIconView
+                    android:id="@+id/mivArrow"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1">
-
-                    <net.steamcrafted.materialiconlib.MaterialIconView
-                        android:id="@+id/ivArrow"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:scaleType="center"
-                        app:materialIcon="arrow_top_right"
-                        app:materialIconColor="@color/default_text_colour"
-                        app:materialIconSize="@dimen/default_icon_size" />
-
-
-                    <ImageView
-                        android:id="@+id/ivArrowSelected"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_alignEnd="@+id/ivArrow"
-                        android:layout_alignRight="@+id/ivArrow"
-                        android:contentDescription="@null"
-                        android:src="@drawable/ic_launcher"
-                        android:visibility="invisible" />
-                </RelativeLayout>
+                    android:layout_weight="1"
+                    android:scaleType="center"
+                    android:tag="5"
+                    app:materialIcon="arrow_top_right"
+                    app:materialIconColor="@color/default_text_colour"
+                    app:materialIconSize="@dimen/default_icon_size" />
             </LinearLayout>
 
 
@@ -273,7 +176,7 @@
                 style="@style/drawing_tools_row">
 
                 <net.steamcrafted.materialiconlib.MaterialIconView
-                    android:id="@+id/ivChangeBrushSize"
+                    android:id="@+id/mivChangeBrushSize"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:scaleType="center"
@@ -285,8 +188,8 @@
                     android:id="@+id/sbBrushSize"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_toEndOf="@+id/ivChangeBrushSize"
-                    android:layout_toRightOf="@+id/ivChangeBrushSize"
+                    android:layout_toEndOf="@+id/mivChangeBrushSize"
+                    android:layout_toRightOf="@+id/mivChangeBrushSize"
                     android:max="30" />
             </RelativeLayout>
 
@@ -564,16 +467,12 @@
                     app:materialIconSize="@dimen/default_icon_size" />
 
                 <SeekBar
-                    android:id="@+id/sbSkew"
+                    android:id="@+id/sbRotation"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@+id/ivSkew"
-                    android:layout_toRightOf="@+id/ivSkew"
-                     />
+                    android:layout_toRightOf="@+id/ivSkew" />
             </RelativeLayout>
-
-
-
         </LinearLayout>
     </ScrollView>
 

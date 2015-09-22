@@ -42,10 +42,6 @@ public class Utils {
         return createRoundImage(Color.parseColor(colour), bitmapW, bitmapH);
     }
 
-    public static Bitmap createRoundImage(String colour, int diametr) {
-        return createRoundImage(Color.parseColor(colour), diametr, diametr);
-    }
-
     public static Bitmap createRoundImage(int colour, int bitmapW, int bitmapH) {
         Bitmap circleBitmap = Bitmap.createBitmap(bitmapW, bitmapH, Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(circleBitmap);
@@ -55,6 +51,24 @@ public class Utils {
         p.setStrokeWidth(5);
         p.setColor(colour);
         c.drawCircle(circleBitmap.getWidth() - bitmapW / 2, circleBitmap.getHeight() - bitmapH / 2, bitmapW / 2, p);
+        return circleBitmap;
+    }
+
+    public static Bitmap createRoundImageSelected(int colour, int selectionColour , int bitmapW, int bitmapH) {
+        Bitmap circleBitmap = Bitmap.createBitmap(bitmapW, bitmapH, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(circleBitmap);
+
+        Paint p = new Paint();
+        p.setAntiAlias(true);
+        p.setStrokeWidth(5);
+        p.setColor(colour);
+        c.drawCircle(circleBitmap.getWidth() - bitmapW / 2, circleBitmap.getHeight() - bitmapH / 2, bitmapW / 2, p);
+
+        p.setColor(selectionColour);
+        c.drawCircle(circleBitmap.getWidth() - bitmapW / 2, circleBitmap.getHeight() - bitmapH / 2, bitmapW / 2 - 5, p);
+
+        //p.setColor(colour);
+        //c.drawCircle(circleBitmap.getWidth() - bitmapW / 2, circleBitmap.getHeight() - bitmapH / 2, bitmapW / 2 - 10, p);
         return circleBitmap;
     }
 }
