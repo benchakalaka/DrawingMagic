@@ -18,8 +18,8 @@ import com.drawingmagic.core.DrawingSettings;
 import com.drawingmagic.core.DrawingView;
 import com.drawingmagic.core.GPUImageFilterTools;
 import com.drawingmagic.eventbus.Event;
-import com.drawingmagic.fragments.FAdjuster_;
 import com.drawingmagic.fragments.FDrawingTools.OnChangeDrawingSettingsListener;
+import com.drawingmagic.fragments.FTiltFragmentController_;
 import com.drawingmagic.helpers.FilterItemHolder;
 import com.drawingmagic.utils.Conditions;
 import com.drawingmagic.utils.Log;
@@ -45,13 +45,13 @@ import static com.drawingmagic.adapters.ViewPagerAdapter.CANVAS_SETTINGS_TOOLS_F
 import static com.drawingmagic.adapters.ViewPagerAdapter.DRAWING_TOOLS_FRAGMENT;
 import static com.drawingmagic.adapters.ViewPagerAdapter.EFFECTS_TOOLS_FRAGMENT;
 import static com.drawingmagic.core.DrawingView.ShapesType;
+import static com.drawingmagic.eventbus.Event.ON_ADJUSTER_VALUE_CHANGED;
 import static com.drawingmagic.eventbus.Event.ON_CLEAR_CANVAS;
 import static com.drawingmagic.eventbus.Event.ON_REDO;
+import static com.drawingmagic.eventbus.Event.ON_ROTATE;
 import static com.drawingmagic.eventbus.Event.ON_TILT_FACTOR_X_CHANGED;
 import static com.drawingmagic.eventbus.Event.ON_TILT_FACTOR_Y_CHANGED;
 import static com.drawingmagic.eventbus.Event.ON_UNDO;
-import static com.drawingmagic.fragments.FCanvasTools.OnChangeCanvasSettingsListener;
-import static com.drawingmagic.fragments.FEffectsTools.OnChangeEffectListener;
 import static com.drawingmagic.views.HoverView.DRAWING_CACHE_QUALITY_HIGH;
 import static com.drawingmagic.views.HoverView.MENU_ITEM_CAMERA;
 import static com.drawingmagic.views.HoverView.MENU_ITEM_EMPTY_CANVAS;
@@ -65,7 +65,7 @@ import static jp.co.cyberagent.android.gpuimage.GPUImageView.OnPictureSavedListe
  * On 13/09/15 at 17:44.
  */
 @EActivity(R.layout.activity_drawing_magic)
-public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSettingsListener, OnChangeEffectListener, OnPictureSavedListener, OnChangeCanvasSettingsListener {
+public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSettingsListener, OnPictureSavedListener {
 
     @ViewById
     DrawingView drawingView;
@@ -94,9 +94,10 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
     // View pager adapter
     private final ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
 
-
+    // Static final constants
     private static final int DEFAULT_BRUSH_SIZE = 3;
     public static final int REQUEST_PICK_IMAGE = 1001;
+    private static final int DEFAULT_ASPECT_RATIO_VALUES = 20;
 
     private GPUImageFilter currentFilter;
     private GPUImageFilterTools.FilterAdjuster filterAdjuster;
@@ -116,6 +117,8 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
         gpuImage.setVisibility(GONE);
         gpuImage.setScaleType(CENTER_INSIDE);
 
+        cropImageView.setAspectRatio(DEFAULT_ASPECT_RATIO_VALUES, DEFAULT_ASPECT_RATIO_VALUES);
+
         switch (selectedMenuItem) {
             case MENU_ITEM_CAMERA:
                 ActivityCamera_.intent(this).start();
@@ -133,13 +136,11 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                 break;
         }
 
-     //  getSupportFragmentManager().beginTransaction().add(R.id.flFragmentHolder, new FTiltFragmentController_()).commit();
-        getSupportFragmentManager().beginTransaction().add(R.id.flFragmentHolder, new FAdjuster_()).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.flFragmentHolder, new FTiltFragmentController_()).commit();
 
-        //fAdjuster.setSeekBarCurrentMinMaxValues(180, 90);
-      //  getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, fAdjuster).commit();
-
+        //getSupportFragmentManager().beginTransaction().add(R.id.flFragmentHolder, new FAdjuster_()).commit();
     }
+
 
     /**
      * Init View Pager
@@ -210,8 +211,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                 withGridEnabled(true).build());
     }
 
-    @Override
-    public void onChangeSeekBarProgress(int progress) {
+    private void adjustFilter(int progress) {
         if (Conditions.isNotNull(filterAdjuster)) {
             filterAdjuster.adjust(progress);
         }
@@ -323,8 +323,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
         drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withShape(shape).build());
     }
 
-    @Override
-    public void onNewFilterSelected(FilterItemHolder filterItemHolder) {
+    private void applyEffect(FilterItemHolder filterItemHolder) {
         // User pressed X
         if (filterItemHolder == null) {
             gpuImage.getFilter().destroy();
@@ -332,9 +331,9 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
             return;
         }
 
-        switchFilterTo(GPUImageFilterTools.createFilterForType(this, filterItemHolder.filter));
+        switchFilterTo(GPUImageFilterTools.createFilterForType(this, filterItemHolder.getFilter()));
         gpuImage.requestRender();
-        Notification.showSuccess(this, filterItemHolder.filterName);
+        Notification.showSuccess(this, filterItemHolder.getFilterName());
     }
 
     private void saveImage() {
@@ -347,36 +346,98 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
         Notification.showSuccess(this, "Saved: " + uri.toString());
     }
 
-    @Override
-    public void onCanvasSettingsChanged() {
-
-    }
 
     @Override
     public void onEventMainThread(Event event) {
         Log.e(event.toString());
         switch (event.type) {
-            case ON_TILT_FACTOR_X_CHANGED:
-                drawingView.setRotationX((int)event.payload);
-                break;
 
-            case ON_TILT_FACTOR_Y_CHANGED:
-                drawingView.setRotationY((int)event.payload);
+            case Event.ON_ADJUST_FILTER_LEVEL: {
+                adjustFilter((int) event.payload);
+                Log.e("  ON_ADJUST_FILTER_LEVEL : " + (int) event.payload);
                 break;
+            }
 
-            case ON_UNDO:
+            case Event.ON_APPLY_EFFECT: {
+                applyEffect((FilterItemHolder) event.payload);
+                Log.e("  ON_APPLY_EFFECT : " + ((FilterItemHolder) event.payload).getFilterName());
+                break;
+            }
+
+            case Event.ON_RESTORE_IMAGE_BEFORE_CROPPING: {
+                //cropImageView.setImageBitmap(ADrawingMagic.ORIGIN_BITMAP.copy(Bitmap.Config.ARGB_8888, true));
+                cropImageView.setImageBitmap(ORIGIN_BITMAP);
+                break;
+            }
+
+            case Event.ON_APPLY_CROPPING: {
+                cropImageView.setImageBitmap(cropImageView.getCroppedImage());
+                break;
+            }
+
+            case ON_ADJUSTER_VALUE_CHANGED: {
+                drawingView.setRotationDegree((int) event.payload);
+                Log.e("  ON_ADJUSTER_VALUE_CHANGED : " + (int) event.payload);
+                break;
+            }
+
+            case ON_TILT_FACTOR_X_CHANGED: {
+                float tiltFactorX = (int) event.payload;
+                // if progress more then a half (tiltFactorX % 50) / 100f  ====> i.e (55 % 50 = 5 and 5 / 100 ==0.05), tiltFactor == 0.05
+                // if progress less then a half (tiltFactorX - 50) / 100f ====> i.e - (23 - 50 = 17 and 17/100)== -0.17)
+                //// TODO: 21/09/2015 Replace magic numbers
+                // replace with InternalMath class
+                tiltFactorX = tiltFactorX > 50 ? (tiltFactorX % 50 / 100f) : ((tiltFactorX - 50) / 100f);
+                drawingView.setTiltFactorX((int) event.payload == 100 ? 0.5f : tiltFactorX);
+                Log.e("  ON_TILT_FACTOR_X_CHANGED : " + tiltFactorX);
+                break;
+            }
+
+            case ON_TILT_FACTOR_Y_CHANGED: {
+                float tiltFactorY = (int) event.payload;
+                tiltFactorY = tiltFactorY > 50 ? (tiltFactorY % 50 / 100f) : ((tiltFactorY - 50) / 100f);
+                drawingView.setTiltFactorY((int) event.payload == 100 ? 0.5f : tiltFactorY);
+                Log.e("  ON_TILT_FACTOR_Y_CHANGED : " + tiltFactorY);
+                break;
+            }
+
+            case ON_UNDO: {
                 drawingView.undo();
                 break;
+            }
 
-            case ON_REDO:
+            case ON_REDO: {
                 drawingView.redo();
                 break;
+            }
 
-            case ON_CLEAR_CANVAS:
+            case ON_CLEAR_CANVAS: {
                 drawingView.clearRedoPaths();
                 drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withPaths(null).build());
-
                 break;
+            }
+
+            case ON_ROTATE: {
+                int progress = (int) event.payload;
+
+                switch (progress) {
+                    case 0: {
+                        progress = 180;
+                        break;
+                    }
+
+                    case 360: {
+                        progress = -180;
+                        break;
+                    }
+
+                    default:
+                        progress = progress > 180 ? progress % 180 : progress - 180;
+                        break;
+                }
+                setRotationDegree(progress);
+                break;
+            }
 
             default:
                 Log.e("Unknown event " + event);
@@ -390,10 +451,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
         startActivityForResult(photoPickerIntent, ADrawingMagic.REQUEST_PICK_IMAGE);
     }
 
-    public void setSkewFactor(float skewFactor) {
-        drawingView.setRotationY(45 + skewFactor);
-        //drawingView.setRotationY(skewFactor-10);
-        Log.e("Skew factor : " + skewFactor);
-        // drawingView.setSkewFactor(skewFactor);
+    public void setRotationDegree(float degree) {
+        drawingView.setRotationDegree(degree);
     }
 }

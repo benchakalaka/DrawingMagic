@@ -119,7 +119,7 @@ public class GPUImageFilterTools {
         filters.addFilter("3x3 Convolution", FilterType.THREE_X_THREE_CONVOLUTION);
         filters.addFilter("Emboss", FilterType.EMBOSS);
         filters.addFilter("Posterize", FilterType.POSTERIZE);
-        filters.addFilter("Grouped filters", FilterType.FILTER_GROUP);
+        filters.addFilter("Grouped FILTERS", FilterType.FILTER_GROUP);
         filters.addFilter("Saturation", FilterType.SATURATION);
         filters.addFilter("Exposure", FilterType.EXPOSURE);
         filters.addFilter("Highlight Shadow", FilterType.HIGHLIGHT_SHADOW);

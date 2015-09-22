@@ -4,12 +4,10 @@ import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.drawingmagic.ADrawingMagic;
 import com.drawingmagic.R;
 import com.drawingmagic.core.DrawingSettings;
 import com.drawingmagic.eventbus.Event;
@@ -24,10 +22,12 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.SeekBarProgressChange;
 import org.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.res.ColorRes;
 import org.androidannotations.annotations.res.StringRes;
 
 import de.greenrobot.event.EventBus;
 
+import static com.drawingmagic.core.DrawingView.DEFAULT_BRUSH_SIZE;
 import static com.drawingmagic.core.DrawingView.GridType;
 import static com.drawingmagic.core.DrawingView.ShapesType;
 import static com.drawingmagic.utils.AnimationUtils.AnimationTechniques;
@@ -41,79 +41,67 @@ import static com.drawingmagic.utils.AnimationUtils.AnimationTechniques;
 @EFragment(R.layout.fragment_drawing_tools)
 public class FDrawingTools extends Fragment {
 
-    // default values for round bitmap (background for imageviews)
-    private static final int ROUND_BITMAP_DIAMETER = 50;
+    // default values for round bitmap (background for image views)
+    private static final int ROUND_BITMAP_DIAMETER = 40;
+    private static final int MAXIMUM_ROTATION_DEGREE = 360;
 
     // String resources
     @StringRes(R.string.draw_arrow)
-    static String drawArrow;
+    String drawArrow;
     @StringRes(R.string.draw_rect)
-    static String drawRect;
+    String drawRect;
     @StringRes(R.string.draw_triangle)
-    static String drawTriangle;
+    String drawTriangle;
     @StringRes(R.string.draw_circle)
-    static String drawCircle;
+    String drawCircle;
     @StringRes(R.string.draw_line)
-    static String drawLine;
+    String drawLine;
     @StringRes(R.string.free_drawing)
-    static String freeDrawing;
+    String freeDrawing;
+
+    // Color resources
+    @ColorRes(R.color.default_ab_background_colour)
+    int selectionColour;
+    @ColorRes(R.color.default_text_colour)
+    int deselectedColour;
 
 
     private final DrawingSettings drawingSettings = new DrawingSettings();
     private OnChangeDrawingSettingsListener listener;
 
     @ViewById
-    MaterialIconView ivChangeBrushSize, ivSimple, ivLine, ivRectangle;
+    MaterialIconView mivChangeBrushSize, mivSimple, mivLine, mivRectangle, mivTriangle, mivArrow, mivCircle;
 
     @ViewById
-    ImageView ivLineSelected, ivRectangleSelected, ivTriangle, ivTriangleSelected, ivCircle, ivArrow, ivCircleSelected, ivArrowSelected,
-            ivColour0, ivColour1, ivColour2, ivColour3, ivColour4, ivColour5, ivColour6, ivColour7, ivColour8, ivColour9, ivColour10, ivColour11, ivSimpleSelected;
+    ImageView ivColour0, ivColour1, ivColour2, ivColour3, ivColour4, ivColour5, ivColour6, ivColour7, ivColour8, ivColour9, ivColour10, ivColour11;
 
     @ViewById
     TextView tvTitle;
 
     @ViewById
-    RelativeLayout rlClearCanvas, rlUndo, rlRedo, rlDashed, rlFillShape, rlDisplayLinesWhileDrawing, rlStandardDrawing, rlLine, rlRectangle, rlTriangle, rlCircle, rlArrow, rlNoGrid, rlPartlyGrid, rlFullGrid;
+    RelativeLayout rlClearCanvas, rlUndo, rlRedo, rlDashed, rlFillShape, rlDisplayLinesWhileDrawing, rlNoGrid, rlPartlyGrid, rlFullGrid;
 
     @ViewById
-    SeekBar sbBrushSize, sbSkew;
-
-    @ViewById
-    LinearLayout llTypeOfShapes, llGridType, llFillShape;
+    SeekBar sbBrushSize, sbRotation;
 
 
     @SeekBarProgressChange
-    void sbSkew(int progress) {
-        float skewFactor = 0f;
-
-
-
-        switch (progress){
-            case 0: {
-                skewFactor = 180;
-                break;
-            }
-
-            case 360: {
-                skewFactor = -180;
-                break;
-            }
-
-            default:
-                skewFactor = progress > 180 ? progress % 180 : progress - 180;
-                break;
-        }
-        // // TODO: 18/09/2015  NAFIG YBRAT'
-
-
-        ((ADrawingMagic) getActivity()).setSkewFactor(skewFactor);
-
+    void sbRotation(int rotateDegree) {
+        EventBus.getDefault().post(new Event(Event.ON_ROTATE, rotateDegree));
     }
+
+    @SeekBarProgressChange
+    void sbBrushSize(int brushSize) {
+        drawingSettings.setBrushWidth(brushSize, (getActivity()).getResources().getDisplayMetrics());
+        listener.onSetUpDrawingShapesOkClicked(drawingSettings);
+    }
+
 
     @AfterViews
     void afterViews() {
-        sbSkew.setMax(360);
-        sbSkew.setProgress(180);
+        sbRotation.setMax(MAXIMUM_ROTATION_DEGREE);
+        // set current value in the middle of seek bar (half of MAXIMUM_ROTATION_DEGREE)
+        sbRotation.setProgress(MAXIMUM_ROTATION_DEGREE >> 1);
 
         // check activity for inheritance from OnSelectTypeOfShapeListener
         try {
@@ -125,39 +113,10 @@ public class FDrawingTools extends Fragment {
         selectViewByTypeOfGrid(GridType.FULL_GRID);
 
         // set current brush size
-        sbBrushSize.setProgress(5);
-        sbBrushSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                drawingSettings.setBrushWidth(progress, (getActivity()).getResources().getDisplayMetrics());
-                listener.onSetUpDrawingShapesOkClicked(drawingSettings);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
+        sbBrushSize.setProgress(DEFAULT_BRUSH_SIZE);
 
         // color picker view
-
-        ivColour0.setImageBitmap(Utils.createRoundImage(ivColour0.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
-        ivColour1.setImageBitmap(Utils.createRoundImage(ivColour1.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
-        ivColour2.setImageBitmap(Utils.createRoundImage(ivColour2.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
-        ivColour3.setImageBitmap(Utils.createRoundImage(ivColour3.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
-        ivColour4.setImageBitmap(Utils.createRoundImage(ivColour4.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
-        ivColour5.setImageBitmap(Utils.createRoundImage(ivColour5.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
-        ivColour6.setImageBitmap(Utils.createRoundImage(ivColour6.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
-        ivColour7.setImageBitmap(Utils.createRoundImage(ivColour7.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
-        ivColour8.setImageBitmap(Utils.createRoundImage(ivColour8.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
-        ivColour9.setImageBitmap(Utils.createRoundImage(ivColour9.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
-        ivColour10.setImageBitmap(Utils.createRoundImage(ivColour10.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
-        ivColour11.setImageBitmap(Utils.createRoundImage(ivColour11.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        initColorPicker();
     }
 
     public FDrawingTools() {
@@ -181,9 +140,11 @@ public class FDrawingTools extends Fragment {
         selectViewByTypeOfGrid(GridType.FULL_GRID);
     }
 
-    private void playAnimationOnViewAndUnselectAllShapes(View target) {
-        AnimationUtils.animate(target, AnimationTechniques.ZOOM_IN);
-        unselectAllTypesOfShapes();
+    private void selectShape(MaterialIconView icon) {
+        playAnimationOnView(icon);
+        deselectShapes();
+        listener.onSetUpDrawingShapesOkClicked(drawingSettings);
+        icon.setColor(selectionColour);
     }
 
     private void playAnimationOnView(View target) {
@@ -191,49 +152,20 @@ public class FDrawingTools extends Fragment {
     }
 
     /**
-     * Hide all iv*Selected
+     * Deselect all types of shape
      */
-    private void unselectAllTypesOfShapes() {
-        ivSimpleSelected.setVisibility(View.INVISIBLE);
-        ivLineSelected.setVisibility(View.INVISIBLE);
-        ivRectangleSelected.setVisibility(View.INVISIBLE);
-        ivTriangleSelected.setVisibility(View.INVISIBLE);
-        ivCircleSelected.setVisibility(View.INVISIBLE);
-        ivArrowSelected.setVisibility(View.INVISIBLE);
+    private void deselectShapes() {
+        mivSimple.setColor(deselectedColour);
+        mivArrow.setColor(deselectedColour);
+        mivLine.setColor(deselectedColour);
+        mivRectangle.setColor(deselectedColour);
+        mivCircle.setColor(deselectedColour);
+        mivTriangle.setColor(deselectedColour);
     }
 
     private void selectViewByTypeOfGrid(int typeOfGrid) {
         drawingSettings.setGridType(typeOfGrid);
         listener.onSetUpDrawingShapesOkClicked(drawingSettings);
-    }
-
-    private void selectViewByTypesOfShape(int typeOfShape) {
-        listener.onSetUpDrawingShapesOkClicked(drawingSettings);
-        switch (typeOfShape) {
-            case ShapesType.ARROW:
-                ivArrowSelected.setVisibility(View.VISIBLE);
-                break;
-
-            case ShapesType.CIRCLE:
-                ivCircleSelected.setVisibility(View.VISIBLE);
-                break;
-
-            case ShapesType.LINE:
-                ivLineSelected.setVisibility(View.VISIBLE);
-                break;
-
-            case ShapesType.RECTANGLE:
-                ivRectangleSelected.setVisibility(View.VISIBLE);
-                break;
-
-            case ShapesType.STANDARD_DRAWING:
-                ivSimpleSelected.setVisibility(View.VISIBLE);
-                break;
-
-            case ShapesType.TRIANGLE:
-                ivTriangleSelected.setVisibility(View.VISIBLE);
-                break;
-        }
     }
 
     /**
@@ -250,7 +182,7 @@ public class FDrawingTools extends Fragment {
      * @param typeOfShape int representation of shape
      * @return string representation
      */
-    public static String getStringMessageByTypesOfShape(int typeOfShape) {
+    public String getStringMessageByTypesOfShape(int typeOfShape) {
         switch (typeOfShape) {
             case ShapesType.ARROW:
                 return drawArrow;
@@ -270,74 +202,43 @@ public class FDrawingTools extends Fragment {
 
 
     private void setUpCustomColourAndPlayAnimation(View view) {
-        //ivCustomColour.setImageBitmap(Utils.createRoundImage(colour, ROUND_BITMAP_DIAMETER, ROUND_BITMAP_HEIGHT));
-        //AnimationUtils.animate(ivCustomColour, AnimationTechniques.FADE_IN);
-        //AnimationUtils.animate(view, AnimationTechniques.FADE_IN);
+        playAnimationOnView(view);
+        // tag of the colors views is the hex representation of colour i.e. 44FF24CC
         drawingSettings.setCurrentColour(Color.parseColor(view.getTag().toString()));
         listener.onSetUpDrawingShapesOkClicked(drawingSettings);
-        Notification.showSuccess(getActivity(), "TODO SELECTION");
+        initColorPicker();
+        ((ImageView) view).setImageBitmap(Utils.createRoundImageSelected(Color.parseColor(view.getTag().toString()), selectionColour, ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
     }
 
-    @Click
-    void ivColour0() {
-        setUpCustomColourAndPlayAnimation(ivColour0);
+    private void initColorPicker() {
+        ivColour0.setImageBitmap(Utils.createRoundImage(ivColour0.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        ivColour1.setImageBitmap(Utils.createRoundImage(ivColour1.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        ivColour2.setImageBitmap(Utils.createRoundImage(ivColour2.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        ivColour3.setImageBitmap(Utils.createRoundImage(ivColour3.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        ivColour4.setImageBitmap(Utils.createRoundImage(ivColour4.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        ivColour5.setImageBitmap(Utils.createRoundImage(ivColour5.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        ivColour6.setImageBitmap(Utils.createRoundImage(ivColour6.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        ivColour7.setImageBitmap(Utils.createRoundImage(ivColour7.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        ivColour8.setImageBitmap(Utils.createRoundImage(ivColour8.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        ivColour9.setImageBitmap(Utils.createRoundImage(ivColour9.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        ivColour10.setImageBitmap(Utils.createRoundImage(ivColour10.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        ivColour11.setImageBitmap(Utils.createRoundImage(ivColour11.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
     }
 
-    @Click
-    void ivColour1() {
-        setUpCustomColourAndPlayAnimation(ivColour1);
+    @Click({R.id.ivColour0, R.id.ivColour1, R.id.ivColour2, R.id.ivColour3, R.id.ivColour4, R.id.ivColour5, R.id.ivColour6, R.id.ivColour7, R.id.ivColour8, R.id.ivColour9, R.id.ivColour10, R.id.ivColour11})
+    void colorPicked(View clickedView) {
+        setUpCustomColourAndPlayAnimation(clickedView);
     }
 
-    @Click
-    void ivColour2() {
-        setUpCustomColourAndPlayAnimation(ivColour2);
-    }
+    @Click({R.id.mivSimple, R.id.mivLine, R.id.mivRectangle, R.id.mivTriangle, R.id.mivArrow, R.id.mivCircle})
+    void shapePicked(View shape) {
+        // tag of the shapes views = one of the ShapeType value
+        int typeOfShape = Integer.parseInt(shape.getTag().toString());
 
-    @Click
-    void ivColour3() {
-        setUpCustomColourAndPlayAnimation(ivColour3);
+        drawingSettings.setCurrentShape(typeOfShape);
+        Notification.showSuccess(getActivity(), getStringMessageByTypesOfShape(typeOfShape));
+        selectShape((MaterialIconView) shape);
     }
-
-    @Click
-    void ivColour4() {
-        setUpCustomColourAndPlayAnimation(ivColour4);
-    }
-
-    @Click
-    void ivColour5() {
-        setUpCustomColourAndPlayAnimation(ivColour5);
-    }
-
-    @Click
-    void ivColour6() {
-        setUpCustomColourAndPlayAnimation(ivColour6);
-    }
-
-    @Click
-    void ivColour7() {
-        setUpCustomColourAndPlayAnimation(ivColour7);
-    }
-
-    @Click
-    void ivColour8() {
-        setUpCustomColourAndPlayAnimation(ivColour8);
-    }
-
-    @Click
-    void ivColour9() {
-        setUpCustomColourAndPlayAnimation(ivColour9);
-    }
-
-    @Click
-    void ivColour10() {
-        setUpCustomColourAndPlayAnimation(ivColour10);
-    }
-
-    @Click
-    void ivColour11() {
-        setUpCustomColourAndPlayAnimation(ivColour11);
-    }
-
 
     @Click
     void rlDashed() {
@@ -375,50 +276,7 @@ public class FDrawingTools extends Fragment {
     @Click
     void rlDisplayLinesWhileDrawing() {
         drawingSettings.setDisplayLinesWhileDrawing(!drawingSettings.isDisplayLinesWhileDrawing());
-        listener.onSetUpDrawingShapesOkClicked(drawingSettings);
         playAnimationOnView(rlDisplayLinesWhileDrawing);
-    }
-
-
-    @Click
-    void ivSimple() {
-        playAnimationOnViewAndUnselectAllShapes(ivSimple);
-        drawingSettings.setCurrentShape(ShapesType.STANDARD_DRAWING);
-        selectViewByTypesOfShape(ShapesType.STANDARD_DRAWING);
-    }
-
-    @Click
-    void ivLine() {
-        playAnimationOnViewAndUnselectAllShapes(ivLine);
-        drawingSettings.setCurrentShape(ShapesType.LINE);
-        selectViewByTypesOfShape(ShapesType.LINE);
-    }
-
-    @Click
-    void ivRectangle() {
-        playAnimationOnViewAndUnselectAllShapes(ivRectangle);
-        drawingSettings.setCurrentShape(ShapesType.RECTANGLE);
-        selectViewByTypesOfShape(ShapesType.RECTANGLE);
-    }
-
-    @Click
-    void ivTriangle() {
-        playAnimationOnViewAndUnselectAllShapes(ivTriangle);
-        drawingSettings.setCurrentShape(ShapesType.TRIANGLE);
-        selectViewByTypesOfShape(ShapesType.TRIANGLE);
-    }
-
-    @Click
-    void ivCircle() {
-        playAnimationOnViewAndUnselectAllShapes(ivCircle);
-        drawingSettings.setCurrentShape(ShapesType.CIRCLE);
-        selectViewByTypesOfShape(ShapesType.CIRCLE);
-    }
-
-    @Click
-    void ivArrow() {
-        playAnimationOnViewAndUnselectAllShapes(ivArrow);
-        drawingSettings.setCurrentShape(ShapesType.ARROW);
-        selectViewByTypesOfShape(ShapesType.ARROW);
+        listener.onSetUpDrawingShapesOkClicked(drawingSettings);
     }
 }

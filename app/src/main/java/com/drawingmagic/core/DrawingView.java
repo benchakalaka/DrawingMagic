@@ -90,13 +90,11 @@ public class DrawingView extends View {
     private float scalePointX, scalePointY;
     // Max zoom value
     private final static float MAX_ZOOM_FACTOR = 5.0f;
-    // rotation factor X
-    private int rotationFactorX = 0;
-    // rotation factor Y
-    private int rotationFactorY = 0;
+    // rotation factor
+    private float rotationDegree = 0f;
 
-    // // TODO: 19/09/15 Replace with only one matrix
-    Matrix rotateMatrix = new Matrix();
+    Matrix transformMatrix = new Matrix();
+
 
     public DrawingView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -133,14 +131,6 @@ public class DrawingView extends View {
 
         // Set source rectangle
         scaleBitmapToCenter();
-
-        // // TODO: 20/09/15  Improve speed by replaceing some calculation from onDraw to here
-    }
-
-    public void setSkewFactor(float skewFactor) {
-        rotateMatrix.reset();
-        rotateMatrix.setRotate(skewFactor, getWidth() / 2, getHeight() / 2);
-        invalidate();
     }
 
     private void scaleBitmapToCenter() {
@@ -184,8 +174,7 @@ public class DrawingView extends View {
 
         // already implemented
         // flip()
-
-        canvas.setMatrix(rotateMatrix);
+        canvas.setMatrix(transformMatrix);
         canvas.drawColor(Color.BLACK);
 
         // 1) draw simple bitmap
@@ -215,15 +204,22 @@ public class DrawingView extends View {
 
         // 3) Draw grid OVER paths and start bitmap
         if (drawingData.isGridEnable() && (drawingData.shape.getGridType() != GridType.NO_GRID)) {
-            for (int i = 0; i < (getHeight() / STEP) + 1; i++) {
+            for (int i = 0; i < (getHeight() / STEP); i++) {
                 canvas.drawLine(0, STEP * i, drawingData.getShape().getGridType() == GridType.PARTLY_GRID ? PARTLY_GRID_LINE_LENGTH : getWidth(), STEP * i, coordinatesPaint);
             }
 
-            for (int i = 0; i < (getWidth() / STEP) + 1; i++) {
+            for (int i = 0; i < (getWidth() / STEP); i++) {
                 canvas.drawLine(STEP * i, 0, STEP * i, drawingData.getShape().getGridType() == GridType.PARTLY_GRID ? PARTLY_GRID_LINE_LENGTH : getHeight(), coordinatesPaint);
             }
 
+            // draw rectangle border around image
+            // left border
+            canvas.drawLine(0, 0, 0, getHeight() - 1, coordinatesPaint);
+            // right border
             canvas.drawLine(getWidth() - 1, 0, getWidth() - 1, getHeight() - 1, coordinatesPaint);
+            // top border
+            canvas.drawLine(0, 0, getWidth() - 1, 0, coordinatesPaint);
+            // bottom border
             canvas.drawLine(0, getHeight() - 1, getWidth() - 1, getHeight() - 1, coordinatesPaint);
 
         }
@@ -585,6 +581,31 @@ public class DrawingView extends View {
         }
     }
 
+    //// TODO: 21/09/2015 Replace to up
+    private float tiltFactorX = 0f;
+    private float tiltFactorY = 0f;
+
+    public void setRotationDegree(float degree) {
+        this.rotationDegree = degree;
+        configureTransformationMatrix();
+    }
+
+    public void setTiltFactorX(float tiltFactorX) {
+        this.tiltFactorX = tiltFactorX;
+        configureTransformationMatrix();
+    }
+
+    public void setTiltFactorY(float tiltFactorY) {
+        this.tiltFactorY = tiltFactorY;
+        configureTransformationMatrix();
+    }
+
+    private void configureTransformationMatrix() {
+        transformMatrix.setSkew(tiltFactorX, tiltFactorY, getWidth() / 2, getHeight() / 2);
+        transformMatrix.postRotate(rotationDegree, getWidth() / 2, getHeight() / 2);
+        invalidate();
+    }
+
 
     /**
      * Touch canvas interface.
@@ -631,22 +652,6 @@ public class DrawingView extends View {
             invalidate();
             return true;
         }
-    }
-
-    public int getRotationFactorX() {
-        return rotationFactorX;
-    }
-
-    public void setRotationFactorX(int rotationFactorX) {
-        this.rotationFactorX = rotationFactorX;
-    }
-
-    public int getRotationFactorY() {
-        return rotationFactorY;
-    }
-
-    public void setRotationFactorY(int rotationFactorY) {
-        this.rotationFactorY = rotationFactorY;
     }
 
     public class DrawingDataBuilder {
