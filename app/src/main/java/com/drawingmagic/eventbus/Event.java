@@ -16,6 +16,10 @@ public final class Event {
     public static final int ON_RESTORE_IMAGE_BEFORE_CROPPING = 9;
     public static final int ON_APPLY_EFFECT = 10;
     public static final int ON_ADJUST_FILTER_LEVEL = 11;
+    public static final int ON_ABS_MENU_CLICKED = 12;
+    public static final int ON_ABS_MENU_APPLY = 13;
+    public static final int ON_ABS_MENU_RESTORE = 14;
+    public static final int ON_ABS_MENU_CANCEL = 15;
 
 
     /**
@@ -75,14 +79,15 @@ public final class Event {
                 return getClass().getCanonicalName() + " ON_APPLY_EFFECT";
             case ON_ADJUST_FILTER_LEVEL:
                 return getClass().getCanonicalName() + " ON_ADJUST_FILTER_LEVEL";
-//            case ON_CREATE_HOTSPOT_REQUEST:
-//                return getClass().getCanonicalName() + " ON_CREATE_HOTSPOT_REQUEST";
-//            case ON_DELETE_ADVANCED_PLANNING:
-//                return getClass().getCanonicalName() + " ON_DELETE_ADVANCED_PLANNING";
-//            case ON_EDIT_ADVANCED_PLAN_REQUEST:
-//                return getClass().getCanonicalName() + " ON_EDIT_ADVANCED_PLAN_REQUEST";
-//            case ON_FIRE_PLAN_REQUEST:
-//                return getClass().getCanonicalName() + " ON_EDIT_ADVANCED_PLAN_REQUEST";
+            case ON_ABS_MENU_CLICKED:
+                return getClass().getCanonicalName() + " ON_ABS_MENU_CLICKED";
+            case ON_ABS_MENU_APPLY:
+                return getClass().getCanonicalName() + " ON_ABS_MENU_APPLY";
+            case ON_ABS_MENU_RESTORE:
+                return getClass().getCanonicalName() + " ON_ABS_MENU_RESTORE";
+            case ON_ABS_MENU_CANCEL:
+                return getClass().getCanonicalName() + " ON_ABS_MENU_CANCEL";
+
 //            case ON_SAVE_WHITE_BOARD_REQUEST:
 //                return getClass().getCanonicalName() + " ON_SAVE_WHITE_BOARD_REQUEST";
 //            default:

@@ -101,6 +101,8 @@
     <string name="blend_substract">Blend (Subtract)</string>
     <string name="blend_chroma_key">Blend (Chroma Key)</string>
     <string name="blend_normal">Blend (Normal)</string>
+    <string name="apply">Apply</string>
+    <string name="restore_original">Restore</string>
     <!-- FILTERS -->
 
 

@@ -90,10 +90,12 @@ public class DrawingView extends View {
     private float scalePointX, scalePointY;
     // Max zoom value
     private final static float MAX_ZOOM_FACTOR = 5.0f;
+    private final static float MIN_ZOOM = 1.0f;
     // rotation factor
     private float rotationDegree = 0f;
 
     Matrix transformMatrix = new Matrix();
+    private final static float CIRCLE_TEXT_RADIUS = 20;
 
 
     public DrawingView(Context context, AttributeSet attrs) {
@@ -227,9 +229,8 @@ public class DrawingView extends View {
         // When user want to draw a text BUT hasn't touched the canvas,
         // for convenience draw text in the middle of the screen
         if (drawingData.getShape().getCurrentShape() == ShapesType.DRAW_TEXT && !isFingerTouchingCanvas) {
-            canvas.drawText(drawingData.getTextToDrawOnCanvas(),
-                    getWidth() / 2, getHeight() / 2, textPaint);
-            canvas.drawCircle(getWidth() / 2, getHeight() / 2 + 30, 20, coordinatesPaint);
+            canvas.drawText(drawingData.getTextToDrawOnCanvas(), getWidth() / 2, getHeight() / 2, textPaint);
+            canvas.drawCircle(getWidth() / 2, getHeight() / 2 + CIRCLE_TEXT_RADIUS, CIRCLE_TEXT_RADIUS, coordinatesPaint);
         }
 
         // !!! if user has released finger from canvas - do not need to draw any addition shapes/lines/text etc.
@@ -278,13 +279,16 @@ public class DrawingView extends View {
             case ShapesType.TRIANGLE:
                 canvas.drawPath(calculateTriangle(shapePath), currentPaint);
                 break;
+            default:
+                Log.e("Unknown SHAPE");
+                return;
 
         }
 
         // 3) if user draw something & drawing line are enabled, draw coordinates of moving finger OVER paths and start canvas
         if ((drawingData.getShape().getCurrentColour() != Color.TRANSPARENT) && drawingData.getShape().isDisplayLinesWhileDrawing()) {
 
-            coordinatesPaint.setTextSize(18);
+            coordinatesPaint.setTextSize(DEFAULT_TEXT_SIZE);
             // draw two crossing horizontal and vertical lines on finger touch position
             canvas.drawLine(0, touchY, getWidth(), touchY, coordinatesPaint);
             canvas.drawLine(touchX, 0, touchX, getHeight(), coordinatesPaint);
@@ -328,10 +332,9 @@ public class DrawingView extends View {
                 isFingerTouchingCanvas = true;
                 touchDownX = curX;
                 touchDownY = curY;
-                switch (drawingData.getShape().getCurrentShape()) {
-                    case ShapesType.STANDARD_DRAWING:
-                        currentPath.moveTo(touchX, touchY);
-                        break;
+                if (drawingData.getShape().getCurrentShape() == ShapesType.STANDARD_DRAWING) {
+                    currentPath.moveTo(touchX, touchY);
+
                 }
                 break;
 
@@ -339,10 +342,8 @@ public class DrawingView extends View {
              * User moving finger
              */
             case MotionEvent.ACTION_MOVE:
-                switch (drawingData.getShape().getCurrentShape()) {
-                    case ShapesType.STANDARD_DRAWING:
-                        currentPath.lineTo(touchX, touchY);
-                        break;
+                if (drawingData.getShape().getCurrentShape() == ShapesType.STANDARD_DRAWING) {
+                    currentPath.lineTo(touchX, touchY);
                 }
                 break;
 
@@ -403,8 +404,16 @@ public class DrawingView extends View {
                         newPath.addRoundRect(calculateRectangle(), RECTANGLE_RADIUS, RECTANGLE_RADIUS, Path.Direction.CW);
                         drawingData.paths.add(newPath);
                         break;
+                    default:
+                        Log.e("MotionEvent.ACTION_UP Unknown SHAPE");
+                        break;
                 }
                 if (null != listener) this.listener.userHasReleasedFinger();
+
+
+            default:
+                // ignore rest of the events
+                break;
         }
         // notify canvas that it should be redrawn
         invalidate();
@@ -606,6 +615,19 @@ public class DrawingView extends View {
         invalidate();
     }
 
+    public void resetAllTransformation() {
+        setRotationDegree(0f);
+        setTiltFactorX(0f);
+        setTiltFactorY(0f);
+        transformMatrix.reset();
+        invalidate();
+    }
+
+    public void setGridType(int gridType) {
+        drawingData.getShape().setGridType(gridType);
+        invalidate();
+    }
+
 
     /**
      * Touch canvas interface.
@@ -647,8 +669,9 @@ public class DrawingView extends View {
             scalePointX = detector.getFocusX();
             scalePointY = detector.getFocusY();
             mScaleFactor *= detector.getScaleFactor();
-            mScaleFactor = Math.max(0.1f, Math.min(mScaleFactor, MAX_ZOOM_FACTOR));
-            mScaleFactor = mScaleFactor < 1f ? 1f : mScaleFactor;
+            mScaleFactor = Math.max(MIN_ZOOM, Math.min(mScaleFactor, MAX_ZOOM_FACTOR));
+
+            mScaleFactor = mScaleFactor < MIN_ZOOM ? MIN_ZOOM : mScaleFactor;
             invalidate();
             return true;
         }
@@ -758,7 +781,7 @@ public class DrawingView extends View {
      */
     public class TextSettings {
         // default text size
-        private int textSize = 20;
+        private int textSize = DEFAULT_TEXT_SIZE;
         // underline text
         private boolean isUnderline = false;
         // default text style

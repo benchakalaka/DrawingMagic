@@ -32,8 +32,8 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
-import com.drawingmagic.core.GPUImageFilterTools;
 import com.drawingmagic.helpers.CameraHelper;
+import com.drawingmagic.utils.Notification;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
@@ -53,7 +53,6 @@ import jp.co.cyberagent.android.gpuimage.GPUImage.OnPictureSavedListener;
 import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
 
 import static com.drawingmagic.core.GPUImageFilterTools.FilterAdjuster;
-import static com.drawingmagic.core.GPUImageFilterTools.OnGpuImageFilterChosenListener;
 import static com.drawingmagic.helpers.CameraHelper.CameraInfo2;
 
 
@@ -62,6 +61,7 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener 
 
     private static final int MEDIA_TYPE_IMAGE = 1;
     private static final int MEDIA_TYPE_VIDEO = 2;
+    private static final int ROTATE_90_DEGREE = 90;
     @ViewById
     SeekBar seekBar;
     @ViewById
@@ -143,13 +143,14 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener 
 
     @Click
     void button_choose_filter() {
-        GPUImageFilterTools.showDialog(this, new OnGpuImageFilterChosenListener() {
-
-            @Override
-            public void onGpuImageFilterChosenListener(final GPUImageFilter filter) {
-                switchFilterTo(filter);
-            }
-        });
+//        GPUImageFilterTools.showDialog(this, new OnGpuImageFilterChosenListener() {
+//
+//            @Override
+//            public void onGpuImageFilterChosenListener(final GPUImageFilter filter) {
+//                switchFilterTo(filter);
+//            }
+//        });
+        Notification.showError(this, "NEED TO BE IMPLMENTED");
     }
 
     @Click
@@ -176,7 +177,7 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener 
     private void takePicture() {
         // TODO get a size that is about the size of the screen
         Camera.Parameters params = mCamera.mCameraInstance.getParameters();
-        params.setRotation(90);
+        params.setRotation(ROTATE_90_DEGREE);
         mCamera.mCameraInstance.setParameters(params);
         for (Camera.Size size : params.getSupportedPictureSizes()) {
             Log.i("ASDF", "Supported: " + size.width + "x" + size.height);

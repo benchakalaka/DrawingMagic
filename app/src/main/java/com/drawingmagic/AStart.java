@@ -1,12 +1,13 @@
 package com.drawingmagic;
 
-import android.animation.Animator;
 import android.view.View;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidviewhover.BlurLayout;
 import com.drawingmagic.eventbus.Event;
+import com.drawingmagic.utils.Utils;
 import com.drawingmagic.views.HoverView_;
+import com.drawingmagic.views.abs.ABS_;
 import com.romainpiel.shimmer.Shimmer;
 import com.romainpiel.shimmer.ShimmerTextView;
 
@@ -25,43 +26,23 @@ public class AStart extends SuperActivity implements HooverMenuClickListener {
     @ViewById
     BlurLayout blProfile;
 
+    private static final int DEFAULT_GLOBAL_BLUR_DURATION = 500;
+    private static final int DEFAULT_SHIMMER_DURATION = 1500;
+
+    private Shimmer shimmer = new Shimmer();
 
     @AfterViews
     void afterViews() {
-        Shimmer shimmer = new Shimmer();
-        BlurLayout.setGlobalDefaultDuration(350);
+        Utils.configureCustomActionBar(getActionBar(), ABS_.build(this));
 
-        shimmer.setDuration(2000)
-                .setStartDelay(1000).
-                setAnimatorListener(new Animator.AnimatorListener() {
-                    @Override
-                    public void onAnimationStart(Animator animation) {
-                        //  ADrawingMagic_.intent(AStart.this).start();
-                    }
+        BlurLayout.setGlobalDefaultDuration(DEFAULT_GLOBAL_BLUR_DURATION);
 
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-
-                    }
-                });
-
+        shimmer.setDuration(DEFAULT_SHIMMER_DURATION);
         shimmer.start(stv);
-
 
         View hoverUserProfile = HoverView_.build(this);
 
         blProfile.setHoverView(hoverUserProfile);
-
-        blProfile.setBlurDuration(500);
 
         blProfile.addChildAppearAnimator(hoverUserProfile, R.id.mivGallery, Techniques.SlideInRight);
         blProfile.addChildAppearAnimator(hoverUserProfile, R.id.mivTakeCameraPicture, Techniques.BounceIn);
@@ -75,12 +56,11 @@ public class AStart extends SuperActivity implements HooverMenuClickListener {
         blProfile.addChildDisappearAnimator(hoverUserProfile, R.id.content, Techniques.FadeOutUp);
 
         blProfile.enableZoomBackground(true);
-
     }
+
 
     @Override
     public void onEventMainThread(Event event) {
-
     }
 
     @Override

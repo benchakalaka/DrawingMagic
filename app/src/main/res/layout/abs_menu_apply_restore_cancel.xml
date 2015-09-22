@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerVertical="true"
+    android:baselineAligned="false"
+    android:orientation="horizontal"
+    android:padding="5dp">
+
+
+    <LinearLayout
+        android:id="@+id/llApply"
+        style="@style/menu_item_style">
+
+        <net.steamcrafted.materialiconlib.MaterialIconView
+            android:id="@+id/mivApply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="center"
+            app:materialIcon="check"
+            app:materialIconColor="@color/default_text_colour"
+            app:materialIconSize="@dimen/default_menu_icons_size" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:text="@string/apply"
+            android:textColor="@color/default_text_colour" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llRestore"
+        style="@style/menu_item_style">
+
+        <net.steamcrafted.materialiconlib.MaterialIconView
+            android:id="@+id/mivRestore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="center"
+            app:materialIcon="backup_restore"
+            app:materialIconColor="@color/default_text_colour"
+            app:materialIconSize="@dimen/default_menu_icons_size" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:text="@string/restore_original"
+            android:textColor="@color/default_text_colour" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/llCancel"
+        style="@style/menu_item_style">
+
+        <net.steamcrafted.materialiconlib.MaterialIconView
+            android:id="@+id/mivCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="center"
+            app:materialIcon="close"
+            app:materialIconColor="@color/default_text_colour"
+            app:materialIconSize="@dimen/default_menu_icons_size" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:text="@android:string/cancel"
+            android:textColor="@color/default_text_colour" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -12,16 +12,15 @@ import de.greenrobot.event.EventBus;
  */
 public abstract class SuperActivity extends SherlockFragmentActivity {
 
+
     /**
      * Start manager on activity start
      */
     @Override
     protected void onStart() {
         super.onStart();
-
         EventBus.getDefault().register(this);
     }
-
 
     @Override
     protected void onPause() {
