@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import com.drawingmagic.fragments.FCanvasTools;
 import com.drawingmagic.fragments.FCanvasTools_;
+import com.drawingmagic.fragments.FCanvasTransformer_;
 import com.drawingmagic.fragments.FDrawingTools;
 import com.drawingmagic.fragments.FDrawingTools_;
 import com.drawingmagic.fragments.FEffectsTools;
@@ -21,17 +22,23 @@ import java.util.ArrayList;
 public class ViewPagerAdapter extends FragmentPagerAdapter {
 
     public static final int DRAWING_TOOLS_FRAGMENT = 0;
-    public static final int EFFECTS_TOOLS_FRAGMENT = 1;
-    public static final int CANVAS_SETTINGS_TOOLS_FRAGMENT = 2;
+    public static final int CANVAS_TRANSFORMER_FRAGMENT = 1;
+    public static final int EFFECTS_TOOLS_FRAGMENT = 2;
+    public static final int CANVAS_SETTINGS_TOOLS_FRAGMENT = 3;
+
 
     private final ArrayList<Fragment> fragments = new ArrayList<>();
 
     public ViewPagerAdapter(FragmentManager fragmentManager) {
         super(fragmentManager);
-
         fragments.add(DRAWING_TOOLS_FRAGMENT, new FDrawingTools_());
+        fragments.add(CANVAS_TRANSFORMER_FRAGMENT, new FCanvasTransformer_());
         fragments.add(EFFECTS_TOOLS_FRAGMENT, new FEffectsTools_());
         fragments.add(CANVAS_SETTINGS_TOOLS_FRAGMENT, new FCanvasTools_());
+    }
+
+    public FDrawingTools getCanvasTransformerFragment() {
+        return (FDrawingTools) getItem(CANVAS_TRANSFORMER_FRAGMENT);
     }
 
     public FDrawingTools getDrawingToolsFragment() {
