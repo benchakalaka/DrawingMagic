@@ -1,14 +1,9 @@
 package com.drawingmagic;
 
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.BitmapFactory.Options;
 import android.graphics.Color;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.support.v4.view.ViewPager;
 import android.widget.FrameLayout;
 
@@ -48,7 +43,7 @@ import static android.view.View.VISIBLE;
 import static com.drawingmagic.adapters.ViewPagerAdapter.CANVAS_SETTINGS_TOOLS_FRAGMENT;
 import static com.drawingmagic.adapters.ViewPagerAdapter.DRAWING_TOOLS_FRAGMENT;
 import static com.drawingmagic.adapters.ViewPagerAdapter.EFFECTS_TOOLS_FRAGMENT;
-import static com.drawingmagic.core.DrawingView.*;
+import static com.drawingmagic.core.DrawingView.GridType;
 import static com.drawingmagic.core.DrawingView.ShapesType;
 import static com.drawingmagic.eventbus.Event.ON_ADJUSTER_VALUE_CHANGED;
 import static com.drawingmagic.eventbus.Event.ON_CLEAR_CANVAS;
@@ -99,6 +94,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
      * BITMAP_ORIGIN -------> BITMAP_MODIFIED -------> (DrawingView, TransformView, GPUEffects, CropView)
      */
     public static Bitmap BITMAP_ORIGIN, BITMAP_MODIFIED;
+    private Bitmap croppedBitmap;
 
     // View pager adapter
     private final ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
@@ -107,6 +103,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
     private static final int DEFAULT_BRUSH_SIZE = 3;
     public static final int REQUEST_PICK_IMAGE = 1001;
     private static final int DEFAULT_ASPECT_RATIO_VALUES = 20;
+    private static final int SHOW_GUIDELINES_ALWAYS = 2;
 
     private GPUImageFilter currentFilter;
     private GPUImageFilterTools.FilterAdjuster filterAdjuster;
@@ -127,6 +124,8 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
         gpuImage.setVisibility(GONE);
         gpuImage.setScaleType(CENTER_INSIDE);
 
+
+        cropImageView.setGuidelines(SHOW_GUIDELINES_ALWAYS);
         cropImageView.setAspectRatio(DEFAULT_ASPECT_RATIO_VALUES, DEFAULT_ASPECT_RATIO_VALUES);
         cropImageView.setImageBitmap(BITMAP_MODIFIED);
         // // TODO: 22/09/2015 Make Picker of shape
@@ -210,6 +209,55 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
         );
     }
 
+    /**
+     * cancel clicked from ABS menu
+     * Reset all transformation from current selected fragment
+     */
+    private void cancelCurrentTransformation() {
+        switch (viewPager.getCurrentItem()) {
+            // Cancel any drawing transformation
+            case DRAWING_TOOLS_FRAGMENT:
+                drawingView.resetAllTransformation();
+                drawingView.clearRedoPaths();
+                drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(BITMAP_MODIFIED).withPaths(null).build());
+                break;
+
+            // Cancel any effect
+            case EFFECTS_TOOLS_FRAGMENT:
+                applyEffect(null);
+                break;
+
+            // Cancel cropping
+            case CANVAS_SETTINGS_TOOLS_FRAGMENT:
+                croppedBitmap = BITMAP_MODIFIED;
+                cropImageView.setImageBitmap(croppedBitmap);
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    private void restoreOriginalImageBeforeTransformation(){
+        switch (viewPager.getCurrentItem()) {
+            // Cancel any drawing transformation
+            case DRAWING_TOOLS_FRAGMENT:
+                break;
+
+            // Cancel any effect
+            case EFFECTS_TOOLS_FRAGMENT:
+                break;
+
+            // Cancel cropping
+            case CANVAS_SETTINGS_TOOLS_FRAGMENT:
+                cropImageView.setImageBitmap(BITMAP_MODIFIED);
+                break;
+
+            default:
+                break;
+        }
+    }
+
     private void onApplyImageTransformationChanges() {
         switch (viewPager.getCurrentItem()) {
             case DRAWING_TOOLS_FRAGMENT:
@@ -227,7 +275,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                 break;
 
             case CANVAS_SETTINGS_TOOLS_FRAGMENT:
-                BITMAP_MODIFIED = cropImageView.getCropShape() == CropShape.RECTANGLE ? cropImageView.getCroppedImage() : cropImageView.getCroppedOvalImage();
+                croppedBitmap = cropImageView.getCropShape() == CropShape.RECTANGLE ? cropImageView.getCroppedImage() : cropImageView.getCroppedOvalImage();
                 break;
 
             default:
@@ -239,7 +287,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
         gpuImage.getGPUImage().deleteImage();
         gpuImage.setImage(BITMAP_MODIFIED);
 
-        cropImageView.setImageBitmap(BITMAP_MODIFIED);
+        cropImageView.setImageBitmap(croppedBitmap);
     }
 
     /**
@@ -255,7 +303,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                 withLinesWhileDrawing(false).
                 withShape(ShapesType.STANDARD_DRAWING).
                 withColor(Color.BLACK).
-                withGridEnabled(false).build());
+                withGridEnabled(true).build());
     }
 
     private void adjustFilter(int progress) {
@@ -294,7 +342,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                         BITMAP_MODIFIED.recycle();
                     }
 
-                    BITMAP_ORIGIN = decodeSampledBitmapFromResource(new File(getRealPathFromURI(data.getData())).getAbsolutePath(), drawingView.getWidth(), drawingView.getHeight());
+                    BITMAP_ORIGIN = Utils.decodeSampledBitmapFromResource(new File(Utils.getRealPathFromURI(ADrawingMagic.this, data.getData())).getAbsolutePath(), drawingView.getWidth(), drawingView.getHeight());
                     BITMAP_MODIFIED = BITMAP_ORIGIN.copy(Config.RGB_565, true);
                     drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(BITMAP_MODIFIED).withPaths(null).build());
                 }
@@ -305,61 +353,6 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
         gpuImage.setImage(data.getData());
     }
 
-
-    public static Bitmap decodeSampledBitmapFromResource(String filename, int reqWidth, int reqHeight) {
-
-        Log.e("W: " + reqWidth + " , H:" + reqHeight);
-
-        // First decode with inJustDecodeBounds=true to check dimensions
-        final Options options = new Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(filename, options);
-
-        // Calculate inSampleSize
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-
-        Log.e("inSampleSize =  " + options.inSampleSize);
-
-        options.inPreferredConfig = Config.RGB_565;
-        options.inDither = true;
-
-        // Decode bitmap with inSampleSize set
-        options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeFile(filename, options);
-    }
-
-    public static int calculateInSampleSize(Options options, int reqWidth, int reqHeight) {
-        // Raw height and width of image
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
-
-        if (height > reqHeight || width > reqWidth) {
-
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-
-            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-            // height and width larger than the requested height and width.
-            while ((halfHeight / inSampleSize) > reqHeight
-                    && (halfWidth / inSampleSize) > reqWidth) {
-                inSampleSize *= 2;
-            }
-        }
-
-        return inSampleSize;
-    }
-
-    private String getRealPathFromURI(Uri contentUri) {
-        String[] proj = {MediaStore.Images.Media.DATA};
-        CursorLoader loader = new CursorLoader(this, contentUri, proj, null, null, null);
-        Cursor cursor = loader.loadInBackground();
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        String result = cursor.getString(column_index);
-        cursor.close();
-        return result;
-    }
 
     @Override
     public void onSetUpDrawingShapesOkClicked(DrawingSettings shape) {
@@ -400,11 +393,11 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                 break;
 
             case Event.ON_ABS_MENU_RESTORE:
-                restoreOriginalImage();
+
                 break;
 
             case Event.ON_ABS_MENU_CANCEL:
-
+                cancelCurrentTransformation();
                 break;
 
             case Event.ON_ABS_MENU_CLICKED:
@@ -501,32 +494,6 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                 Log.e("Unknown event " + event);
         }
     }
-
-    /**
-     * On restore original image clicked from menu
-     * Reset all transformation from current selected fragment
-     */
-    private void restoreOriginalImage() {
-        switch (viewPager.getCurrentItem()) {
-            case DRAWING_TOOLS_FRAGMENT:
-                drawingView.resetAllTransformation();
-                drawingView.clearRedoPaths();
-                drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(BITMAP_MODIFIED).withPaths(null).build());
-                break;
-
-            case EFFECTS_TOOLS_FRAGMENT:
-                applyEffect(null);
-                break;
-
-            case CANVAS_SETTINGS_TOOLS_FRAGMENT:
-                cropImageView.setImageBitmap(BITMAP_MODIFIED);
-                break;
-
-            default:
-                break;
-        }
-    }
-
 
     private void pickUpImageFromGallery() {
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
