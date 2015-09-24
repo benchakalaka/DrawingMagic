@@ -35,8 +35,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:scaleType="center"
-                    app:materialIcon="minus"
                     android:tag="3"
+                    app:materialIcon="minus"
                     app:materialIconColor="@color/default_text_colour"
                     app:materialIconSize="@dimen/default_icon_size" />
 
@@ -365,114 +365,6 @@
 
                 </RelativeLayout>
             </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/llClearingTools"
-                style="@style/drawing_tools_row"
-                android:baselineAligned="false">
-
-                <RelativeLayout
-                    android:id="@+id/rlUndo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-
-                    <net.steamcrafted.materialiconlib.MaterialIconView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginEnd="2dp"
-                        android:layout_marginRight="2dp"
-                        android:layout_toLeftOf="@+id/tvUndo"
-                        android:layout_toStartOf="@+id/tvUndo"
-                        android:scaleType="center"
-                        app:materialIcon="rotate_left"
-                        app:materialIconColor="@color/default_text_colour"
-                        app:materialIconSize="@dimen/default_icon_size" />
-
-                    <TextView
-                        android:id="@+id/tvUndo"
-                        style="@style/tools_description_text_view"
-                        android:text="@string/undo" />
-
-                </RelativeLayout>
-
-
-                <RelativeLayout
-                    android:id="@+id/rlRedo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-
-                    <net.steamcrafted.materialiconlib.MaterialIconView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginRight="5dp"
-                        android:layout_toLeftOf="@+id/tvRedo"
-                        android:layout_toStartOf="@+id/tvRedo"
-                        android:scaleType="center"
-                        app:materialIcon="rotate_right"
-                        app:materialIconColor="@color/default_text_colour"
-                        app:materialIconSize="@dimen/default_icon_size" />
-
-                    <TextView
-                        android:id="@+id/tvRedo"
-                        style="@style/tools_description_text_view"
-                        android:text="@string/redo" />
-
-                </RelativeLayout>
-
-
-                <RelativeLayout
-                    android:id="@+id/rlClearCanvas"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-
-                    <net.steamcrafted.materialiconlib.MaterialIconView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginRight="5dp"
-                        android:layout_toLeftOf="@+id/tvClearAll"
-                        android:layout_toStartOf="@+id/tvClearAll"
-                        android:scaleType="center"
-                        app:materialIcon="broom"
-                        app:materialIconColor="@color/default_text_colour"
-                        app:materialIconSize="@dimen/default_icon_size" />
-
-                    <TextView
-                        android:id="@+id/tvClearAll"
-                        style="@style/tools_description_text_view"
-                        android:text="@string/clear_all" />
-
-                </RelativeLayout>
-            </LinearLayout>
-
-
-            <RelativeLayout
-                android:id="@+id/rlSkew"
-                style="@style/drawing_tools_row">
-
-                <net.steamcrafted.materialiconlib.MaterialIconView
-                    android:id="@+id/ivSkew"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:scaleType="center"
-                    app:materialIcon="brush"
-                    app:materialIconColor="@color/default_text_colour"
-                    app:materialIconSize="@dimen/default_icon_size" />
-
-                <SeekBar
-                    android:id="@+id/sbRotation"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_toEndOf="@+id/ivSkew"
-                    android:layout_toRightOf="@+id/ivSkew" />
-            </RelativeLayout>
         </LinearLayout>
     </ScrollView>
 

@@ -20,6 +20,8 @@ public final class Event {
     public static final int ON_ABS_MENU_APPLY = 13;
     public static final int ON_ABS_MENU_RESTORE = 14;
     public static final int ON_ABS_MENU_CANCEL = 15;
+    public static final int ON_ROTATE_TRANSFORMATION = 16;
+    public static final int ON_SKEW_TRANSFORMATION = 17;
 
 
     /**
@@ -87,11 +89,19 @@ public final class Event {
                 return getClass().getCanonicalName() + " ON_ABS_MENU_RESTORE";
             case ON_ABS_MENU_CANCEL:
                 return getClass().getCanonicalName() + " ON_ABS_MENU_CANCEL";
+            case ON_ROTATE_TRANSFORMATION:
+                return getClass().getCanonicalName() + " ON_ROTATE_TRANSFORMATION";
+            case ON_SKEW_TRANSFORMATION:
+                return getClass().getCanonicalName() + " ON_SKEW_TRANSFORMATION";
 
-//            case ON_SAVE_WHITE_BOARD_REQUEST:
+            //            case ON_SAVE_WHITE_BOARD_REQUEST:
 //                return getClass().getCanonicalName() + " ON_SAVE_WHITE_BOARD_REQUEST";
-//            default:
-//                break;
+            //            case ON_SAVE_WHITE_BOARD_REQUEST:
+//                return getClass().getCanonicalName() + " ON_SAVE_WHITE_BOARD_REQUEST";
+            //            case ON_SAVE_WHITE_BOARD_REQUEST:
+//                return getClass().getCanonicalName() + " ON_SAVE_WHITE_BOARD_REQUEST";
+            default:
+                break;
         }
         return "Unknown EVENT";
     }

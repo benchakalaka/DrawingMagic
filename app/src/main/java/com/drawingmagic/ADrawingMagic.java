@@ -13,7 +13,9 @@ import com.drawingmagic.core.DrawingSettings;
 import com.drawingmagic.core.DrawingView;
 import com.drawingmagic.core.GPUImageFilterTools;
 import com.drawingmagic.eventbus.Event;
+import com.drawingmagic.fragments.FAdjuster_;
 import com.drawingmagic.fragments.FDrawingTools.OnChangeDrawingSettingsListener;
+import com.drawingmagic.fragments.FMenuClearingTools_;
 import com.drawingmagic.fragments.FTiltFragmentController_;
 import com.drawingmagic.helpers.FilterItemHolder;
 import com.drawingmagic.utils.Conditions;
@@ -41,6 +43,7 @@ import static android.view.View.GONE;
 import static android.view.View.LAYER_TYPE_SOFTWARE;
 import static android.view.View.VISIBLE;
 import static com.drawingmagic.adapters.ViewPagerAdapter.CANVAS_SETTINGS_TOOLS_FRAGMENT;
+import static com.drawingmagic.adapters.ViewPagerAdapter.CANVAS_TRANSFORMER_FRAGMENT;
 import static com.drawingmagic.adapters.ViewPagerAdapter.DRAWING_TOOLS_FRAGMENT;
 import static com.drawingmagic.adapters.ViewPagerAdapter.EFFECTS_TOOLS_FRAGMENT;
 import static com.drawingmagic.core.DrawingView.GridType;
@@ -70,23 +73,16 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 
     @ViewById
     DrawingView drawingView;
-
     @ViewById
     ViewPager viewPager;
-
     @ViewById
     SpringIndicator viewPagerIndicator;
-
     @ViewById
     GPUImageView gpuImage;
-
     @ViewById
-    public
     CropImageView cropImageView;
-
     @ViewById
     FrameLayout flFragmentHolder;
-
     @Extra
     int selectedMenuItem;
 
@@ -148,9 +144,8 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                 break;
         }
 
-        getSupportFragmentManager().beginTransaction().add(R.id.flFragmentHolder, new FTiltFragmentController_()).commit();
-
-        //getSupportFragmentManager().beginTransaction().add(R.id.flFragmentHolder, new FAdjuster_()).commit();
+        // Set clearing tools as a first
+        getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, new FMenuClearingTools_()).commit();
     }
 
 
@@ -158,53 +153,59 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
      * Init View Pager
      */
     private void initViewPager() {
-
         viewPager.setAdapter(viewPagerAdapter);
-        viewPagerIndicator.setViewPager(viewPager);
-        // viewPager.setOffscreenPageLimit(3);
+        // // TODO: 24/09/2015 replace magic number
+        viewPager.setOffscreenPageLimit(3);
         viewPager.setPageTransformer(true, new CubeOutTransformer());
+        viewPagerIndicator.setViewPager(viewPager);
+        viewPagerIndicator.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                                                       @Override
+                                                       public void onPageScrolled(int i, float v, int i1) {
 
-        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                                              @Override
-                                              public void onPageScrolled(int i, float v, int i1) {
+                                                       }
 
-                                              }
+                                                       @Override
+                                                       public void onPageSelected(int position) {
+                                                           switch (position) {
+                                                               case DRAWING_TOOLS_FRAGMENT:
+                                                                   drawingView.setVisibility(VISIBLE);
+                                                                   gpuImage.setVisibility(GONE);
+                                                                   cropImageView.setVisibility(GONE);
+                                                                   getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, new FMenuClearingTools_()).commit();
+                                                                   break;
 
-                                              @Override
-                                              public void onPageSelected(int position) {
-                                                  flFragmentHolder.setVisibility(GONE);
-                                                  switch (position) {
-                                                      case DRAWING_TOOLS_FRAGMENT:
-                                                          drawingView.setVisibility(VISIBLE);
-                                                          gpuImage.setVisibility(GONE);
-                                                          cropImageView.setVisibility(GONE);
-                                                          break;
+                                                               case CANVAS_TRANSFORMER_FRAGMENT:
+                                                                   drawingView.setVisibility(VISIBLE);
+                                                                   gpuImage.setVisibility(GONE);
+                                                                   cropImageView.setVisibility(GONE);
 
-                                                      case EFFECTS_TOOLS_FRAGMENT:
-                                                          drawingView.setVisibility(GONE);
-                                                          gpuImage.setVisibility(VISIBLE);
-                                                          cropImageView.setVisibility(GONE);
-                                                          break;
+                                                                   break;
 
-                                                      case CANVAS_SETTINGS_TOOLS_FRAGMENT:
-                                                          drawingView.setVisibility(GONE);
-                                                          gpuImage.setVisibility(GONE);
-                                                          cropImageView.setVisibility(VISIBLE);
-                                                          cropImageView.setImageBitmap(BITMAP_MODIFIED);
-                                                          break;
+                                                               case EFFECTS_TOOLS_FRAGMENT:
+                                                                   drawingView.setVisibility(GONE);
+                                                                   gpuImage.setVisibility(VISIBLE);
+                                                                   cropImageView.setVisibility(GONE);
+                                                                   break;
 
-                                                      default:
-                                                          Log.e("onPageSelected: Unknown page position  : " + viewPager.getCurrentItem());
-                                                          break;
+                                                               case CANVAS_SETTINGS_TOOLS_FRAGMENT:
+                                                                   drawingView.setVisibility(GONE);
+                                                                   gpuImage.setVisibility(GONE);
+                                                                   cropImageView.setVisibility(VISIBLE);
+                                                                   cropImageView.setImageBitmap(BITMAP_MODIFIED);
+                                                                   break;
 
-                                                  }
-                                              }
+                                                               default:
+                                                                   Log.e("onPageSelected: Unknown page position  : " + viewPager.getCurrentItem());
+                                                                   break;
 
-                                              @Override
-                                              public void onPageScrollStateChanged(int i) {
+                                                           }
+                                                       }
 
-                                              }
-                                          }
+                                                       @Override
+                                                       public void onPageScrollStateChanged(int i) {
+
+                                                       }
+                                                   }
 
         );
     }
@@ -238,14 +239,16 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
         }
     }
 
-    private void restoreOriginalImageBeforeTransformation(){
+    private void restoreOriginalImageBeforeTransformation() {
         switch (viewPager.getCurrentItem()) {
             // Cancel any drawing transformation
             case DRAWING_TOOLS_FRAGMENT:
+                Notification.showError(this, "TODO ");
                 break;
 
             // Cancel any effect
             case EFFECTS_TOOLS_FRAGMENT:
+                Notification.showError(this, "TODO ");
                 break;
 
             // Cancel cropping
@@ -388,12 +391,20 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
         Log.e(event.toString());
         switch (event.type) {
 
+            case Event.ON_SKEW_TRANSFORMATION:
+                getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, new FTiltFragmentController_()).commit();
+                break;
+
+            case Event.ON_ROTATE_TRANSFORMATION:
+                getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, new FAdjuster_()).commit();
+                break;
+
             case Event.ON_ABS_MENU_APPLY:
                 onApplyImageTransformationChanges();
                 break;
 
             case Event.ON_ABS_MENU_RESTORE:
-
+                restoreOriginalImageBeforeTransformation();
                 break;
 
             case Event.ON_ABS_MENU_CANCEL:

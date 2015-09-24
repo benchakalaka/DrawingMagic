@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
-import android.widget.TextView;
 
 import com.drawingmagic.R;
 import com.drawingmagic.core.DrawingSettings;
@@ -76,19 +75,16 @@ public class FDrawingTools extends Fragment {
     ImageView ivColour0, ivColour1, ivColour2, ivColour3, ivColour4, ivColour5, ivColour6, ivColour7, ivColour8, ivColour9, ivColour10, ivColour11;
 
     @ViewById
-    TextView tvTitle;
+    RelativeLayout rlDashed, rlFillShape, rlDisplayLinesWhileDrawing, rlNoGrid, rlPartlyGrid, rlFullGrid;
 
     @ViewById
-    RelativeLayout rlClearCanvas, rlUndo, rlRedo, rlDashed, rlFillShape, rlDisplayLinesWhileDrawing, rlNoGrid, rlPartlyGrid, rlFullGrid;
-
-    @ViewById
-    SeekBar sbBrushSize, sbRotation;
+    SeekBar sbBrushSize;
 
 
-    @SeekBarProgressChange
-    void sbRotation(int rotateDegree) {
-        EventBus.getDefault().post(new Event(Event.ON_ROTATE, rotateDegree));
-    }
+//    @SeekBarProgressChange
+//    void sbRotation(int rotateDegree) {
+//        EventBus.getDefault().post(new Event(Event.ON_ROTATE, rotateDegree));
+//    }
 
     @SeekBarProgressChange
     void sbBrushSize(int brushSize) {
@@ -246,25 +242,6 @@ public class FDrawingTools extends Fragment {
         listener.onSetUpDrawingShapesOkClicked(drawingSettings);
         playAnimationOnView(rlDashed);
     }
-
-    @Click
-    void rlUndo() {
-        EventBus.getDefault().post(new Event(Event.ON_UNDO));
-        playAnimationOnView(rlUndo);
-    }
-
-    @Click
-    void rlRedo() {
-        EventBus.getDefault().post(new Event(Event.ON_REDO));
-        playAnimationOnView(rlRedo);
-    }
-
-    @Click
-    void rlClearCanvas() {
-        EventBus.getDefault().post(new Event(Event.ON_CLEAR_CANVAS));
-        playAnimationOnView(rlClearCanvas);
-    }
-
 
     @Click
     void rlFillShape() {
