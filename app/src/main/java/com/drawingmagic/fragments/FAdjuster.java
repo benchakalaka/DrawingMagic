@@ -9,13 +9,13 @@ import android.widget.TextView;
 import com.drawingmagic.R;
 import com.drawingmagic.eventbus.Event;
 
+import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.SeekBarProgressChange;
 import org.androidannotations.annotations.ViewById;
 
 import de.greenrobot.event.EventBus;
-
-import static com.drawingmagic.eventbus.Event.ON_ADJUSTER_VALUE_CHANGED;
 
 /**
  * Project DrawingMagic.
@@ -30,12 +30,37 @@ public class FAdjuster extends Fragment {
     @ViewById
     SeekBar sBar;
 
+    @FragmentArg
+    String fragmentTitle;
+
+    @FragmentArg
+    String adjusterTitle;
+
+    @FragmentArg
+    int progressMax;
+
+    @FragmentArg
+    int currentProgress;
+
+    /**
+     * Event ID to be sent on progress changed
+     */
+    @FragmentArg
+    int eventId;
+
+
+    @AfterViews void afterViews(){
+        setAdjusterTitle(adjusterTitle);
+        setFragmentTitle(fragmentTitle);
+        setSeekBarCurrentMinMaxValues(progressMax, currentProgress);
+    }
+
     /**
      * Set seek bar string title
      *
      * @param title string representation of title
      */
-    public void setAdjusterTitle(String title) {
+    private void setAdjusterTitle(String title) {
         tvSeekBarTitle.setVisibility(View.VISIBLE);
         tvSeekBarTitle.setText(!TextUtils.isEmpty(title) ? title : "");
     }
@@ -45,18 +70,18 @@ public class FAdjuster extends Fragment {
      *
      * @param title string representation of title
      */
-    public void setFragmentTitle(String title) {
+    private void setFragmentTitle(String title) {
         tvTitle.setVisibility(View.VISIBLE);
         tvTitle.setText(!TextUtils.isEmpty(title) ? title : "");
     }
 
-    public void setSeekBarCurrentMinMaxValues(int max, int value) {
+    private void setSeekBarCurrentMinMaxValues(int max, int value) {
         sBar.setMax(max);
         sBar.setProgress(value);
     }
 
     @SeekBarProgressChange
     void sBar(int progress) {
-        EventBus.getDefault().post(new Event(ON_ADJUSTER_VALUE_CHANGED, progress));
+        EventBus.getDefault().post(new Event(eventId, progress));
     }
 }

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.widget.FrameLayout;
 
@@ -31,6 +32,7 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.res.StringRes;
 
 import java.io.File;
 
@@ -86,6 +88,15 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
     @Extra
     int selectedMenuItem;
 
+    @StringRes(R.string.rotate)
+    String rotatePicture;
+
+    @StringRes(R.string.angle)
+    String rotateAngle;
+
+
+    private static final int MAXIMUM_ROTATION_DEGREE = 360;
+
     /**
      * BITMAP_ORIGIN -------> BITMAP_MODIFIED -------> (DrawingView, TransformView, GPUEffects, CropView)
      */
@@ -103,6 +114,9 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 
     private GPUImageFilter currentFilter;
     private GPUImageFilterTools.FilterAdjuster filterAdjuster;
+
+    // Transformation fragments
+    Fragment fragmentRotation, fragmentSkew, fragmentUndoRedo;
 
 
     @AfterViews
@@ -125,7 +139,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
         cropImageView.setAspectRatio(DEFAULT_ASPECT_RATIO_VALUES, DEFAULT_ASPECT_RATIO_VALUES);
         cropImageView.setImageBitmap(BITMAP_MODIFIED);
         // // TODO: 22/09/2015 Make Picker of shape
-        cropImageView.setCropShape(CropShape.RECTANGLE);
+        cropImageView.setCropShape(CropShape.OVAL);
 
         switch (selectedMenuItem) {
             case MENU_ITEM_CAMERA:
@@ -146,6 +160,17 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 
         // Set clearing tools as a first
         getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, new FMenuClearingTools_()).commit();
+
+        // set current value in the middle of seek bar (half of MAXIMUM_ROTATION_DEGREE)
+        fragmentRotation = FAdjuster_.builder().
+                adjusterTitle(rotateAngle).
+                fragmentTitle(rotatePicture).
+                currentProgress(MAXIMUM_ROTATION_DEGREE >> 1).
+                progressMax(MAXIMUM_ROTATION_DEGREE).
+                eventId(Event.ON_ROTATE).build();
+
+        fragmentSkew = new FTiltFragmentController_();
+        fragmentUndoRedo = new FMenuClearingTools_();
     }
 
 
@@ -171,14 +196,14 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                                                                    drawingView.setVisibility(VISIBLE);
                                                                    gpuImage.setVisibility(GONE);
                                                                    cropImageView.setVisibility(GONE);
-                                                                   getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, new FMenuClearingTools_()).commit();
+                                                                   getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, fragmentUndoRedo).commit();
                                                                    break;
 
                                                                case CANVAS_TRANSFORMER_FRAGMENT:
                                                                    drawingView.setVisibility(VISIBLE);
                                                                    gpuImage.setVisibility(GONE);
                                                                    cropImageView.setVisibility(GONE);
-
+                                                                   getSupportFragmentManager().beginTransaction().remove(fragmentUndoRedo).commit();
                                                                    break;
 
                                                                case EFFECTS_TOOLS_FRAGMENT:
@@ -392,11 +417,11 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
         switch (event.type) {
 
             case Event.ON_SKEW_TRANSFORMATION:
-                getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, new FTiltFragmentController_()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, fragmentSkew).commit();
                 break;
 
             case Event.ON_ROTATE_TRANSFORMATION:
-                getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, new FAdjuster_()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, fragmentRotation).commit();
                 break;
 
             case Event.ON_ABS_MENU_APPLY:
@@ -438,7 +463,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 
 
             case ON_ADJUSTER_VALUE_CHANGED:
-                drawingView.setRotationDegree((int) event.payload);
+                //drawingView.setRotationDegree((int) event.payload);
                 Log.e("  ON_ADJUSTER_VALUE_CHANGED : " + (int) event.payload);
                 break;
 

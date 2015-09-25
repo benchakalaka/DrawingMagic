@@ -9,7 +9,6 @@ import android.widget.SeekBar;
 
 import com.drawingmagic.R;
 import com.drawingmagic.core.DrawingSettings;
-import com.drawingmagic.eventbus.Event;
 import com.drawingmagic.utils.AnimationUtils;
 import com.drawingmagic.utils.Notification;
 import com.drawingmagic.utils.Utils;
@@ -23,8 +22,6 @@ import org.androidannotations.annotations.SeekBarProgressChange;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.ColorRes;
 import org.androidannotations.annotations.res.StringRes;
-
-import de.greenrobot.event.EventBus;
 
 import static com.drawingmagic.core.DrawingView.DEFAULT_BRUSH_SIZE;
 import static com.drawingmagic.core.DrawingView.GridType;
@@ -42,7 +39,6 @@ public class FDrawingTools extends Fragment {
 
     // default values for round bitmap (background for image views)
     private static final int ROUND_BITMAP_DIAMETER = 40;
-    private static final int MAXIMUM_ROTATION_DEGREE = 360;
 
     // String resources
     @StringRes(R.string.draw_arrow)
@@ -95,10 +91,6 @@ public class FDrawingTools extends Fragment {
 
     @AfterViews
     void afterViews() {
-        sbRotation.setMax(MAXIMUM_ROTATION_DEGREE);
-        // set current value in the middle of seek bar (half of MAXIMUM_ROTATION_DEGREE)
-        sbRotation.setProgress(MAXIMUM_ROTATION_DEGREE >> 1);
-
         // check activity for inheritance from OnSelectTypeOfShapeListener
         try {
             this.listener = (OnChangeDrawingSettingsListener) getActivity();
