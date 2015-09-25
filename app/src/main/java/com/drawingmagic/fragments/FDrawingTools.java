@@ -77,11 +77,6 @@ public class FDrawingTools extends Fragment {
     SeekBar sbBrushSize;
 
 
-//    @SeekBarProgressChange
-//    void sbRotation(int rotateDegree) {
-//        EventBus.getDefault().post(new Event(Event.ON_ROTATE, rotateDegree));
-//    }
-
     @SeekBarProgressChange
     void sbBrushSize(int brushSize) {
         drawingSettings.setBrushWidth(brushSize, (getActivity()).getResources().getDisplayMetrics());

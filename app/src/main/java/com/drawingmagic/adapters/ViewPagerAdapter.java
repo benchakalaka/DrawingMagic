@@ -29,12 +29,14 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
 
     private final ArrayList<Fragment> fragments = new ArrayList<>();
 
+    private final Fragment fDrawingTools = new FDrawingTools_(), fCanvasTransformerTools = new FCanvasTransformer_(), fEffectsTools = new FEffectsTools_(), fCanvasCroppingTools = new FCanvasTools_();
+
     public ViewPagerAdapter(FragmentManager fragmentManager) {
         super(fragmentManager);
-        fragments.add(DRAWING_TOOLS_FRAGMENT, new FDrawingTools_());
-        fragments.add(CANVAS_TRANSFORMER_FRAGMENT, new FCanvasTransformer_());
-        fragments.add(EFFECTS_TOOLS_FRAGMENT, new FEffectsTools_());
-        fragments.add(CANVAS_SETTINGS_TOOLS_FRAGMENT, new FCanvasTools_());
+        fragments.add(DRAWING_TOOLS_FRAGMENT, fDrawingTools);
+        fragments.add(CANVAS_TRANSFORMER_FRAGMENT, fCanvasTransformerTools);
+        fragments.add(EFFECTS_TOOLS_FRAGMENT, fEffectsTools);
+        fragments.add(CANVAS_SETTINGS_TOOLS_FRAGMENT, fCanvasCroppingTools);
     }
 
     public FDrawingTools getCanvasTransformerFragment() {
@@ -65,7 +67,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return String.valueOf(position + 1);
+        return String.valueOf(position + 1 + 9000);
     }
 
 }

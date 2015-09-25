@@ -94,7 +94,11 @@ public class DrawingView extends View {
     // rotation factor
     private float rotationDegree = 0f;
 
-    Matrix transformMatrix = new Matrix();
+    /**
+     * Do we need to apply transformation to canvas, or skip it
+     */
+    private boolean isMatrixTransformationApplied = false;
+    private final Matrix transformMatrix = new Matrix();
     private final static float CIRCLE_TEXT_RADIUS = 20;
 
 
@@ -152,7 +156,7 @@ public class DrawingView extends View {
             // y = y * -1
             matrix.preScale(1.0f, -1.0f);
         }
-        // if horizonal
+        // if horizontal
         else if (type == FLIP_HORIZONTAL) {
             // x = x * -1
             matrix.preScale(-1.0f, 1.0f);
@@ -166,6 +170,12 @@ public class DrawingView extends View {
     }
 
 
+    public void setIsMatrixTransformationApplied(boolean isApplied) {
+        isMatrixTransformationApplied = isApplied;
+        invalidate();
+    }
+
+
     /**
      * onDraw will be called after any touch event or invalidating drawing surface
      */
@@ -176,7 +186,11 @@ public class DrawingView extends View {
 
         // already implemented
         // flip()
-        canvas.setMatrix(transformMatrix);
+
+        if (isMatrixTransformationApplied) {
+            canvas.setMatrix(transformMatrix);
+        }
+
         canvas.drawColor(Color.BLACK);
 
         // 1) draw simple bitmap

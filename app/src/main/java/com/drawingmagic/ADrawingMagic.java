@@ -193,6 +193,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                                                        public void onPageSelected(int position) {
                                                            switch (position) {
                                                                case DRAWING_TOOLS_FRAGMENT:
+                                                                   drawingView.setIsMatrixTransformationApplied(false);
                                                                    drawingView.setVisibility(VISIBLE);
                                                                    gpuImage.setVisibility(GONE);
                                                                    cropImageView.setVisibility(GONE);
@@ -200,6 +201,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                                                                    break;
 
                                                                case CANVAS_TRANSFORMER_FRAGMENT:
+                                                                   drawingView.setIsMatrixTransformationApplied(true);
                                                                    drawingView.setVisibility(VISIBLE);
                                                                    gpuImage.setVisibility(GONE);
                                                                    cropImageView.setVisibility(GONE);
@@ -287,14 +289,19 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
     }
 
     private void onApplyImageTransformationChanges() {
+        int gridType = drawingView.getDrawingData().getShape().getGridType();
+
         switch (viewPager.getCurrentItem()) {
             case DRAWING_TOOLS_FRAGMENT:
-                int gridType = drawingView.getDrawingData().getShape().getGridType();
                 drawingView.setGridType(GridType.NO_GRID);
                 BITMAP_MODIFIED = drawingView.getDrawingCache().copy(Config.RGB_565, true);
-                drawingView.clearRedoPaths();
                 drawingView.setGridType(gridType);
-                drawingView.resetAllTransformation();
+                break;
+
+            case CANVAS_TRANSFORMER_FRAGMENT:
+                drawingView.setGridType(GridType.NO_GRID);
+                BITMAP_MODIFIED = drawingView.getDrawingCache().copy(Config.RGB_565, true);
+                drawingView.setGridType(gridType);
                 break;
 
             case EFFECTS_TOOLS_FRAGMENT:
