@@ -25,7 +25,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="@string/app_name"
         android:textColor="@color/default_text_colour"
         android:textSize="@dimen/default_icon_size" />
 

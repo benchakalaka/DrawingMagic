@@ -51,6 +51,7 @@ import static com.drawingmagic.adapters.ViewPagerAdapter.EFFECTS_TOOLS_FRAGMENT;
 import static com.drawingmagic.core.DrawingView.GridType;
 import static com.drawingmagic.core.DrawingView.ShapesType;
 import static com.drawingmagic.eventbus.Event.ON_ADJUSTER_VALUE_CHANGED;
+import static com.drawingmagic.eventbus.Event.ON_CHANGE_CROPPING_SHAPE;
 import static com.drawingmagic.eventbus.Event.ON_CLEAR_CANVAS;
 import static com.drawingmagic.eventbus.Event.ON_REDO;
 import static com.drawingmagic.eventbus.Event.ON_ROTATE;
@@ -114,9 +115,9 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 
     private GPUImageFilter currentFilter;
     private GPUImageFilterTools.FilterAdjuster filterAdjuster;
-
+    // TODO: 27/09/15 Change names of fragments for adjusting
     // Transformation fragments
-    Fragment fragmentRotation, fragmentSkew, fragmentUndoRedo;
+    Fragment fragmentRotation, fragmentSkew, fragmentUndoRedo, fragmentAdjustEffectLevel;
 
 
     @AfterViews
@@ -169,6 +170,13 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                 progressMax(MAXIMUM_ROTATION_DEGREE).
                 eventId(Event.ON_ROTATE).build();
 
+        fragmentAdjustEffectLevel = FAdjuster_.builder().
+                adjusterTitle("ADJUST EFFECT").
+                fragmentTitle("ADJUST EFFECT").
+                currentProgress(0).
+                progressMax(100).
+                eventId(Event.ON_ADJUST_FILTER_LEVEL).build();
+
         fragmentSkew = new FTiltFragmentController_();
         fragmentUndoRedo = new FMenuClearingTools_();
     }
@@ -205,13 +213,18 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                                                                    drawingView.setVisibility(VISIBLE);
                                                                    gpuImage.setVisibility(GONE);
                                                                    cropImageView.setVisibility(GONE);
-                                                                   getSupportFragmentManager().beginTransaction().remove(fragmentUndoRedo).commit();
+                                                                   // // TODO: 27/09/15 Remember selected transform tools and display this fragment
+                                                                   getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, fragmentRotation).commit();
                                                                    break;
 
                                                                case EFFECTS_TOOLS_FRAGMENT:
                                                                    drawingView.setVisibility(GONE);
                                                                    gpuImage.setVisibility(VISIBLE);
                                                                    cropImageView.setVisibility(GONE);
+                                                                   // getSupportFragmentManager().beginTransaction().remove(fragmentRotation).commit();
+                                                                   // getSupportFragmentManager().beginTransaction().remove(fragmentSkew).commit();
+
+                                                                   getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, fragmentAdjustEffectLevel).commit();
                                                                    break;
 
                                                                case CANVAS_SETTINGS_TOOLS_FRAGMENT:
@@ -422,6 +435,9 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
     public void onEventMainThread(Event event) {
         Log.e(event.toString());
         switch (event.type) {
+            case ON_CHANGE_CROPPING_SHAPE:
+                cropImageView.setCropShape((CropShape) event.payload);
+                break;
 
             case Event.ON_SKEW_TRANSFORMATION:
                 getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, fragmentSkew).commit();

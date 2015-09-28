@@ -1,82 +1,91 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+
+<!--
+  ~ Created by Ihor Karpachev, Copyright (c) 2015. .
+  -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    android:background="@color/default_background_colour">
 
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@color/default_background_colour">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:baselineAligned="false"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <!-- Rotate option -->
-            <RelativeLayout
-                android:id="@+id/rlRotate"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="2dp"
-                android:layout_weight="1"
-                android:background="@color/default_transparency">
+                android:layout_height="match_parent"
+                android:baselineAligned="false"
+                android:orientation="horizontal">
 
-                <net.steamcrafted.materialiconlib.MaterialIconView
-                    android:layout_width="wrap_content"
+                <!-- Rotate option -->
+                <RelativeLayout
+                    android:id="@+id/rlRotate"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="2dp"
-                    android:layout_marginRight="2dp"
-                    android:layout_toLeftOf="@+id/tvRotate"
-                    android:layout_toStartOf="@+id/tvRotate"
-                    android:scaleType="center"
-                    app:materialIcon="rotate_left"
-                    app:materialIconColor="@color/default_text_colour"
-                    app:materialIconSize="@dimen/default_icon_size" />
+                    android:layout_margin="2dp"
+                    android:layout_weight="1"
+                    android:background="@color/default_transparency">
 
-                <TextView
-                    android:id="@+id/tvRotate"
-                    style="@style/tools_description_text_view"
-                    android:text="@string/rotate" />
-            </RelativeLayout>
-            <!-- Rotate option -->
+                    <net.steamcrafted.materialiconlib.MaterialIconView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="2dp"
+                        android:layout_marginRight="2dp"
+                        android:layout_toLeftOf="@+id/tvRotate"
+                        android:layout_toStartOf="@+id/tvRotate"
+                        android:scaleType="center"
+                        app:materialIcon="rotate_left"
+                        app:materialIconColor="@color/default_text_colour"
+                        app:materialIconSize="@dimen/default_icon_size" />
+
+                    <TextView
+                        android:id="@+id/tvRotate"
+                        style="@style/tools_description_text_view"
+                        android:text="@string/rotate" />
+                </RelativeLayout>
+                <!-- Rotate option -->
 
 
-            <!-- Skew option -->
-            <RelativeLayout
-                android:id="@+id/rlSkew"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="2dp"
-                android:layout_weight="1"
-                android:background="@color/default_transparency">
-
-                <net.steamcrafted.materialiconlib.MaterialIconView
-                    android:layout_width="wrap_content"
+                <!-- Skew option -->
+                <RelativeLayout
+                    android:id="@+id/rlSkew"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="2dp"
-                    android:layout_marginRight="2dp"
-                    android:layout_toLeftOf="@+id/tvSkew"
-                    android:layout_toStartOf="@+id/tvSkew"
-                    android:scaleType="center"
-                    app:materialIcon="rotate_left"
-                    app:materialIconColor="@color/default_text_colour"
-                    app:materialIconSize="@dimen/default_icon_size" />
+                    android:layout_margin="2dp"
+                    android:layout_weight="1"
+                    android:background="@color/default_transparency">
 
-                <TextView
-                    android:id="@+id/tvSkew"
-                    style="@style/tools_description_text_view"
-                    android:text="@string/skew" />
-            </RelativeLayout>
-            <!-- Skew option -->
+                    <net.steamcrafted.materialiconlib.MaterialIconView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="2dp"
+                        android:layout_marginRight="2dp"
+                        android:layout_toLeftOf="@+id/tvSkew"
+                        android:layout_toStartOf="@+id/tvSkew"
+                        android:scaleType="center"
+                        app:materialIcon="rotate_left"
+                        app:materialIconColor="@color/default_text_colour"
+                        app:materialIconSize="@dimen/default_icon_size" />
+
+                    <TextView
+                        android:id="@+id/tvSkew"
+                        style="@style/tools_description_text_view"
+                        android:text="@string/skew" />
+                </RelativeLayout>
+                <!-- Skew option -->
 
 
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
-
-
-</ScrollView>
+    </ScrollView>
+</RelativeLayout>
