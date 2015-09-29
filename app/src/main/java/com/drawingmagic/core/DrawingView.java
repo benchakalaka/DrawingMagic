@@ -187,7 +187,7 @@ public class DrawingView extends View {
         // already implemented
         // flip()
 
-        if (isMatrixTransformationApplied) {
+        if (isMatrixTransformationApplied && (rotationDegree != 0 || tiltFactorX != 0 || tiltFactorY != 0)) {
             canvas.setMatrix(transformMatrix);
         }
 
@@ -217,6 +217,12 @@ public class DrawingView extends View {
             }
         }
 
+        // When user want to draw a text BUT hasn't touched the canvas,
+        // for convenience draw text in the middle of the screen
+        if (drawingData.getShape().getCurrentShape() == ShapesType.DRAW_TEXT && !isFingerTouchingCanvas) {
+            canvas.drawText(drawingData.getTextToDrawOnCanvas(), getWidth() / 2, getHeight() / 2, textPaint);
+            canvas.drawCircle(getWidth() / 2, getHeight() / 2 + CIRCLE_TEXT_RADIUS, CIRCLE_TEXT_RADIUS, coordinatesPaint);
+        }
 
         // 3) Draw grid OVER paths and start bitmap
         if (drawingData.isGridEnable() && (drawingData.shape.getGridType() != GridType.NO_GRID)) {
@@ -238,13 +244,6 @@ public class DrawingView extends View {
             // bottom border
             canvas.drawLine(0, getHeight() - 1, getWidth() - 1, getHeight() - 1, coordinatesPaint);
 
-        }
-
-        // When user want to draw a text BUT hasn't touched the canvas,
-        // for convenience draw text in the middle of the screen
-        if (drawingData.getShape().getCurrentShape() == ShapesType.DRAW_TEXT && !isFingerTouchingCanvas) {
-            canvas.drawText(drawingData.getTextToDrawOnCanvas(), getWidth() / 2, getHeight() / 2, textPaint);
-            canvas.drawCircle(getWidth() / 2, getHeight() / 2 + CIRCLE_TEXT_RADIUS, CIRCLE_TEXT_RADIUS, coordinatesPaint);
         }
 
         // !!! if user has released finger from canvas - do not need to draw any addition shapes/lines/text etc.
@@ -441,6 +440,7 @@ public class DrawingView extends View {
     public void undo() {
         if (!drawingData.paths.isEmpty()) {
             redoPaths.add(drawingData.paths.remove(drawingData.getPaths().size() - 1));
+            Log.e(drawingData.paths.size() + " - Paths left in list");
             invalidate();
         }
     }
@@ -476,6 +476,14 @@ public class DrawingView extends View {
      */
     public void clearRedoPaths() {
         redoPaths = new ArrayList<>();
+    }
+
+    /**
+     * Clear all paths
+     */
+    public void clearCanvas() {
+        clearRedoPaths();
+        drawingData.getPaths().clear();
     }
 
     /**
@@ -630,9 +638,9 @@ public class DrawingView extends View {
     }
 
     public void resetAllTransformation() {
-        setRotationDegree(0f);
-        setTiltFactorX(0f);
-        setTiltFactorY(0f);
+        rotationDegree = 0;
+        tiltFactorX = 0;
+        tiltFactorY = 0;
         transformMatrix.reset();
         invalidate();
     }

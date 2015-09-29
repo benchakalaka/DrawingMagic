@@ -2,7 +2,6 @@
   ~ Created by Ihor Karpachev, Copyright (c) 2015. .
   -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -10,35 +9,8 @@
         android:id="@+id/gridView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/llBottomFilterSettingsMenu"
         android:columnWidth="100dp"
         android:gravity="center"
         android:numColumns="4"
         android:stretchMode="columnWidth" />
-
-    <LinearLayout
-        android:id="@+id/llBottomFilterSettingsMenu"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="#33000000"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <SeekBar
-                android:id="@+id/seekBar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:max="100" />
-        </LinearLayout>
-
-    </LinearLayout>
-
-
 </RelativeLayout>

@@ -23,6 +23,7 @@ public final class Event {
     public static final int ON_ROTATE_TRANSFORMATION = 16;
     public static final int ON_SKEW_TRANSFORMATION = 17;
     public static final int ON_CHANGE_CROPPING_SHAPE = 18;
+    public static final int ON_FINISHED_ROTATION = 19;
 
 
     /**
@@ -96,8 +97,9 @@ public final class Event {
                 return getClass().getCanonicalName() + " ON_SKEW_TRANSFORMATION";
             case ON_CHANGE_CROPPING_SHAPE:
                 return getClass().getCanonicalName() + " ON_CHANGE_CROPPING_SHAPE";
-            //            case ON_SAVE_WHITE_BOARD_REQUEST:
-//                return getClass().getCanonicalName() + " ON_SAVE_WHITE_BOARD_REQUEST";
+            case ON_FINISHED_ROTATION:
+                return getClass().getCanonicalName() + " ON_FINISHED_ROTATION";
+
             //            case ON_SAVE_WHITE_BOARD_REQUEST:
 //                return getClass().getCanonicalName() + " ON_SAVE_WHITE_BOARD_REQUEST";
             default:

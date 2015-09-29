@@ -13,6 +13,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.SeekBarProgressChange;
+import org.androidannotations.annotations.SeekBarTouchStop;
 import org.androidannotations.annotations.ViewById;
 
 import de.greenrobot.event.EventBus;
@@ -48,8 +49,16 @@ public class FAdjuster extends Fragment {
     @FragmentArg
     int eventId;
 
+    /**
+     * Event to be sent on progress finished
+     */
+    @FragmentArg
+    int finishedProgress;
 
-    @AfterViews void afterViews(){
+
+
+    @AfterViews
+    void afterViews() {
         setAdjusterTitle(adjusterTitle);
         setFragmentTitle(fragmentTitle);
         setSeekBarCurrentMinMaxValues(progressMax, currentProgress);
@@ -60,7 +69,7 @@ public class FAdjuster extends Fragment {
      *
      * @param title string representation of title
      */
-    private void setAdjusterTitle(String title) {
+    public void setAdjusterTitle(String title) {
         tvSeekBarTitle.setVisibility(View.VISIBLE);
         tvSeekBarTitle.setText(!TextUtils.isEmpty(title) ? title : "");
     }
@@ -70,18 +79,24 @@ public class FAdjuster extends Fragment {
      *
      * @param title string representation of title
      */
-    private void setFragmentTitle(String title) {
+    public void setFragmentTitle(String title) {
         tvTitle.setVisibility(View.VISIBLE);
         tvTitle.setText(!TextUtils.isEmpty(title) ? title : "");
     }
 
-    private void setSeekBarCurrentMinMaxValues(int max, int value) {
+    public void setSeekBarCurrentMinMaxValues(int max, int value) {
         sBar.setMax(max);
         sBar.setProgress(value);
     }
 
+
     @SeekBarProgressChange
     void sBar(int progress) {
         EventBus.getDefault().post(new Event(eventId, progress));
+    }
+
+    @SeekBarTouchStop
+    void sBar() {
+        EventBus.getDefault().post(new Event(finishedProgress));
     }
 }

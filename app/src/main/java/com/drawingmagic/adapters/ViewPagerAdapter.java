@@ -67,7 +67,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return String.valueOf(position + 1 + 9000);
+        return String.valueOf(position + 1);
     }
 
 }

@@ -49,7 +49,9 @@ import static com.drawingmagic.adapters.ViewPagerAdapter.CANVAS_TRANSFORMER_FRAG
 import static com.drawingmagic.adapters.ViewPagerAdapter.DRAWING_TOOLS_FRAGMENT;
 import static com.drawingmagic.adapters.ViewPagerAdapter.EFFECTS_TOOLS_FRAGMENT;
 import static com.drawingmagic.core.DrawingView.GridType;
+import static com.drawingmagic.core.DrawingView.OnTouchCanvasCallback;
 import static com.drawingmagic.core.DrawingView.ShapesType;
+import static com.drawingmagic.eventbus.Event.*;
 import static com.drawingmagic.eventbus.Event.ON_ADJUSTER_VALUE_CHANGED;
 import static com.drawingmagic.eventbus.Event.ON_CHANGE_CROPPING_SHAPE;
 import static com.drawingmagic.eventbus.Event.ON_CLEAR_CANVAS;
@@ -72,7 +74,7 @@ import static jp.co.cyberagent.android.gpuimage.GPUImageView.OnPictureSavedListe
  * On 13/09/15 at 17:44.
  */
 @EActivity(R.layout.activity_drawing_magic)
-public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSettingsListener, OnPictureSavedListener {
+public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSettingsListener, OnPictureSavedListener, OnTouchCanvasCallback {
 
     @ViewById
     DrawingView drawingView;
@@ -119,6 +121,9 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
     // Transformation fragments
     Fragment fragmentRotation, fragmentSkew, fragmentUndoRedo, fragmentAdjustEffectLevel;
 
+    @StringRes(R.string.effect_adjuster)
+    String effectAdjuster;
+
 
     @AfterViews
     void afterViews() {
@@ -131,7 +136,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
         initViewPager();
 
         // for some unknown reason, if gpuImage had visibility GONE defined
-        // in xml layout file, setImage will not work
+        // in xml layout file, setImage method of GPUImageView doesn't not work
         gpuImage.setVisibility(GONE);
         gpuImage.setScaleType(CENTER_INSIDE);
 
@@ -159,8 +164,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                 break;
         }
 
-        // Set clearing tools as a first
-        getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, new FMenuClearingTools_()).commit();
+        fragmentUndoRedo = new FMenuClearingTools_();
 
         // set current value in the middle of seek bar (half of MAXIMUM_ROTATION_DEGREE)
         fragmentRotation = FAdjuster_.builder().
@@ -168,17 +172,15 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                 fragmentTitle(rotatePicture).
                 currentProgress(MAXIMUM_ROTATION_DEGREE >> 1).
                 progressMax(MAXIMUM_ROTATION_DEGREE).
-                eventId(Event.ON_ROTATE).build();
-
-        fragmentAdjustEffectLevel = FAdjuster_.builder().
-                adjusterTitle("ADJUST EFFECT").
-                fragmentTitle("ADJUST EFFECT").
-                currentProgress(0).
-                progressMax(100).
-                eventId(Event.ON_ADJUST_FILTER_LEVEL).build();
+                finishedProgress(ON_FINISHED_ROTATION).
+                eventId(ON_ROTATE).build();
 
         fragmentSkew = new FTiltFragmentController_();
-        fragmentUndoRedo = new FMenuClearingTools_();
+
+        // Set clearing tools as a first
+        getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, fragmentUndoRedo).commit();
+
+
     }
 
 
@@ -209,22 +211,25 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                                                                    break;
 
                                                                case CANVAS_TRANSFORMER_FRAGMENT:
+                                                                   drawingView.setIsMatrixTransformationApplied(false);
+                                                                   // TODO: 27/09/15 Remember selected transform tools and display this fragment
+                                                                   getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, fragmentRotation).commit();
                                                                    drawingView.setIsMatrixTransformationApplied(true);
                                                                    drawingView.setVisibility(VISIBLE);
                                                                    gpuImage.setVisibility(GONE);
                                                                    cropImageView.setVisibility(GONE);
-                                                                   // // TODO: 27/09/15 Remember selected transform tools and display this fragment
-                                                                   getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, fragmentRotation).commit();
+
                                                                    break;
 
                                                                case EFFECTS_TOOLS_FRAGMENT:
                                                                    drawingView.setVisibility(GONE);
                                                                    gpuImage.setVisibility(VISIBLE);
                                                                    cropImageView.setVisibility(GONE);
-                                                                   // getSupportFragmentManager().beginTransaction().remove(fragmentRotation).commit();
-                                                                   // getSupportFragmentManager().beginTransaction().remove(fragmentSkew).commit();
-
-                                                                   getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, fragmentAdjustEffectLevel).commit();
+                                                                   getSupportFragmentManager().beginTransaction().remove(fragmentRotation).commit();
+                                                                   getSupportFragmentManager().beginTransaction().remove(fragmentSkew).commit();
+                                                                   if (Conditions.isNotNull(currentFilter)) {
+                                                                       getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, fragmentAdjustEffectLevel).commit();
+                                                                   }
                                                                    break;
 
                                                                case CANVAS_SETTINGS_TOOLS_FRAGMENT:
@@ -232,6 +237,9 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                                                                    gpuImage.setVisibility(GONE);
                                                                    cropImageView.setVisibility(VISIBLE);
                                                                    cropImageView.setImageBitmap(BITMAP_MODIFIED);
+                                                                   if (Conditions.isNotNull(currentFilter)) {
+                                                                       getSupportFragmentManager().beginTransaction().remove(fragmentAdjustEffectLevel).commit();
+                                                                   }
                                                                    break;
 
                                                                default:
@@ -307,6 +315,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
         switch (viewPager.getCurrentItem()) {
             case DRAWING_TOOLS_FRAGMENT:
                 drawingView.setGridType(GridType.NO_GRID);
+                drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(BITMAP_ORIGIN).build());
                 BITMAP_MODIFIED = drawingView.getDrawingCache().copy(Config.RGB_565, true);
                 drawingView.setGridType(gridType);
                 break;
@@ -315,6 +324,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                 drawingView.setGridType(GridType.NO_GRID);
                 BITMAP_MODIFIED = drawingView.getDrawingCache().copy(Config.RGB_565, true);
                 drawingView.setGridType(gridType);
+                //drawingView.resetAllTransformation();
                 break;
 
             case EFFECTS_TOOLS_FRAGMENT:
@@ -330,7 +340,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                 break;
         }
 
-        drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(BITMAP_MODIFIED).withPaths(null).build());
+        drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(BITMAP_MODIFIED).build());
 
         gpuImage.getGPUImage().deleteImage();
         gpuImage.setImage(BITMAP_MODIFIED);
@@ -352,6 +362,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                 withShape(ShapesType.STANDARD_DRAWING).
                 withColor(Color.BLACK).
                 withGridEnabled(true).build());
+        drawingView.setListener(this);
     }
 
     private void adjustFilter(int progress) {
@@ -361,12 +372,30 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
         gpuImage.requestRender();
     }
 
-    private void switchFilterTo(final GPUImageFilter filter) {
+    private void switchFilterTo(final GPUImageFilter filter, String filterName) {
         if (Conditions.isNull(currentFilter) || (!currentFilter.getClass().equals(filter.getClass()))) {
             currentFilter = filter;
             gpuImage.setFilter(currentFilter);
             filterAdjuster = new GPUImageFilterTools.FilterAdjuster(currentFilter);
-            viewPagerAdapter.getEffectsToolsFragment().setCanAdjustStatus(filterAdjuster.canAdjust());
+
+            // Filter is not adjustable, remove adjust menu
+            if (!filterAdjuster.canAdjust()){
+                getSupportFragmentManager().beginTransaction().remove(fragmentAdjustEffectLevel).commit();
+                Log.e("Filter "+filterName + " is not adjustable, hide seekBar");
+                return;
+            }
+
+            // TODO: 28/09/15 Replace with creation only once
+            // create adjustable fragment
+            fragmentAdjustEffectLevel = FAdjuster_.builder().
+                    adjusterTitle(filterName).
+                    fragmentTitle(effectAdjuster).
+                    currentProgress(50).
+                    progressMax(100).
+                    eventId(ON_ADJUST_FILTER_LEVEL).build();
+
+            getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, fragmentAdjustEffectLevel).commit();
+
         }
     }
 
@@ -415,7 +444,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
             return;
         }
 
-        switchFilterTo(GPUImageFilterTools.createFilterForType(this, filterItemHolder.getFilter()));
+        switchFilterTo(GPUImageFilterTools.createFilterForType(this, filterItemHolder.getFilter()), filterItemHolder.getFilterName());
         gpuImage.requestRender();
         Notification.showSuccess(this, filterItemHolder.getFilterName());
     }
@@ -435,52 +464,56 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
     public void onEventMainThread(Event event) {
         Log.e(event.toString());
         switch (event.type) {
+            case ON_FINISHED_ROTATION:
+                onApplyImageTransformationChanges();
+                break;
+
             case ON_CHANGE_CROPPING_SHAPE:
                 cropImageView.setCropShape((CropShape) event.payload);
                 break;
 
-            case Event.ON_SKEW_TRANSFORMATION:
+            case ON_SKEW_TRANSFORMATION:
                 getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, fragmentSkew).commit();
                 break;
 
-            case Event.ON_ROTATE_TRANSFORMATION:
+            case ON_ROTATE_TRANSFORMATION:
                 getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, fragmentRotation).commit();
                 break;
 
-            case Event.ON_ABS_MENU_APPLY:
+            case ON_ABS_MENU_APPLY:
                 onApplyImageTransformationChanges();
                 break;
 
-            case Event.ON_ABS_MENU_RESTORE:
+            case ON_ABS_MENU_RESTORE:
                 restoreOriginalImageBeforeTransformation();
                 break;
 
-            case Event.ON_ABS_MENU_CANCEL:
+            case ON_ABS_MENU_CANCEL:
                 cancelCurrentTransformation();
                 break;
 
-            case Event.ON_ABS_MENU_CLICKED:
+            case ON_ABS_MENU_CLICKED:
                 onBackPressed();
                 break;
 
-            case Event.ON_ADJUST_FILTER_LEVEL:
+            case ON_ADJUST_FILTER_LEVEL:
                 adjustFilter((int) event.payload);
                 Log.e("  ON_ADJUST_FILTER_LEVEL : " + (int) event.payload);
                 break;
 
 
-            case Event.ON_APPLY_EFFECT:
+            case ON_APPLY_EFFECT:
                 applyEffect((FilterItemHolder) event.payload);
                 Log.e("  ON_APPLY_EFFECT : " + ((FilterItemHolder) event.payload).getFilterName());
                 break;
 
 
-            case Event.ON_RESTORE_IMAGE_BEFORE_CROPPING:
+            case ON_RESTORE_IMAGE_BEFORE_CROPPING:
                 cropImageView.setImageBitmap(BITMAP_MODIFIED);
                 break;
 
 
-            case Event.ON_APPLY_CROPPING:
+            case ON_APPLY_CROPPING:
                 cropImageView.setImageBitmap(cropImageView.getCroppedImage());
                 break;
 
@@ -513,17 +546,19 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 
             case ON_UNDO:
                 drawingView.undo();
+                onApplyImageTransformationChanges();
                 break;
 
 
             case ON_REDO:
                 drawingView.redo();
+                onApplyImageTransformationChanges();
                 break;
 
 
             case ON_CLEAR_CANVAS:
-                drawingView.clearRedoPaths();
-                drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withPaths(null).build());
+                drawingView.clearCanvas();
+                onApplyImageTransformationChanges();
                 break;
 
 
@@ -562,5 +597,10 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 
     public void setRotationDegree(float degree) {
         drawingView.setRotationDegree(degree);
+    }
+
+    @Override
+    public void userHasReleasedFinger() {
+        onApplyImageTransformationChanges();
     }
 }

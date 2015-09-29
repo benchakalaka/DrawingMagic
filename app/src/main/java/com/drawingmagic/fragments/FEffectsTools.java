@@ -22,34 +22,29 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
-import android.widget.LinearLayout;
-import android.widget.SeekBar;
 
 import com.drawingmagic.R;
-import com.drawingmagic.eventbus.Event;
 import com.drawingmagic.helpers.FilterItemHolder;
 import com.drawingmagic.utils.Conditions;
 import com.drawingmagic.utils.Log;
 import com.drawingmagic.views.ImageFilterPreview;
 import com.drawingmagic.views.ImageFilterPreview_;
 
-import net.steamcrafted.materialiconlib.MaterialIconView;
-
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.SeekBarProgressChange;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import de.greenrobot.event.EventBus;
-
 import static com.drawingmagic.core.GPUImageFilterTools.FilterType;
 
 @EFragment(R.layout.fragment_effects)
 public class FEffectsTools extends Fragment {
+
+
+    @ViewById
+    GridView gridView;
 
     public static final ArrayList<FilterItemHolder> FILTERS = new ArrayList<>();
 
@@ -128,29 +123,6 @@ public class FEffectsTools extends Fragment {
         Log.e("Filters has been initialized  - " + FILTERS.size());
     }
 
-    @ViewById
-    GridView gridView;
-
-    @ViewById
-    MaterialIconView mivApply, mivCancel;
-
-    @ViewById
-    SeekBar seekBar;
-
-    @ViewById
-    LinearLayout llBottomFilterSettingsMenu;
-
-
-    @SeekBarProgressChange
-    void seekBar(int progress) {
-        EventBus.getDefault().post(new Event(Event.ON_ADJUST_FILTER_LEVEL, progress));
-    }
-
-    public void setCanAdjustStatus(boolean canAdjust) {
-        seekBar.setVisibility(canAdjust ? View.VISIBLE : View.GONE);
-        llBottomFilterSettingsMenu.setVisibility(View.VISIBLE);
-    }
-
 
     @AfterViews
     void afterViews() {
@@ -180,15 +152,5 @@ public class FEffectsTools extends Fragment {
             ((ImageFilterPreview) convertView).setUpView(getItem(position));
             return convertView;
         }
-    }
-
-    @Click
-    void mivCancel() {
-        EventBus.getDefault().post(new Event(Event.ON_APPLY_EFFECT, null));
-    }
-
-    @Click
-    void mivApply() {
-
     }
 }
