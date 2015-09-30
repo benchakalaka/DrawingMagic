@@ -419,6 +419,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                         BITMAP_MODIFIED.recycle();
                     }
 
+                    Log.e("FilePath:"+Utils.getRealPathFromURI(ADrawingMagic.this, data.getData()));
                     BITMAP_ORIGIN = Utils.decodeSampledBitmapFromResource(new File(Utils.getRealPathFromURI(ADrawingMagic.this, data.getData())).getAbsolutePath(), drawingView.getWidth(), drawingView.getHeight());
                     BITMAP_MODIFIED = BITMAP_ORIGIN.copy(Config.RGB_565, true);
                     drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(BITMAP_MODIFIED).withPaths(null).build());
