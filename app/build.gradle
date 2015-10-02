@@ -121,6 +121,26 @@ dependencies {
     compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
     compile 'com.android.support:support-v4:21.0.+'
 
+    // Floating btton
+    compile 'com.github.clans:fab:1.6.1'
+
+    // Social networks
+   // compile 'com.github.asne:asne-facebook:0.3.3'
+//    compile 'com.github.asne:asne-twitter:0.3.3'
+//    compile 'com.github.asne:asne-googleplus:0.3.3'
+//    compile 'com.github.asne:asne-linkedin:0.3.3'
+//    compile 'com.github.asne:asne-instagram:0.3.3'
+
+    // Image Loading library
+    compile 'com.squareup.picasso:picasso:2.5.2'
+
+    compile ('com.github.asne:asne-vk:0.3.3'){
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+    }
+//    compile ('com.github.asne:asne-odnoklassniki:0.3.3'){
+//        exclude group: 'com.android.support', module: 'appcompat-v7'
+//    }
+
     // Event bus
     compile 'de.greenrobot:eventbus:2.4.0'
     // Splash screen

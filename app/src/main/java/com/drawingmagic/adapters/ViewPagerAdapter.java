@@ -4,9 +4,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.drawingmagic.fragments.FCanvasTools;
-import com.drawingmagic.fragments.FCanvasTools_;
 import com.drawingmagic.fragments.FCanvasTransformer_;
+import com.drawingmagic.fragments.FCropperTools;
+import com.drawingmagic.fragments.FCropperTools_;
 import com.drawingmagic.fragments.FDrawingTools;
 import com.drawingmagic.fragments.FDrawingTools_;
 import com.drawingmagic.fragments.FEffectsTools;
@@ -29,7 +29,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
 
     private final ArrayList<Fragment> fragments = new ArrayList<>();
 
-    private final Fragment fDrawingTools = new FDrawingTools_(), fCanvasTransformerTools = new FCanvasTransformer_(), fEffectsTools = new FEffectsTools_(), fCanvasCroppingTools = new FCanvasTools_();
+    private final static Fragment fDrawingTools = new FDrawingTools_(), fCanvasTransformerTools = new FCanvasTransformer_(), fEffectsTools = new FEffectsTools_(), fCanvasCroppingTools = new FCropperTools_();
 
     public ViewPagerAdapter(FragmentManager fragmentManager) {
         super(fragmentManager);
@@ -51,8 +51,8 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         return (FEffectsTools) getItem(EFFECTS_TOOLS_FRAGMENT);
     }
 
-    public FCanvasTools getCanvasToolsFragment() {
-        return (FCanvasTools) getItem(CANVAS_SETTINGS_TOOLS_FRAGMENT);
+    public FCropperTools getCropperToolsFragment() {
+        return (FCropperTools) getItem(CANVAS_SETTINGS_TOOLS_FRAGMENT);
     }
 
     @Override

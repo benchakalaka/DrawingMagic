@@ -27,7 +27,6 @@ import com.drawingmagic.R;
 import com.drawingmagic.helpers.FilterItemHolder;
 import com.drawingmagic.utils.Conditions;
 import com.drawingmagic.utils.Log;
-import com.drawingmagic.views.ImageFilterPreview;
 import com.drawingmagic.views.ImageFilterPreview_;
 
 import org.androidannotations.annotations.AfterViews;
@@ -146,11 +145,11 @@ public class FEffectsTools extends Fragment {
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-            if (Conditions.isNull(convertView)) {
-                convertView = ImageFilterPreview_.build(getActivity(), getItem(position));
-            }
-            ((ImageFilterPreview) convertView).setUpView(getItem(position));
-            return convertView;
+//            if (Conditions.isNull(convertView)) {
+//                convertView = ImageFilterPreview_.build(getActivity(), getItem(position));
+//            }
+//            ((ImageFilterPreview) convertView).setUpView(getItem(position));
+            return ImageFilterPreview_.build(getActivity(), getItem(position));
         }
     }
 }

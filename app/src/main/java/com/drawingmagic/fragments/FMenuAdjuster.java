@@ -24,7 +24,7 @@ import de.greenrobot.event.EventBus;
  * On 20/09/15 at 13:32.
  */
 @EFragment(R.layout.fragment_adjuster)
-public class FAdjuster extends Fragment {
+public class FMenuAdjuster extends Fragment {
 
     @ViewById
     TextView tvTitle, tvSeekBarTitle;

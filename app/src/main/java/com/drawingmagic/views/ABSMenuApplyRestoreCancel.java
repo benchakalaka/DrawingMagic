@@ -51,6 +51,4 @@ public class ABSMenuApplyRestoreCancel extends RelativeLayout {
         AnimationUtils.animate(llCancel, AnimationTechniques.FADE_IN);
         EventBus.getDefault().post(new Event(Event.ON_ABS_MENU_CANCEL));
     }
-
-
 }
