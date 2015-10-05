@@ -24,7 +24,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     public static final int DRAWING_TOOLS_FRAGMENT = 0;
     public static final int CANVAS_TRANSFORMER_FRAGMENT = 1;
     public static final int EFFECTS_TOOLS_FRAGMENT = 2;
-    public static final int CANVAS_SETTINGS_TOOLS_FRAGMENT = 3;
+    public static final int CANVAS_CROPPER_TOOLS_FRAGMENT = 3;
 
 
     private final ArrayList<Fragment> fragments = new ArrayList<>();
@@ -36,7 +36,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         fragments.add(DRAWING_TOOLS_FRAGMENT, fDrawingTools);
         fragments.add(CANVAS_TRANSFORMER_FRAGMENT, fCanvasTransformerTools);
         fragments.add(EFFECTS_TOOLS_FRAGMENT, fEffectsTools);
-        fragments.add(CANVAS_SETTINGS_TOOLS_FRAGMENT, fCanvasCroppingTools);
+        fragments.add(CANVAS_CROPPER_TOOLS_FRAGMENT, fCanvasCroppingTools);
     }
 
     public FDrawingTools getCanvasTransformerFragment() {
@@ -52,7 +52,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     }
 
     public FCropperTools getCropperToolsFragment() {
-        return (FCropperTools) getItem(CANVAS_SETTINGS_TOOLS_FRAGMENT);
+        return (FCropperTools) getItem(CANVAS_CROPPER_TOOLS_FRAGMENT);
     }
 
     @Override

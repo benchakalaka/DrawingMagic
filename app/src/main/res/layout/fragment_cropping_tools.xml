@@ -11,8 +11,20 @@
         android:layout_margin="20dp"
         android:background="@color/black" />
 
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/fabSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:src="@drawable/abs__ic_cab_done_holo_dark"
+        fab:fab_colorNormal="@color/default_text_colour"
+        fab:fab_colorPressed="@color/white"
+        fab:fab_colorRipple="@color/default_transparency" />
+
     <com.github.clans.fab.FloatingActionMenu
-        android:id="@+id/menu"
+        android:id="@+id/fabMenu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -21,12 +33,13 @@
         fab:menu_animationDelayPerItem="50"
         fab:menu_backgroundColor="@android:color/transparent"
         fab:menu_buttonSpacing="0dp"
-        fab:menu_colorNormal="#DA4336"
-        fab:menu_colorPressed="#E75043"
+        fab:menu_colorNormal="@color/default_ab_background_colour"
+        fab:menu_colorPressed="@color/black"
         fab:menu_colorRipple="#99FFFFFF"
-        fab:menu_fab_label="your_label_here"
+        fab:menu_fab_label="Share"
         fab:menu_fab_size="normal"
-        fab:menu_icon="@drawable/fab_add"
+        fab:menu_icon="@drawable/abs__ic_menu_share_holo_dark"
+
         fab:menu_labels_colorNormal="#333333"
         fab:menu_labels_colorPressed="#444444"
         fab:menu_labels_colorRipple="#66FFFFFF"
@@ -54,17 +67,47 @@
         fab:menu_showShadow="true">
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/menu_item"
+            android:id="@+id/fabOdnoklassniki"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/abs__ic_cab_done_holo_dark"
             fab:fab_colorNormal="@color/default_text_colour"
             fab:fab_colorPressed="@color/white"
             fab:fab_colorRipple="@color/default_transparency"
-            fab:fab_label="Menu item 1" />
+            fab:fab_label="Odnoklassniki" />
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab"
+            android:id="@+id/fabInstagram"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/abs__ic_cab_done_holo_dark"
+            fab:fab_colorNormal="@color/default_text_colour"
+            fab:fab_colorPressed="@color/white"
+            fab:fab_colorRipple="@color/default_transparency"
+            fab:fab_label="Instagram" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fabTwitter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/abs__ic_cab_done_holo_dark"
+            fab:fab_colorNormal="@color/default_text_colour"
+            fab:fab_colorPressed="@color/white"
+            fab:fab_colorRipple="@color/default_transparency"
+            fab:fab_label="Facebook" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fabFacebook"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/abs__ic_cab_done_holo_dark"
+            fab:fab_colorNormal="@color/default_text_colour"
+            fab:fab_colorPressed="@color/white"
+            fab:fab_colorRipple="@color/default_transparency"
+            fab:fab_label="Twitter" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fabVk"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -73,7 +116,8 @@
             android:src="@drawable/abs__ic_menu_share_holo_dark"
             fab:fab_colorNormal="@color/default_text_colour"
             fab:fab_colorPressed="@color/white"
-            fab:fab_colorRipple="@color/default_transparency" />
+            fab:fab_colorRipple="@color/default_transparency"
+            fab:fab_label="VK" />
 
     </com.github.clans.fab.FloatingActionMenu>
 

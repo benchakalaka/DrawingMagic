@@ -45,7 +45,7 @@ import static android.graphics.Bitmap.Config;
 import static android.view.View.GONE;
 import static android.view.View.LAYER_TYPE_SOFTWARE;
 import static android.view.View.VISIBLE;
-import static com.drawingmagic.adapters.ViewPagerAdapter.CANVAS_SETTINGS_TOOLS_FRAGMENT;
+import static com.drawingmagic.adapters.ViewPagerAdapter.CANVAS_CROPPER_TOOLS_FRAGMENT;
 import static com.drawingmagic.adapters.ViewPagerAdapter.CANVAS_TRANSFORMER_FRAGMENT;
 import static com.drawingmagic.adapters.ViewPagerAdapter.DRAWING_TOOLS_FRAGMENT;
 import static com.drawingmagic.adapters.ViewPagerAdapter.EFFECTS_TOOLS_FRAGMENT;
@@ -62,6 +62,7 @@ import static com.drawingmagic.eventbus.Event.ON_APPLY_CROPPING;
 import static com.drawingmagic.eventbus.Event.ON_APPLY_EFFECT;
 import static com.drawingmagic.eventbus.Event.ON_CHANGE_CROPPING_SHAPE;
 import static com.drawingmagic.eventbus.Event.ON_CLEAR_CANVAS;
+import static com.drawingmagic.eventbus.Event.ON_FINAL_SAVE_IMAGE;
 import static com.drawingmagic.eventbus.Event.ON_FINISHED_ROTATION;
 import static com.drawingmagic.eventbus.Event.ON_REDO;
 import static com.drawingmagic.eventbus.Event.ON_RESTORE_IMAGE_BEFORE_CROPPING;
@@ -244,7 +245,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                                                                    }
                                                                    break;
 
-                                                               case CANVAS_SETTINGS_TOOLS_FRAGMENT:
+                                                               case CANVAS_CROPPER_TOOLS_FRAGMENT:
                                                                    drawingView.setVisibility(GONE);
                                                                    gpuImage.setVisibility(GONE);
                                                                    cropImageView.setVisibility(VISIBLE);
@@ -286,7 +287,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                 break;
 
             // Cancel cropping
-            case CANVAS_SETTINGS_TOOLS_FRAGMENT:
+            case CANVAS_CROPPER_TOOLS_FRAGMENT:
                 croppedBitmap = BITMAP_MODIFIED;
                 cropImageView.setImageBitmap(croppedBitmap);
                 break;
@@ -309,7 +310,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                 break;
 
             // Cancel cropping
-            case CANVAS_SETTINGS_TOOLS_FRAGMENT:
+            case CANVAS_CROPPER_TOOLS_FRAGMENT:
                 cropImageView.setImageBitmap(BITMAP_MODIFIED);
                 break;
 
@@ -341,7 +342,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                 applyEffect(null);
                 break;
 
-            case CANVAS_SETTINGS_TOOLS_FRAGMENT:
+            case CANVAS_CROPPER_TOOLS_FRAGMENT:
                 // // TODO: 02/10/2015 direct access to field
                 viewPagerAdapter.getCropperToolsFragment().ivFinalImage.setImageBitmap(cropImageView.getCropShape() == CropShape.RECTANGLE ? cropImageView.getCroppedImage() : cropImageView.getCroppedOvalImage());
                 break;
@@ -460,7 +461,8 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 
     private void saveImage() {
         String fileName = System.currentTimeMillis() + ".jpg";
-        gpuImage.saveToPictures("GPUImage", fileName, this);
+        Bitmap finalImage = cropImageView.getCropShape() == CropShape.RECTANGLE ? cropImageView.getCroppedImage() : cropImageView.getCroppedOvalImage();
+        Notification.showSuccess(this, "TODO: bitmap is ready, save it to disk");
     }
 
     @Override
@@ -473,6 +475,10 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
     public void onEventMainThread(Event event) {
         Log.e(event.toString());
         switch (event.type) {
+            case ON_FINAL_SAVE_IMAGE:
+                saveImage();
+                break;
+
             case ON_FINISHED_ROTATION:
                 onApplyImageTransformationChanges();
                 break;

@@ -1,23 +1,43 @@
 package com.drawingmagic.fragments;
 
 import android.support.v4.app.Fragment;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.drawingmagic.R;
+import com.drawingmagic.eventbus.Event;
+import com.drawingmagic.utils.AnimationUtils;
+import com.github.clans.fab.FloatingActionButton;
 
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.Touch;
 import org.androidannotations.annotations.ViewById;
 
-@EFragment(R.layout.fragment_canvas_tools)
+import de.greenrobot.event.EventBus;
+
+import static com.drawingmagic.eventbus.Event.*;
+import static com.drawingmagic.utils.AnimationUtils.AnimationTechniques.*;
+
+@EFragment(R.layout.fragment_cropping_tools)
 public class FCropperTools extends Fragment {
 
     @ViewById
     public ImageView ivFinalImage;
 
-//    @Click
-//    void rlRectangle() {
-//        AnimationUtils.animate(rlRectangle, ZOOM_IN);
-//    }
+    @ViewById
+    FloatingActionButton fabSave;
+
+    @Click
+    void fabSave() {
+        EventBus.getDefault().post(new Event(ON_FINAL_SAVE_IMAGE));
+    }
+
+    @Touch({R.id.fabSave, R.id.fabMenu})
+    boolean onTouch(View clickedView) {
+        AnimationUtils.animate(clickedView, ZOOM_IN);
+        return false;
+    }
 //
 //    @Click
 //    void rlOval() {
