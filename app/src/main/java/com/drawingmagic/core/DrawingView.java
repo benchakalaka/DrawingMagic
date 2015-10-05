@@ -170,12 +170,6 @@ public class DrawingView extends View {
     }
 
 
-    public void setIsMatrixTransformationApplied(boolean isApplied) {
-        isMatrixTransformationApplied = isApplied;
-        invalidate();
-    }
-
-
     /**
      * onDraw will be called after any touch event or invalidating drawing surface
      */
@@ -187,10 +181,7 @@ public class DrawingView extends View {
         // already implemented
         // flip()
 
-        if (isMatrixTransformationApplied && (rotationDegree != 0 || tiltFactorX != 0 || tiltFactorY != 0)) {
-            canvas.setMatrix(transformMatrix);
-        }
-
+        canvas.setMatrix(transformMatrix);
         canvas.drawColor(Color.BLACK);
 
         // 1) draw simple bitmap

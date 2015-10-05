@@ -95,8 +95,8 @@ public class FMenuAdjuster extends Fragment {
         EventBus.getDefault().post(new Event(eventId, progress));
     }
 
-    @SeekBarTouchStop
-    void sBar() {
-        EventBus.getDefault().post(new Event(finishedProgress));
-    }
+//    @SeekBarTouchStop
+//    void sBar() {
+//        EventBus.getDefault().post(new Event(finishedProgress));
+//    }
 }

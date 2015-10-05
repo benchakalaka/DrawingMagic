@@ -201,8 +201,6 @@ public class ADrawingMagic extends SuperActivity implements OnPostingCompleteLis
 
         // Set clearing tools as a first
         getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, fragmentMenuDrawingTools).commit();
-
-
     }
 
 
@@ -225,7 +223,6 @@ public class ADrawingMagic extends SuperActivity implements OnPostingCompleteLis
                                                        public void onPageSelected(int position) {
                                                            switch (position) {
                                                                case DRAWING_TOOLS_FRAGMENT:
-                                                                   drawingView.setIsMatrixTransformationApplied(false);
                                                                    drawingView.setVisibility(VISIBLE);
                                                                    gpuImage.setVisibility(GONE);
                                                                    cropImageView.setVisibility(GONE);
@@ -233,14 +230,12 @@ public class ADrawingMagic extends SuperActivity implements OnPostingCompleteLis
                                                                    break;
 
                                                                case CANVAS_TRANSFORMER_FRAGMENT:
-                                                                   drawingView.setIsMatrixTransformationApplied(false);
                                                                    // TODO: 27/09/15 Remember selected transform tools and display this fragment
                                                                    getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, fragmentMenuRotation).commit();
-                                                                   drawingView.setIsMatrixTransformationApplied(true);
                                                                    drawingView.setVisibility(VISIBLE);
                                                                    gpuImage.setVisibility(GONE);
                                                                    cropImageView.setVisibility(GONE);
-
+                                                                   drawingView.setGridType(GridType.NO_GRID);
                                                                    break;
 
                                                                case EFFECTS_TOOLS_FRAGMENT:
@@ -341,10 +336,9 @@ public class ADrawingMagic extends SuperActivity implements OnPostingCompleteLis
                 break;
 
             case CANVAS_TRANSFORMER_FRAGMENT:
-                drawingView.setGridType(GridType.NO_GRID);
                 BITMAP_MODIFIED = drawingView.getDrawingCache().copy(Config.RGB_565, true);
-                drawingView.setGridType(gridType);
-                //drawingView.resetAllTransformation();
+                //drawingView.setGridType(gridType);
+                drawingView.resetAllTransformation();
                 break;
 
             case EFFECTS_TOOLS_FRAGMENT:
