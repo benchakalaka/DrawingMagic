@@ -16,16 +16,23 @@ import com.drawingmagic.core.GPUImageFilterTools;
 import com.drawingmagic.eventbus.Event;
 import com.drawingmagic.fragments.FDrawingTools.OnChangeDrawingSettingsListener;
 import com.drawingmagic.fragments.FMenuAdjuster_;
-import com.drawingmagic.fragments.FMenuClearingTools_;
 import com.drawingmagic.fragments.FMenuCropper_;
+import com.drawingmagic.fragments.FMenuDrawingTools_;
 import com.drawingmagic.fragments.FTiltFragmentController_;
 import com.drawingmagic.helpers.FilterItemHolder;
+import com.drawingmagic.social.FragmentShare_;
+import com.drawingmagic.social.Social;
 import com.drawingmagic.utils.Conditions;
+import com.drawingmagic.utils.GraphicUtils;
 import com.drawingmagic.utils.Log;
 import com.drawingmagic.utils.Notification;
 import com.drawingmagic.utils.Utils;
 import com.drawingmagic.views.ABSMenuApplyRestoreCancel_;
 import com.drawingmagic.views.abs.ABS_;
+import com.github.gorbin.asne.core.SocialNetwork;
+import com.github.gorbin.asne.core.listener.OnLoginCompleteListener;
+import com.github.gorbin.asne.core.listener.OnPostingCompleteListener;
+import com.github.gorbin.asne.vk.VkSocialNetwork;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import org.androidannotations.annotations.AfterViews;
@@ -72,10 +79,13 @@ import static com.drawingmagic.eventbus.Event.ON_SKEW_TRANSFORMATION;
 import static com.drawingmagic.eventbus.Event.ON_TILT_FACTOR_X_CHANGED;
 import static com.drawingmagic.eventbus.Event.ON_TILT_FACTOR_Y_CHANGED;
 import static com.drawingmagic.eventbus.Event.ON_UNDO;
+import static com.drawingmagic.eventbus.Event.SHARE_VK;
+import static com.drawingmagic.utils.GraphicUtils.decodeSampledBitmapFromResource;
 import static com.drawingmagic.views.HoverView.DRAWING_CACHE_QUALITY_HIGH;
 import static com.drawingmagic.views.HoverView.MENU_ITEM_CAMERA;
 import static com.drawingmagic.views.HoverView.MENU_ITEM_EMPTY_CANVAS;
 import static com.drawingmagic.views.HoverView.MENU_ITEM_GALLERY;
+import static com.github.gorbin.asne.core.SocialNetworkManager.OnInitializationCompleteListener;
 import static com.theartofdev.edmodo.cropper.CropImageView.CropShape;
 import static jp.co.cyberagent.android.gpuimage.GPUImage.ScaleType.CENTER_INSIDE;
 import static jp.co.cyberagent.android.gpuimage.GPUImageView.OnPictureSavedListener;
@@ -86,7 +96,7 @@ import static jp.co.cyberagent.android.gpuimage.GPUImageView.OnPictureSavedListe
  * On 13/09/15 at 17:44.
  */
 @EActivity(R.layout.activity_drawing_magic)
-public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSettingsListener, OnPictureSavedListener, OnTouchCanvasCallback {
+public class ADrawingMagic extends SuperActivity implements OnPostingCompleteListener, OnChangeDrawingSettingsListener, OnPictureSavedListener, OnTouchCanvasCallback, OnInitializationCompleteListener, OnLoginCompleteListener {
 
     @ViewById
     DrawingView drawingView;
@@ -130,8 +140,8 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
     private GPUImageFilter currentFilter;
     private GPUImageFilterTools.FilterAdjuster filterAdjuster;
     // TODO: 27/09/15 Change names of fragments for adjusting as menu
-    // Transformation fragments
-    Fragment fragmentMenuRotation, fragmentMenuSkew, fragmentMenuUndoRedo, fragmentMenuAdjustEffectLevel, fragmentMenuCropper;
+    // Transformation/Menu fragments
+    Fragment fShare, fragmentMenuRotation, fragmentMenuSkew, fragmentMenuDrawingTools, fragmentMenuAdjustEffectLevel, fragmentMenuCropper;
 
     @StringRes(R.string.effect_adjuster)
     String effectAdjuster;
@@ -176,8 +186,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
         }
 
         fragmentMenuCropper = new FMenuCropper_();
-
-        fragmentMenuUndoRedo = new FMenuClearingTools_();
+        fragmentMenuDrawingTools = new FMenuDrawingTools_();
 
         // set current value in the middle of seek bar (half of MAXIMUM_ROTATION_DEGREE)
         fragmentMenuRotation = FMenuAdjuster_.builder().
@@ -191,7 +200,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
         fragmentMenuSkew = new FTiltFragmentController_();
 
         // Set clearing tools as a first
-        getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, fragmentMenuUndoRedo).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, fragmentMenuDrawingTools).commit();
 
 
     }
@@ -220,7 +229,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                                                                    drawingView.setVisibility(VISIBLE);
                                                                    gpuImage.setVisibility(GONE);
                                                                    cropImageView.setVisibility(GONE);
-                                                                   getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, fragmentMenuUndoRedo).commit();
+                                                                   getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, fragmentMenuDrawingTools).commit();
                                                                    break;
 
                                                                case CANVAS_TRANSFORMER_FRAGMENT:
@@ -301,7 +310,8 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
         switch (viewPager.getCurrentItem()) {
             // Cancel any drawing transformation
             case DRAWING_TOOLS_FRAGMENT:
-                Notification.showError(this, "TODO ");
+                BITMAP_MODIFIED = BITMAP_ORIGIN.copy(Config.RGB_565, true);
+                onApplyImageTransformationChanges();
                 break;
 
             // Cancel any effect
@@ -408,9 +418,21 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(Social.SOCIAL_NETWORK_TAG);
+
+        if (Conditions.isNotNull(fragment)) {
+            getSupportFragmentManager().beginTransaction().add(R.id.container, fShare).commit();
+            fragment.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
 
     @OnActivityResult(REQUEST_PICK_IMAGE)
     void onResult(int resultCode, final Intent data) {
+
         if (resultCode != RESULT_OK) {
             finish();
             return;
@@ -429,7 +451,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                     }
 
                     Log.e("FilePath:" + Utils.getRealPathFromURI(ADrawingMagic.this, data.getData()));
-                    BITMAP_ORIGIN = Utils.decodeSampledBitmapFromResource(new File(Utils.getRealPathFromURI(ADrawingMagic.this, data.getData())).getAbsolutePath(), drawingView.getWidth(), drawingView.getHeight());
+                    BITMAP_ORIGIN = decodeSampledBitmapFromResource(new File(Utils.getRealPathFromURI(ADrawingMagic.this, data.getData())).getAbsolutePath(), drawingView.getWidth(), drawingView.getHeight());
                     BITMAP_MODIFIED = BITMAP_ORIGIN.copy(Config.RGB_565, true);
                     drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(BITMAP_MODIFIED).withPaths(null).build());
                 }
@@ -448,7 +470,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 
     private void applyEffect(FilterItemHolder filterItemHolder) {
         // User pressed X
-        if (filterItemHolder == null) {
+        if (Conditions.isNull(filterItemHolder)) {
             // equivalent to restore default image
             gpuImage.setFilter(new GPUImageFilter());
             return;
@@ -460,9 +482,10 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
     }
 
     private void saveImage() {
-        String fileName = System.currentTimeMillis() + ".jpg";
+        //// TODO: 05/10/2015 String to resources
+        String fileName = String.format("Drawing magic %s", System.currentTimeMillis() + ".jpg");
         Bitmap finalImage = cropImageView.getCropShape() == CropShape.RECTANGLE ? cropImageView.getCroppedImage() : cropImageView.getCroppedOvalImage();
-        Notification.showSuccess(this, "TODO: bitmap is ready, save it to disk");
+        Notification.showSuccess(this, "Successfully saved " + GraphicUtils.saveImageToGallery(getContentResolver(), finalImage, fileName, "Drawing Magic"));
     }
 
     @Override
@@ -475,6 +498,20 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
     public void onEventMainThread(Event event) {
         Log.e(event.toString());
         switch (event.type) {
+
+            case Event.ON_RESTORE_IMAGE_BEFORE_DRAWING:
+                restoreOriginalImageBeforeTransformation();
+                break;
+
+            case Event.ON_APPLY_DRAWING_ON_CANVAS:
+                onApplyImageTransformationChanges();
+                break;
+
+            case SHARE_VK:
+                fShare = FragmentShare_.builder().networkId(VkSocialNetwork.ID).build();
+                getSupportFragmentManager().beginTransaction().add(R.id.container, fShare).commit();
+                break;
+
             case ON_FINAL_SAVE_IMAGE:
                 saveImage();
                 break;
@@ -618,8 +655,33 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
         drawingView.setRotationDegree(degree);
     }
 
+
     @Override
     public void userHasReleasedFinger() {
-        onApplyImageTransformationChanges();
+        //onApplyImageTransformationChanges();
+    }
+
+    @Override
+    public void onSocialNetworkManagerInitialized() {
+        //when init SocialNetworks - get and setup login only for initialized SocialNetworks
+        for (SocialNetwork socialNetwork : Social.getInitializedSocialNetworks()) {
+            socialNetwork.setOnLoginCompleteListener(this);
+            Log.e("Social network initializaed");
+            //initSocialNetwork(socialNetwork);
+        }
+    }
+
+    @Override
+    public void onLoginSuccess(int socialNetworkID) {
+    }
+
+    @Override
+    public void onError(int socialNetworkID, String requestID, String errorMessage, Object data) {
+        Notification.showError(this, errorMessage);
+    }
+
+    @Override
+    public void onPostSuccessfully(int socialNetworkID) {
+        Notification.showSuccess(this, "Successfully posted");
     }
 }

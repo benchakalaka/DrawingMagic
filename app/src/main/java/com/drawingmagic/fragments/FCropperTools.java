@@ -7,7 +7,6 @@ import android.widget.ImageView;
 import com.drawingmagic.R;
 import com.drawingmagic.eventbus.Event;
 import com.drawingmagic.utils.AnimationUtils;
-import com.github.clans.fab.FloatingActionButton;
 
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
@@ -16,8 +15,8 @@ import org.androidannotations.annotations.ViewById;
 
 import de.greenrobot.event.EventBus;
 
-import static com.drawingmagic.eventbus.Event.*;
-import static com.drawingmagic.utils.AnimationUtils.AnimationTechniques.*;
+import static com.drawingmagic.eventbus.Event.ON_FINAL_SAVE_IMAGE;
+import static com.drawingmagic.utils.AnimationUtils.AnimationTechniques.ZOOM_IN;
 
 @EFragment(R.layout.fragment_cropping_tools)
 public class FCropperTools extends Fragment {
@@ -25,13 +24,16 @@ public class FCropperTools extends Fragment {
     @ViewById
     public ImageView ivFinalImage;
 
-    @ViewById
-    FloatingActionButton fabSave;
-
     @Click
     void fabSave() {
         EventBus.getDefault().post(new Event(ON_FINAL_SAVE_IMAGE));
     }
+
+    @Click
+    void fabVk() {
+        EventBus.getDefault().post(new Event(Event.SHARE_VK));
+    }
+
 
     @Touch({R.id.fabSave, R.id.fabMenu})
     boolean onTouch(View clickedView) {

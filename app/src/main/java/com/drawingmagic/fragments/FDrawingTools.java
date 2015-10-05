@@ -11,7 +11,6 @@ import com.drawingmagic.R;
 import com.drawingmagic.core.DrawingSettings;
 import com.drawingmagic.utils.AnimationUtils;
 import com.drawingmagic.utils.Notification;
-import com.drawingmagic.utils.Utils;
 
 import net.steamcrafted.materialiconlib.MaterialIconView;
 
@@ -27,6 +26,8 @@ import static com.drawingmagic.core.DrawingView.DEFAULT_BRUSH_SIZE;
 import static com.drawingmagic.core.DrawingView.GridType;
 import static com.drawingmagic.core.DrawingView.ShapesType;
 import static com.drawingmagic.utils.AnimationUtils.AnimationTechniques;
+import static com.drawingmagic.utils.GraphicUtils.createRoundImage;
+import static com.drawingmagic.utils.GraphicUtils.createRoundImageSelected;
 
 
 /**
@@ -190,22 +191,22 @@ public class FDrawingTools extends Fragment {
         drawingSettings.setCurrentColour(Color.parseColor(view.getTag().toString()));
         listener.onSetUpDrawingShapesOkClicked(drawingSettings);
         initColorPicker();
-        ((ImageView) view).setImageBitmap(Utils.createRoundImageSelected(Color.parseColor(view.getTag().toString()), selectionColour, ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        ((ImageView) view).setImageBitmap(createRoundImageSelected(Color.parseColor(view.getTag().toString()), selectionColour, ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
     }
 
     private void initColorPicker() {
-        ivColour0.setImageBitmap(Utils.createRoundImage(ivColour0.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
-        ivColour1.setImageBitmap(Utils.createRoundImage(ivColour1.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
-        ivColour2.setImageBitmap(Utils.createRoundImage(ivColour2.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
-        ivColour3.setImageBitmap(Utils.createRoundImage(ivColour3.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
-        ivColour4.setImageBitmap(Utils.createRoundImage(ivColour4.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
-        ivColour5.setImageBitmap(Utils.createRoundImage(ivColour5.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
-        ivColour6.setImageBitmap(Utils.createRoundImage(ivColour6.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
-        ivColour7.setImageBitmap(Utils.createRoundImage(ivColour7.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
-        ivColour8.setImageBitmap(Utils.createRoundImage(ivColour8.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
-        ivColour9.setImageBitmap(Utils.createRoundImage(ivColour9.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
-        ivColour10.setImageBitmap(Utils.createRoundImage(ivColour10.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
-        ivColour11.setImageBitmap(Utils.createRoundImage(ivColour11.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        ivColour0.setImageBitmap(createRoundImage(ivColour0.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        ivColour1.setImageBitmap(createRoundImage(ivColour1.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        ivColour2.setImageBitmap(createRoundImage(ivColour2.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        ivColour3.setImageBitmap(createRoundImage(ivColour3.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        ivColour4.setImageBitmap(createRoundImage(ivColour4.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        ivColour5.setImageBitmap(createRoundImage(ivColour5.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        ivColour6.setImageBitmap(createRoundImage(ivColour6.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        ivColour7.setImageBitmap(createRoundImage(ivColour7.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        ivColour8.setImageBitmap(createRoundImage(ivColour8.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        ivColour9.setImageBitmap(createRoundImage(ivColour9.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        ivColour10.setImageBitmap(createRoundImage(ivColour10.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
+        ivColour11.setImageBitmap(createRoundImage(ivColour11.getTag().toString(), ROUND_BITMAP_DIAMETER, ROUND_BITMAP_DIAMETER));
     }
 
     @Click({R.id.ivColour0, R.id.ivColour1, R.id.ivColour2, R.id.ivColour3, R.id.ivColour4, R.id.ivColour5, R.id.ivColour6, R.id.ivColour7, R.id.ivColour8, R.id.ivColour9, R.id.ivColour10, R.id.ivColour11})

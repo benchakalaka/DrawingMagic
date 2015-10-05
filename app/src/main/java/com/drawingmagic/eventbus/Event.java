@@ -25,6 +25,12 @@ public final class Event {
     public static final int ON_CHANGE_CROPPING_SHAPE = 18;
     public static final int ON_FINISHED_ROTATION = 19;
     public static final int ON_FINAL_SAVE_IMAGE = 20;
+    public static final int SHARE_VK = 21;
+    public static final int SHARE_FACEBOOK = 22;
+    public static final int SHARE_TWITTER = 23;
+    public static final int SHARE_ODNOKLASSNIKI = 24;
+    public static final int ON_APPLY_DRAWING_ON_CANVAS = 25;
+    public static final int ON_RESTORE_IMAGE_BEFORE_DRAWING = 26;
 
 
     /**
@@ -102,19 +108,18 @@ public final class Event {
                 return getClass().getCanonicalName() + " ON_FINISHED_ROTATION";
             case ON_FINAL_SAVE_IMAGE:
                 return getClass().getCanonicalName() + " ON_FINAL_SAVE_IMAGE";
-
-//            case ON_FINAL_SAVE_IMAGE:
-//                return getClass().getCanonicalName() + " ON_FINAL_SAVE_IMAGE";
-            //            case ON_FINAL_SAVE_IMAGE:
-//                return getClass().getCanonicalName() + " ON_FINAL_SAVE_IMAGE";
-            //            case ON_FINAL_SAVE_IMAGE:
-//                return getClass().getCanonicalName() + " ON_FINAL_SAVE_IMAGE";
-            //            case ON_FINAL_SAVE_IMAGE:
-//                return getClass().getCanonicalName() + " ON_FINAL_SAVE_IMAGE";
-            //            case ON_FINAL_SAVE_IMAGE:
-//                return getClass().getCanonicalName() + " ON_FINAL_SAVE_IMAGE";
-            //            case ON_FINAL_SAVE_IMAGE:
-//                return getClass().getCanonicalName() + " ON_FINAL_SAVE_IMAGE";
+            case SHARE_FACEBOOK:
+                return getClass().getCanonicalName() + " SHARE_FACEBOOK";
+            case SHARE_VK:
+                return getClass().getCanonicalName() + " SHARE_VK";
+            case SHARE_TWITTER:
+                return getClass().getCanonicalName() + " SHARE_TWITTER";
+            case SHARE_ODNOKLASSNIKI:
+                return getClass().getCanonicalName() + " SHARE_ODNOKLASSNIKI";
+            case ON_APPLY_DRAWING_ON_CANVAS:
+                return getClass().getCanonicalName() + " ON_APPLY_DRAWING_ON_CANVAS";
+            case ON_RESTORE_IMAGE_BEFORE_DRAWING:
+                return getClass().getCanonicalName() + " ON_RESTORE_IMAGE_BEFORE_DRAWING";
             //            case ON_FINAL_SAVE_IMAGE:
 //                return getClass().getCanonicalName() + " ON_FINAL_SAVE_IMAGE";
             default:
@@ -122,6 +127,7 @@ public final class Event {
         }
         return "Unknown EVENT";
     }
+
 
 }
 
