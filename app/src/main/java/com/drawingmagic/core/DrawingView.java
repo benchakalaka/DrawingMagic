@@ -86,7 +86,6 @@ public class DrawingView extends View {
     public static final int FLIP_HORIZONTAL = 2;
     // Scaling objects
     private final ScaleGestureDetector mScaleDetector;
-    private float mScaleFactor = 1.0f;
     private float scalePointX, scalePointY;
     // Max zoom value
     private final static float MAX_ZOOM_FACTOR = 5.0f;
@@ -100,7 +99,11 @@ public class DrawingView extends View {
     private boolean isMatrixTransformationApplied = false;
     private final Matrix transformMatrix = new Matrix();
     private final static float CIRCLE_TEXT_RADIUS = 20;
-
+    private static final float SCALE_DELTA = 0.05f;
+    private static final float DEFAULT_ROTATE_SCALE_FACTOR = 1.0f;
+    private float mScaleFactor = DEFAULT_ROTATE_SCALE_FACTOR;
+    private boolean scaleWithZoom = false;
+    private float currentScaleZoomFactor = DEFAULT_ROTATE_SCALE_FACTOR;
 
     public DrawingView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -320,9 +323,8 @@ public class DrawingView extends View {
             Log.e("System.currentTimeMillis() - lastDoubleTouchTime = " + value + " , so EXIT");
             return false;
         }
-
-        float curX = event.getX() / mScaleFactor + rect.left;
-        float curY = event.getY() / mScaleFactor + rect.top;
+        float curX = event.getX() / (mScaleFactor * (currentScaleZoomFactor)) + rect.left;
+        float curY = event.getY() / (mScaleFactor * (currentScaleZoomFactor)) + rect.top;
         touchY = curY;
         touchX = curX;
 
@@ -612,6 +614,12 @@ public class DrawingView extends View {
         configureTransformationMatrix();
     }
 
+    public void setRotationDegree(float degree, boolean scaleZoomIn) {
+        this.rotationDegree = degree;
+        this.scaleWithZoom = scaleZoomIn;
+        configureTransformationMatrix();
+    }
+
     public void setTiltFactorX(float tiltFactorX) {
         this.tiltFactorX = tiltFactorX;
         configureTransformationMatrix();
@@ -625,6 +633,15 @@ public class DrawingView extends View {
     private void configureTransformationMatrix() {
         transformMatrix.setSkew(tiltFactorX, tiltFactorY, getWidth() / 2, getHeight() / 2);
         transformMatrix.postRotate(rotationDegree, getWidth() / 2, getHeight() / 2);
+        if (scaleWithZoom) {
+
+            currentScaleZoomFactor = DEFAULT_ROTATE_SCALE_FACTOR + Math.abs(rotationDegree * SCALE_DELTA);
+            transformMatrix.postScale(
+                    currentScaleZoomFactor,
+                    currentScaleZoomFactor,
+                    getWidth() / 2, getHeight() / 2
+            );
+        }
         invalidate();
     }
 
