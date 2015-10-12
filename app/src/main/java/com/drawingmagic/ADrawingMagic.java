@@ -120,8 +120,6 @@ public class ADrawingMagic extends SuperActivity implements OnPostingCompleteLis
     String rotateAngle;
 
 
-    private static final int MAXIMUM_ROTATION_DEGREE = 360;
-
     /**
      * BITMAP_ORIGIN -------> BITMAP_MODIFIED -------> (DrawingView, TransformView, GPUEffects, CropView)
      */
@@ -145,6 +143,7 @@ public class ADrawingMagic extends SuperActivity implements OnPostingCompleteLis
 
     @StringRes(R.string.effect_adjuster)
     String effectAdjuster;
+    private final int MAX_ROTATION_DEGREE_ONE_DIRECTION = 25;
 
 
     @AfterViews
@@ -192,8 +191,8 @@ public class ADrawingMagic extends SuperActivity implements OnPostingCompleteLis
         fragmentMenuRotation = FMenuAdjuster_.builder().
                 adjusterTitle(rotateAngle).
                 fragmentTitle(rotatePicture).
-                currentProgress(MAXIMUM_ROTATION_DEGREE >> 1).
-                progressMax(MAXIMUM_ROTATION_DEGREE).
+                currentProgress(MAX_ROTATION_DEGREE_ONE_DIRECTION).
+                progressMax(MAX_ROTATION_DEGREE_ONE_DIRECTION << 1).
                 finishedProgress(ON_FINISHED_ROTATION).
                 eventId(ON_ROTATE).build();
 
@@ -610,23 +609,8 @@ public class ADrawingMagic extends SuperActivity implements OnPostingCompleteLis
 
             case ON_ROTATE:
                 int progress = (int) event.payload;
-
-                switch (progress) {
-                    case 0: {
-                        progress = 180;
-                        break;
-                    }
-
-                    case 360: {
-                        progress = -180;
-                        break;
-                    }
-
-                    default:
-                        progress = progress > 180 ? progress % 180 : progress - 180;
-                        break;
-                }
-                setRotationDegree(progress);
+                int realProgress = progress - MAX_ROTATION_DEGREE_ONE_DIRECTION;
+                setRotationDegree(realProgress, true);
                 break;
 
 
@@ -647,6 +631,10 @@ public class ADrawingMagic extends SuperActivity implements OnPostingCompleteLis
 
     public void setRotationDegree(float degree) {
         drawingView.setRotationDegree(degree);
+    }
+
+    public void setRotationDegree(float degree, boolean zoomIn) {
+        drawingView.setRotationDegree(degree, zoomIn);
     }
 
 
