@@ -130,7 +130,7 @@ public class Social {
             initSocialManager(fragmentShare);
         }
 
-        VkSocialNetwork network = (VkSocialNetwork) socialNetworkManager.getSocialNetwork(networkId);
+        SocialNetwork network =  socialNetworkManager.getSocialNetwork(networkId);
         if (!network.isConnected()) {
             network.requestLogin();
             return;
