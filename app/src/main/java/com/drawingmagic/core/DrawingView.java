@@ -88,6 +88,7 @@ public class DrawingView extends View {
     private final ScaleGestureDetector mScaleDetector;
     private float scalePointX, scalePointY;
     // Max zoom value
+    private boolean isDrawingEnabled = true;
     private final static float MAX_ZOOM_FACTOR = 5.0f;
     private final static float MIN_ZOOM = 1.0f;
     // rotation factor
@@ -128,7 +129,9 @@ public class DrawingView extends View {
         mScaleDetector = new ScaleGestureDetector(this.getContext(), new ScaleListener());
     }
 
-
+    public void setDrawingEnabled(boolean enabled) {
+        this.isDrawingEnabled = enabled;
+    }
     public void setDrawingData(DrawingData drawingData) {
         this.drawingData = drawingData;
         // init brush's size, colour etc..
@@ -327,99 +330,100 @@ public class DrawingView extends View {
         float curY = event.getY() / (mScaleFactor * (currentScaleZoomFactor)) + rect.top;
         touchY = curY;
         touchX = curX;
+        if(isDrawingEnabled) {
+            // respond to down, move and up events
+            switch (event.getAction()) {
+                /**
+                 * User touched the canvas
+                 */
+                case MotionEvent.ACTION_DOWN:
+                    // user has touched canvas
+                    isFingerTouchingCanvas = true;
+                    touchDownX = curX;
+                    touchDownY = curY;
+                    if (drawingData.getShape().getCurrentShape() == ShapesType.STANDARD_DRAWING) {
+                        currentPath.moveTo(touchX, touchY);
 
-        // respond to down, move and up events
-        switch (event.getAction()) {
-            /**
-             * User touched the canvas
-             */
-            case MotionEvent.ACTION_DOWN:
-                // user has touched canvas
-                isFingerTouchingCanvas = true;
-                touchDownX = curX;
-                touchDownY = curY;
-                if (drawingData.getShape().getCurrentShape() == ShapesType.STANDARD_DRAWING) {
-                    currentPath.moveTo(touchX, touchY);
+                    }
+                    break;
 
-                }
-                break;
+                /**
+                 * User moving finger
+                 */
+                case MotionEvent.ACTION_MOVE:
+                    if (drawingData.getShape().getCurrentShape() == ShapesType.STANDARD_DRAWING) {
+                        currentPath.lineTo(touchX, touchY);
+                    }
+                    break;
 
-            /**
-             * User moving finger
-             */
-            case MotionEvent.ACTION_MOVE:
-                if (drawingData.getShape().getCurrentShape() == ShapesType.STANDARD_DRAWING) {
-                    currentPath.lineTo(touchX, touchY);
-                }
-                break;
-
-            /**
-             * User released finger from screen
-             */
-            case MotionEvent.ACTION_UP:
-                // indicates is user's finger is still touching canvas
-                isFingerTouchingCanvas = false;
-                PaintSerializable ps = new PaintSerializable();
-                ps.brushStrokeWith = currentPaint.getStrokeWidth();
-                ps.colour = currentPaint.getColor();
-                ps.isFillInside = currentPaint.isFillInside;
-                ps.isDashed = this.drawingData.getShape().getDashedState();
-
-
-                PathSerializable newPath = new PathSerializable();
-                newPath.setPaint(ps);
-                newPath.setSavedCanvasX(getWidth());
-                newPath.setSavedCanvasY(getHeight());
-
-                switch (drawingData.getShape().getCurrentShape()) {
-                    case ShapesType.STANDARD_DRAWING:
-                        currentPath.setPaint(ps);
-                        currentPath.setSavedCanvasX(getWidth());
-                        currentPath.setSavedCanvasY(getHeight());
-                        drawingData.paths.add(currentPath);
-                        // Re init path in order to separate every free drawing
-                        currentPath = new PathSerializable();
-                        break;
-
-                    case ShapesType.CIRCLE:
-                        rectangleOfDrawing.set(touchDownX, touchDownY, touchX, touchY);
-                        newPath.addOval(rectangleOfDrawing, Path.Direction.CW);
-                        newPath.setPaint(ps);
-                        drawingData.paths.add(newPath);
-                        break;
-
-                    case ShapesType.ARROW:
-                        drawingData.paths.add(calculateArrow(newPath));
-                        break;
-
-                    case ShapesType.LINE:
-                        drawingData.paths.add(calculateLine(newPath));
-                        break;
-
-                    case ShapesType.DRAW_TEXT:
-                        newPath.setDrawText(touchX - TEXT_SHIFT, touchY - TEXT_SHIFT, drawingData.getTextToDrawOnCanvas());
-                        drawingData.paths.add(newPath);
-                        drawingData.getShape().setCurrentShape(ShapesType.STANDARD_DRAWING);
-                        break;
-
-                    case ShapesType.TRIANGLE:
-                        drawingData.paths.add(calculateTriangle(newPath));
-                        break;
-
-                    case ShapesType.RECTANGLE:
-                        newPath.addRoundRect(calculateRectangle(), RECTANGLE_RADIUS, RECTANGLE_RADIUS, Path.Direction.CW);
-                        drawingData.paths.add(newPath);
-                        break;
-                    default:
-                        Log.e("MotionEvent.ACTION_UP Unknown SHAPE");
-                        break;
-                }
-                if (null != listener) this.listener.userHasReleasedFinger();
+                /**
+                 * User released finger from screen
+                 */
+                case MotionEvent.ACTION_UP:
+                    // indicates is user's finger is still touching canvas
+                    isFingerTouchingCanvas = false;
+                    PaintSerializable ps = new PaintSerializable();
+                    ps.brushStrokeWith = currentPaint.getStrokeWidth();
+                    ps.colour = currentPaint.getColor();
+                    ps.isFillInside = currentPaint.isFillInside;
+                    ps.isDashed = this.drawingData.getShape().getDashedState();
 
 
-            default:
-                // ignore rest of the events
-                break;
+                    PathSerializable newPath = new PathSerializable();
+                    newPath.setPaint(ps);
+                    newPath.setSavedCanvasX(getWidth());
+                    newPath.setSavedCanvasY(getHeight());
+
+                    switch (drawingData.getShape().getCurrentShape()) {
+                        case ShapesType.STANDARD_DRAWING:
+                            currentPath.setPaint(ps);
+                            currentPath.setSavedCanvasX(getWidth());
+                            currentPath.setSavedCanvasY(getHeight());
+                            drawingData.paths.add(currentPath);
+                            // Re init path in order to separate every free drawing
+                            currentPath = new PathSerializable();
+                            break;
+
+                        case ShapesType.CIRCLE:
+                            rectangleOfDrawing.set(touchDownX, touchDownY, touchX, touchY);
+                            newPath.addOval(rectangleOfDrawing, Path.Direction.CW);
+                            newPath.setPaint(ps);
+                            drawingData.paths.add(newPath);
+                            break;
+
+                        case ShapesType.ARROW:
+                            drawingData.paths.add(calculateArrow(newPath));
+                            break;
+
+                        case ShapesType.LINE:
+                            drawingData.paths.add(calculateLine(newPath));
+                            break;
+
+                        case ShapesType.DRAW_TEXT:
+                            newPath.setDrawText(touchX - TEXT_SHIFT, touchY - TEXT_SHIFT, drawingData.getTextToDrawOnCanvas());
+                            drawingData.paths.add(newPath);
+                            drawingData.getShape().setCurrentShape(ShapesType.STANDARD_DRAWING);
+                            break;
+
+                        case ShapesType.TRIANGLE:
+                            drawingData.paths.add(calculateTriangle(newPath));
+                            break;
+
+                        case ShapesType.RECTANGLE:
+                            newPath.addRoundRect(calculateRectangle(), RECTANGLE_RADIUS, RECTANGLE_RADIUS, Path.Direction.CW);
+                            drawingData.paths.add(newPath);
+                            break;
+                        default:
+                            Log.e("MotionEvent.ACTION_UP Unknown SHAPE");
+                            break;
+                    }
+                    if (null != listener) this.listener.userHasReleasedFinger();
+
+
+                default:
+                    // ignore rest of the events
+                    break;
+            }
         }
         // notify canvas that it should be redrawn
         invalidate();

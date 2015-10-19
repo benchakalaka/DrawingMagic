@@ -1,8 +1,8 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light">
+        <item name="android:actionBarStyle">@style/MyActionBar</item>
     </style>
 
     <style name="tilt_seek_bar_text_appearance" parent="android:TextAppearance.Small">
@@ -13,7 +13,9 @@
         <item name="android:shadowDx">1</item>
         <item name="android:shadowDy">3</item>
     </style>
-
+    <style name="MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">@color/default_ab_background_colour</item>
+    </style>
     <style name="colour_image">
         <item name="android:layout_width">40dp</item>
         <item name="android:layout_height">40dp</item>

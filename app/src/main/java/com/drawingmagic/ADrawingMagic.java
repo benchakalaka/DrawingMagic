@@ -148,7 +148,7 @@ public class ADrawingMagic extends SuperActivity implements OnPostingCompleteLis
 
     @AfterViews
     void afterViews() {
-        Utils.configureCustomActionBar(getActionBar(), ABS_.build(this).withRightMenu(ABSMenuApplyRestoreCancel_.build(this)).withMenuButton());
+        Utils.configureCustomActionBar(getSupportActionBar(), ABS_.build(this).withRightMenu(ABSMenuApplyRestoreCancel_.build(this)).withMenuButton());
 
         // init drawing view
         initDrawingView();
@@ -225,6 +225,7 @@ public class ADrawingMagic extends SuperActivity implements OnPostingCompleteLis
                                                                    drawingView.setVisibility(VISIBLE);
                                                                    gpuImage.setVisibility(GONE);
                                                                    cropImageView.setVisibility(GONE);
+                                                                   drawingView.setDrawingEnabled(true);
                                                                    getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, fragmentMenuDrawingTools).commit();
                                                                    break;
 
@@ -234,6 +235,7 @@ public class ADrawingMagic extends SuperActivity implements OnPostingCompleteLis
                                                                    drawingView.setVisibility(VISIBLE);
                                                                    gpuImage.setVisibility(GONE);
                                                                    cropImageView.setVisibility(GONE);
+                                                                   drawingView.setDrawingEnabled(false);
                                                                    drawingView.setGridType(GridType.NO_GRID);
                                                                    break;
 
@@ -241,6 +243,7 @@ public class ADrawingMagic extends SuperActivity implements OnPostingCompleteLis
                                                                    drawingView.setVisibility(GONE);
                                                                    gpuImage.setVisibility(VISIBLE);
                                                                    cropImageView.setVisibility(GONE);
+                                                                   drawingView.setDrawingEnabled(true);
                                                                    getSupportFragmentManager().beginTransaction().remove(fragmentMenuRotation).commit();
                                                                    getSupportFragmentManager().beginTransaction().remove(fragmentMenuSkew).commit();
                                                                    if (Conditions.isNotNull(currentFilter)) {
@@ -252,6 +255,7 @@ public class ADrawingMagic extends SuperActivity implements OnPostingCompleteLis
                                                                    drawingView.setVisibility(GONE);
                                                                    gpuImage.setVisibility(GONE);
                                                                    cropImageView.setVisibility(VISIBLE);
+                                                                   drawingView.setDrawingEnabled(true);
                                                                    cropImageView.setImageBitmap(BITMAP_MODIFIED);
                                                                    getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, fragmentMenuCropper).commit();
                                                                    break;

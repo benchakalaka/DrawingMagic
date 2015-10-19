@@ -34,7 +34,7 @@ public class AStart extends SuperActivity implements HooverMenuClickListener {
 
     @AfterViews
     void afterViews() {
-        Utils.configureCustomActionBar(getActionBar(), ABS_.build(this));
+        Utils.configureCustomActionBar(getSupportActionBar(), ABS_.build(this));
 
         BlurLayout.setGlobalDefaultDuration(DEFAULT_GLOBAL_BLUR_DURATION);
 

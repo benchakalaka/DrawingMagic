@@ -1,8 +1,6 @@
 package com.drawingmagic;
 
 import com.drawingmagic.eventbus.Event;
-import com.drawingmagic.utils.Utils;
-import com.drawingmagic.views.abs.ABS_;
 
 import org.androidannotations.annotations.EActivity;
 
