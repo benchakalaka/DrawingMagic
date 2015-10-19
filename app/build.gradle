@@ -54,13 +54,13 @@ android {
         maven { url "https://jitpack.io" }
     }
 
-    compileSdkVersion 21
+    compileSdkVersion 23
     buildToolsVersion "22.0.1"
 
     defaultConfig {
         applicationId "com.drawingmagic"
         minSdkVersion 15
-        targetSdkVersion 21
+        targetSdkVersion 23
         versionCode 1
         versionName "1.0"
         renderscriptTargetApi 19
@@ -118,8 +118,8 @@ dependencies {
     // Log
     compile 'com.mauriciotogneri:trail:1.0.0'
     // Abs
-    compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
-    compile 'com.android.support:support-v4:21.0.+'
+ //   compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
+    compile 'com.android.support:support-v4:+'
 
     // Floating btton
     compile 'com.github.clans:fab:1.6.1'
@@ -146,11 +146,14 @@ dependencies {
     compile 'com.daimajia.easing:library:1.0.0@aar'
     compile 'com.daimajia.androidanimations:library:1.1.2@aar'
     compile 'com.daimajia.androidviewhover:library:1.0.4@aar'
+    compile 'com.android.support:appcompat-v7:+'
+
     // Toast notification
     compile('com.github.Pierry:SimpleToast:v1.6') {
         exclude group: 'com.android.support', module: 'appcompat-v7'
     }
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.github.ViksaaSkool:AwesomeSplash:v1.0.0'
 }
 
 apt {

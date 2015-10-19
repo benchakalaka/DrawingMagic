@@ -148,7 +148,7 @@ public class ADrawingMagic extends SuperActivity implements OnPostingCompleteLis
 
     @AfterViews
     void afterViews() {
-        Utils.configureCustomActionBar(getActionBar(), ABS_.build(this).withRightMenu(ABSMenuApplyRestoreCancel_.build(this)).withMenuButton());
+        Utils.configureCustomActionBar(getSupportActionBar(), ABS_.build(this).withRightMenu(ABSMenuApplyRestoreCancel_.build(this)).withMenuButton());
 
         // init drawing view
         initDrawingView();
