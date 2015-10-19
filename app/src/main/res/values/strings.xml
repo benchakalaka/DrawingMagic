@@ -61,8 +61,8 @@
     <string name="cga_color_space">CGA Color Space</string>
     <string name="dilation">Dilation</string>
     <string name="kuwahara">Kuwahara</string>
-    <string name="rgb_dilation">Tilt</string>
-    <string name="sketch">RGB Dilation</string>
+    <string name="rgb_dilation">RGB Dilation</string>
+    <string name="sketch">Sketch</string>
     <string name="toon">Toon</string>
     <string name="smooth_toon">Smooth Toon</string>
     <string name="buldge_distortion">Bulge Distortion</string>

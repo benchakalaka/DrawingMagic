@@ -13,7 +13,6 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.SeekBarProgressChange;
-import org.androidannotations.annotations.SeekBarTouchStop;
 import org.androidannotations.annotations.ViewById;
 
 import de.greenrobot.event.EventBus;
@@ -91,8 +90,10 @@ public class FMenuAdjuster extends Fragment {
 
 
     @SeekBarProgressChange
-    void sBar(int progress) {
-        EventBus.getDefault().post(new Event(eventId, progress));
+    void sBar(int progress,boolean fromUser) {
+        if(fromUser) {
+            EventBus.getDefault().post(new Event(eventId, progress));
+        }
     }
 
 //    @SeekBarTouchStop

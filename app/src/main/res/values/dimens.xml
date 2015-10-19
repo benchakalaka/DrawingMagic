@@ -8,5 +8,7 @@
     <dimen name="stick_size">144dp</dimen>
     <dimen name="default_menu_icons_size">30sp</dimen>
     <dimen name="transform_canvas_icon_size">40sp</dimen>
+    <dimen name="margin_effect_preview_description_top">15dp</dimen>
+
 
 </resources>

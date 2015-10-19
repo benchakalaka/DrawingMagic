@@ -21,12 +21,14 @@
     <TextView
         android:id="@+id/tvDescription"
         android:layout_width="wrap_content"
+        android:layout_marginTop="@dimen/margin_effect_preview_description_top"
         android:layout_height="wrap_content"
         android:layout_below="@+id/mivImage"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
         android:singleLine="true"
+        android:textStyle="italic"
         android:text="sadasd"
-        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/default_text_colour" />
 </RelativeLayout>
