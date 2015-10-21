@@ -5,8 +5,10 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.drawingmagic.R;
+import com.drawingmagic.SuperActivity;
 import com.drawingmagic.eventbus.Event;
 import com.drawingmagic.utils.AnimationUtils;
+import com.drawingmagic.utils.Utils;
 
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;

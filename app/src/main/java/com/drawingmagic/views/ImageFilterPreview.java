@@ -5,7 +5,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.drawingmagic.R;
+import com.drawingmagic.core.GPUImageFilterTools;
 import com.drawingmagic.eventbus.Event;
+import com.drawingmagic.fragments.FEffectsTools;
 import com.drawingmagic.helpers.FilterItemHolder;
 import com.drawingmagic.utils.AnimationUtils;
 import com.drawingmagic.utils.Log;
@@ -18,8 +20,6 @@ import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
 
 import de.greenrobot.event.EventBus;
-
-import static net.steamcrafted.materialiconlib.MaterialDrawableBuilder.IconValue;
 
 /**
  * Project DrawingMagic.
@@ -35,7 +35,7 @@ public class ImageFilterPreview extends RelativeLayout {
     TextView tvDescription;
 
     @ViewById
-    MaterialIconView mivImage;
+    MaterialIconView mivImage, mivIsAdjustable;
 
     @ViewById
     RelativeLayout rlRoot;
@@ -46,16 +46,18 @@ public class ImageFilterPreview extends RelativeLayout {
         this.filterDescriptor = filterItem;
     }
 
-    public void setUpView(FilterItemHolder filterItem) {
+    public ImageFilterPreview setItem(FilterItemHolder filterItem) {
         this.filterDescriptor = filterItem;
         afterViews();
+        return this;
     }
 
 
     @AfterViews
     void afterViews() {
         tvDescription.setText(filterDescriptor.getFilterName());
-        mivImage.setIcon(IconValue.XBOX_CONTROLLER);
+        mivImage.setIcon(FEffectsTools.FILTERS_MAP.get(filterDescriptor));
+        mivIsAdjustable.setVisibility(new GPUImageFilterTools.FilterAdjuster(GPUImageFilterTools.createFilterForType(getContext(), this.filterDescriptor.getFilter())).canAdjust() ? VISIBLE : GONE);
         Log.e("Create preview for Filter : " + filterDescriptor.getFilterName());
     }
 

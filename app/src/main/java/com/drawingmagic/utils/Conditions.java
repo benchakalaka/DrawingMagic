@@ -5,6 +5,7 @@
 package com.drawingmagic.utils;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -23,6 +24,16 @@ public class Conditions {
      */
     public static boolean isNullOrEmpty(Set<?> jArray) {
         return (isNull(jArray)) || (jArray.isEmpty());
+    }
+
+    /**
+     * Check map to null or empty value
+     *
+     * @param map list to be checked
+     * @return true if map is null or empty, false otherwise
+     */
+    public static boolean isNullOrEmpty(Map<?, ?> map) {
+        return (isNull(map)) || (map.isEmpty());
     }
 
     /**
