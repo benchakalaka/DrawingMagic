@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFCCCCCC"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/facebook"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="8dp"
+        android:background="#3b5998"
+        android:text="Login via Facebook"
+        android:textColor="#ffffffff" />
+
+    <Button
+        android:id="@+id/twitter"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="8dp"
+        android:background="#55ACEE"
+        android:text="Login via Twitter"
+        android:textColor="#ffffffff" />
+
+    <Button
+        android:id="@+id/linkedin"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="8dp"
+        android:background="#287bbc"
+        android:text="Login via LinkedIn"
+        android:textColor="#ffffffff" />
+
+    <Button
+        android:id="@+id/googleplus"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="8dp"
+        android:background="#D34836"
+        android:text="Login via GooglePlus"
+        android:textColor="#ffffffff" />
+</LinearLayout>
