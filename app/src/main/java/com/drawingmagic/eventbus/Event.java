@@ -32,6 +32,7 @@ public final class Event {
     public static final int ON_APPLY_DRAWING_ON_CANVAS = 25;
     public static final int ON_RESTORE_IMAGE_BEFORE_DRAWING = 26;
     public static final int FLIP = 27;
+    public static final int MIRROR = 28;
 
 
     /**
@@ -123,10 +124,8 @@ public final class Event {
                 return getClass().getCanonicalName() + " ON_RESTORE_IMAGE_BEFORE_DRAWING";
             case FLIP:
                 return getClass().getCanonicalName() + " FLIP";
-
-
-//            case FLIP_HORIZONTAL:
-//                return getClass().getCanonicalName() + " FLIP_HORIZONTAL";
+            case MIRROR:
+                return getClass().getCanonicalName() + " MIRROR";
 //            case FLIP_HORIZONTAL:
 //                return getClass().getCanonicalName() + " FLIP_HORIZONTAL";
 //            case FLIP_HORIZONTAL:

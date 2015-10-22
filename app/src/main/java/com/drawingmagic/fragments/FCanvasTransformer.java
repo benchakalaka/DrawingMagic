@@ -19,6 +19,8 @@ import static com.drawingmagic.eventbus.Event.ON_SKEW_TRANSFORMATION;
 import static com.drawingmagic.utils.AnimationUtils.AnimationTechniques.FADE_IN;
 import static com.drawingmagic.utils.GraphicUtils.FLIP_HORIZONTAL;
 import static com.drawingmagic.utils.GraphicUtils.FLIP_VERTICAL;
+import static com.drawingmagic.utils.GraphicUtils.MIRROR_HORIZONTAL;
+import static com.drawingmagic.utils.GraphicUtils.MIRROR_VERTICAL;
 
 /**
  * Project DrawingMagic.
@@ -29,7 +31,7 @@ import static com.drawingmagic.utils.GraphicUtils.FLIP_VERTICAL;
 public class FCanvasTransformer extends Fragment {
 
     @ViewById
-    RelativeLayout rlRotate, rlSkew, rlFlipHorizontal, rlFlipVertical;
+    RelativeLayout rlRotate, rlSkew, rlFlipHorizontal, rlFlipVertical, rlMirrorHorizontal, rlMirrorVertical;
 
     public FCanvasTransformer() {
     }
@@ -57,4 +59,17 @@ public class FCanvasTransformer extends Fragment {
         AnimationUtils.animate(rlFlipVertical, FADE_IN);
         EventBus.getDefault().post(new Event(FLIP, FLIP_VERTICAL));
     }
+
+    @Click
+    void rlMirrorHorizontal() {
+        AnimationUtils.animate(rlMirrorHorizontal, FADE_IN);
+        EventBus.getDefault().post(new Event(Event.MIRROR, MIRROR_HORIZONTAL));
+    }
+
+    @Click
+    void rlMirrorVertical() {
+        AnimationUtils.animate(rlMirrorVertical, FADE_IN);
+        EventBus.getDefault().post(new Event(Event.MIRROR, MIRROR_VERTICAL));
+    }
+
 }

@@ -22,6 +22,7 @@ import com.drawingmagic.fragments.FMenuDrawingTools_;
 import com.drawingmagic.fragments.FTiltFragmentController_;
 import com.drawingmagic.helpers.FilterItemHolder;
 import com.drawingmagic.utils.Conditions;
+import com.drawingmagic.utils.GraphicUtils;
 import com.drawingmagic.utils.Log;
 import com.drawingmagic.utils.Notification;
 import com.drawingmagic.utils.Utils;
@@ -56,6 +57,8 @@ import static com.drawingmagic.adapters.ViewPagerAdapter.EFFECTS_TOOLS_FRAGMENT;
 import static com.drawingmagic.core.DrawingView.GridType;
 import static com.drawingmagic.core.DrawingView.OnTouchCanvasCallback;
 import static com.drawingmagic.core.DrawingView.ShapesType;
+import static com.drawingmagic.eventbus.Event.FLIP;
+import static com.drawingmagic.eventbus.Event.MIRROR;
 import static com.drawingmagic.eventbus.Event.ON_ABS_MENU_APPLY;
 import static com.drawingmagic.eventbus.Event.ON_ABS_MENU_CANCEL;
 import static com.drawingmagic.eventbus.Event.ON_ABS_MENU_CLICKED;
@@ -63,6 +66,7 @@ import static com.drawingmagic.eventbus.Event.ON_ABS_MENU_RESTORE;
 import static com.drawingmagic.eventbus.Event.ON_ADJUSTER_VALUE_CHANGED;
 import static com.drawingmagic.eventbus.Event.ON_ADJUST_FILTER_LEVEL;
 import static com.drawingmagic.eventbus.Event.ON_APPLY_CROPPING;
+import static com.drawingmagic.eventbus.Event.ON_APPLY_DRAWING_ON_CANVAS;
 import static com.drawingmagic.eventbus.Event.ON_APPLY_EFFECT;
 import static com.drawingmagic.eventbus.Event.ON_CHANGE_CROPPING_SHAPE;
 import static com.drawingmagic.eventbus.Event.ON_CLEAR_CANVAS;
@@ -70,6 +74,7 @@ import static com.drawingmagic.eventbus.Event.ON_FINAL_SAVE_IMAGE;
 import static com.drawingmagic.eventbus.Event.ON_FINISHED_ROTATION;
 import static com.drawingmagic.eventbus.Event.ON_REDO;
 import static com.drawingmagic.eventbus.Event.ON_RESTORE_IMAGE_BEFORE_CROPPING;
+import static com.drawingmagic.eventbus.Event.ON_RESTORE_IMAGE_BEFORE_DRAWING;
 import static com.drawingmagic.eventbus.Event.ON_ROTATE;
 import static com.drawingmagic.eventbus.Event.ON_ROTATE_TRANSFORMATION;
 import static com.drawingmagic.eventbus.Event.ON_SKEW_TRANSFORMATION;
@@ -81,6 +86,8 @@ import static com.drawingmagic.utils.AnimationUtils.AnimationTechniques.FLIP_IN_
 import static com.drawingmagic.utils.AnimationUtils.animateSlow;
 import static com.drawingmagic.utils.GraphicUtils.FLIP_HORIZONTAL;
 import static com.drawingmagic.utils.GraphicUtils.FLIP_VERTICAL;
+import static com.drawingmagic.utils.GraphicUtils.MIRROR_HORIZONTAL;
+import static com.drawingmagic.utils.GraphicUtils.MIRROR_VERTICAL;
 import static com.drawingmagic.utils.GraphicUtils.decodeSampledBitmapFromResource;
 import static com.drawingmagic.utils.GraphicUtils.flip;
 import static com.drawingmagic.utils.GraphicUtils.saveImageToGallery;
@@ -515,20 +522,34 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
         animateSlow(drawingView, direction == FLIP_HORIZONTAL ? FADE_IN : FLIP_IN_X);
     }
 
+    private void mirrorImage(int direction) {
+        if (direction == MIRROR_VERTICAL) {
+            drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(GraphicUtils.applyReflection(drawingView.getDrawingData().getCanvasBitmap())).build());
+        }
+
+        if (direction == MIRROR_HORIZONTAL) {
+            drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(GraphicUtils.applyReflection(drawingView.getDrawingData().getCanvasBitmap(), MIRROR_HORIZONTAL)).build());
+        }
+    }
+
 
     @Override
     public void onEventMainThread(Event event) {
         Log.e(event.toString());
         switch (event.type) {
-            case Event.FLIP:
+            case FLIP:
                 flipImage((int) event.payload);
                 break;
 
-            case Event.ON_RESTORE_IMAGE_BEFORE_DRAWING:
+            case MIRROR:
+                mirrorImage((int) event.payload);
+                break;
+
+            case ON_RESTORE_IMAGE_BEFORE_DRAWING:
                 restoreOriginalImageBeforeTransformation();
                 break;
 
-            case Event.ON_APPLY_DRAWING_ON_CANVAS:
+            case ON_APPLY_DRAWING_ON_CANVAS:
                 onApplyImageTransformationChanges();
                 break;
 

@@ -110,6 +110,8 @@
     <string name="effect_adjuster">Effect adjuster</string>
     <string name="flip_vertical">Flip vertical</string>
     <string name="flip_horizontal">Flip horizontal</string>
+    <string name="mirror_horizontal">Mirror horizontally</string>
+    <string name="mirror_vertical">Mirror verticaly</string>
     <!-- FILTERS -->
 
 
