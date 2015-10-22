@@ -108,6 +108,8 @@
     <string name="rectangle">Rectangle</string>
     <string name="oval">Oval</string>
     <string name="effect_adjuster">Effect adjuster</string>
+    <string name="flip_vertical">Flip vertical</string>
+    <string name="flip_horizontal">Flip horizontal</string>
     <!-- FILTERS -->
 
 

@@ -97,8 +97,7 @@ dependencies {
     // Android annotations
     apt 'org.androidannotations:androidannotations:3.2'
     compile 'org.androidannotations:androidannotations-api:3.2'
-    // Joystick for rotation of View
-    compile 'com.jmedeisis:bugstick:0.2.1'
+   
     // View pager spring indicator
     compile 'com.github.chenupt.android:springindicator:1.0.2@aar'
     // Image processing effect

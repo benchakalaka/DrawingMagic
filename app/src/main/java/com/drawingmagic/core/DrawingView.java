@@ -81,9 +81,6 @@ public class DrawingView extends View {
     public static final int DEFAULT_BRUSH_SIZE = 5;
     // Default text size
     public static final int DEFAULT_TEXT_SIZE = 30;
-    // Flip type direction
-    public static final int FLIP_VERTICAL = 1;
-    public static final int FLIP_HORIZONTAL = 2;
     // Scaling objects
     private final ScaleGestureDetector mScaleDetector;
     private float scalePointX, scalePointY;
@@ -132,6 +129,7 @@ public class DrawingView extends View {
     public void setDrawingEnabled(boolean enabled) {
         this.isDrawingEnabled = enabled;
     }
+
     public void setDrawingData(DrawingData drawingData) {
         this.drawingData = drawingData;
         // init brush's size, colour etc..
@@ -154,28 +152,6 @@ public class DrawingView extends View {
         }
     }
 
-    public static Bitmap flip(Bitmap src, int type) {
-        // create new matrix for transformation
-        Matrix matrix = new Matrix();
-        // if vertical
-        if (type == FLIP_VERTICAL) {
-            // y = y * -1
-            matrix.preScale(1.0f, -1.0f);
-        }
-        // if horizontal
-        else if (type == FLIP_HORIZONTAL) {
-            // x = x * -1
-            matrix.preScale(-1.0f, 1.0f);
-            // unknown type
-        } else {
-            return null;
-        }
-
-        // return transformed image
-        return Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), matrix, true);
-    }
-
-
     /**
      * onDraw will be called after any touch event or invalidating drawing surface
      */
@@ -183,9 +159,6 @@ public class DrawingView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
-        // already implemented
-        // flip()
 
         canvas.setMatrix(transformMatrix);
         canvas.drawColor(Color.BLACK);
@@ -330,7 +303,7 @@ public class DrawingView extends View {
         float curY = event.getY() / (mScaleFactor * (currentScaleZoomFactor)) + rect.top;
         touchY = curY;
         touchX = curX;
-        if(isDrawingEnabled) {
+        if (isDrawingEnabled) {
             // respond to down, move and up events
             switch (event.getAction()) {
                 /**

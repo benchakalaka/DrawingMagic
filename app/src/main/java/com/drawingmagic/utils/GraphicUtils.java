@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.provider.MediaStore;
 import android.text.TextUtils;
@@ -16,6 +17,32 @@ import android.text.TextUtils;
  * Datascope Systems Ltd.
  */
 public class GraphicUtils {
+
+    // Flip type direction
+    public static final int FLIP_VERTICAL = 1;
+    public static final int FLIP_HORIZONTAL = 2;
+
+
+    public static Bitmap flip(Bitmap src, int type) {
+        // create new matrix for transformation
+        Matrix matrix = new Matrix();
+        // if vertical
+        if (type == FLIP_VERTICAL) {
+            // y = y * -1
+            matrix.preScale(1.0f, -1.0f);
+        }
+        // if horizontal
+        else if (type == FLIP_HORIZONTAL) {
+            // x = x * -1
+            matrix.preScale(-1.0f, 1.0f);
+            // unknown type
+        } else {
+            return null;
+        }
+
+        // return transformed image
+        return Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), matrix, true);
+    }
 
 
     /**
@@ -72,8 +99,6 @@ public class GraphicUtils {
         p.setColor(selectionColour);
         c.drawCircle(circleBitmap.getWidth() - bitmapW / 2, circleBitmap.getHeight() - bitmapH / 2, bitmapW / 2 - 5, p);
 
-        //p.setColor(colour);
-        //c.drawCircle(circleBitmap.getWidth() - bitmapW / 2, circleBitmap.getHeight() - bitmapH / 2, bitmapW / 2 - 10, p);
         return circleBitmap;
     }
 
