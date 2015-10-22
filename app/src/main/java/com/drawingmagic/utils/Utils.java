@@ -2,6 +2,7 @@ package com.drawingmagic.utils;
 
 import android.app.Dialog;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -13,12 +14,33 @@ import android.view.Window;
 import com.drawingmagic.R;
 import com.drawingmagic.SuperActivity;
 
+import static android.content.Intent.ACTION_SEND;
+import static android.content.Intent.EXTRA_STREAM;
+import static android.content.Intent.EXTRA_SUBJECT;
+import static android.content.Intent.EXTRA_TEXT;
+import static android.content.Intent.createChooser;
+
 /**
  * Project DrawingMagic.
  * Created by ihorkarpachev.
  * On 14/09/15 at 13:40.
  */
 public class Utils {
+
+    /**
+     * Share image via existing social networks or email
+     *
+     * @param activityHost host activity
+     * @param uriPath      path to image
+     */
+    public static void shareImage(SuperActivity activityHost, String uriPath) {
+        Intent sharingIntent = new Intent(ACTION_SEND);
+        sharingIntent.setType("application/octet-stream");
+        sharingIntent.setType("image/png");
+        sharingIntent.putExtra(EXTRA_SUBJECT, "Drawing App");
+        sharingIntent.putExtra(EXTRA_TEXT, "This is the text that will be shared.").putExtra(EXTRA_STREAM, Uri.parse(uriPath));
+        activityHost.startActivity(createChooser(sharingIntent, "Share image using"));
+    }
 
     /**
      * Configure dialog and return it

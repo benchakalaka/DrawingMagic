@@ -3,12 +3,13 @@ package com.drawingmagic;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.PointF;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.view.MotionEvent;
 import android.widget.FrameLayout;
 
-import com.ToxicBakery.viewpager.transforms.CubeOutTransformer;
 import com.drawingmagic.adapters.ViewPagerAdapter;
 import com.drawingmagic.core.DrawingSettings;
 import com.drawingmagic.core.DrawingView;
@@ -20,8 +21,6 @@ import com.drawingmagic.fragments.FMenuCropper_;
 import com.drawingmagic.fragments.FMenuDrawingTools_;
 import com.drawingmagic.fragments.FTiltFragmentController_;
 import com.drawingmagic.helpers.FilterItemHolder;
-import com.drawingmagic.social.FragmentShare_;
-import com.drawingmagic.social.Social;
 import com.drawingmagic.utils.Conditions;
 import com.drawingmagic.utils.GraphicUtils;
 import com.drawingmagic.utils.Log;
@@ -29,23 +28,22 @@ import com.drawingmagic.utils.Notification;
 import com.drawingmagic.utils.Utils;
 import com.drawingmagic.views.ABSMenuApplyRestoreCancel_;
 import com.drawingmagic.views.abs.ABS_;
-import com.github.gorbin.asne.core.SocialNetwork;
-import com.github.gorbin.asne.core.listener.OnLoginCompleteListener;
-import com.github.gorbin.asne.core.listener.OnPostingCompleteListener;
-import com.github.gorbin.asne.vk.VkSocialNetwork;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OnActivityResult;
+import org.androidannotations.annotations.Touch;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.StringRes;
 
 import java.io.File;
 
 import github.chenupt.springindicator.SpringIndicator;
+import jp.co.cyberagent.android.gpuimage.GPUImageBulgeDistortionFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
+import jp.co.cyberagent.android.gpuimage.GPUImageSwirlFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageView;
 
 import static android.graphics.Bitmap.Config;
@@ -79,13 +77,11 @@ import static com.drawingmagic.eventbus.Event.ON_SKEW_TRANSFORMATION;
 import static com.drawingmagic.eventbus.Event.ON_TILT_FACTOR_X_CHANGED;
 import static com.drawingmagic.eventbus.Event.ON_TILT_FACTOR_Y_CHANGED;
 import static com.drawingmagic.eventbus.Event.ON_UNDO;
-import static com.drawingmagic.eventbus.Event.SHARE_VK;
 import static com.drawingmagic.utils.GraphicUtils.decodeSampledBitmapFromResource;
 import static com.drawingmagic.views.HoverView.DRAWING_CACHE_QUALITY_HIGH;
 import static com.drawingmagic.views.HoverView.MENU_ITEM_CAMERA;
 import static com.drawingmagic.views.HoverView.MENU_ITEM_EMPTY_CANVAS;
 import static com.drawingmagic.views.HoverView.MENU_ITEM_GALLERY;
-import static com.github.gorbin.asne.core.SocialNetworkManager.OnInitializationCompleteListener;
 import static com.theartofdev.edmodo.cropper.CropImageView.CropShape;
 import static jp.co.cyberagent.android.gpuimage.GPUImage.ScaleType.CENTER_INSIDE;
 import static jp.co.cyberagent.android.gpuimage.GPUImageView.OnPictureSavedListener;
@@ -96,7 +92,7 @@ import static jp.co.cyberagent.android.gpuimage.GPUImageView.OnPictureSavedListe
  * On 13/09/15 at 17:44.
  */
 @EActivity(R.layout.activity_drawing_magic)
-public class ADrawingMagic extends SuperActivity implements OnPostingCompleteListener, OnChangeDrawingSettingsListener, OnPictureSavedListener, OnTouchCanvasCallback, OnInitializationCompleteListener, OnLoginCompleteListener {
+public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSettingsListener, OnPictureSavedListener, OnTouchCanvasCallback {
 
     @ViewById
     DrawingView drawingView;
@@ -139,7 +135,7 @@ public class ADrawingMagic extends SuperActivity implements OnPostingCompleteLis
     private GPUImageFilterTools.FilterAdjuster filterAdjuster;
     // TODO: 27/09/15 Change names of fragments for adjusting as menu
     // Transformation/Menu fragments
-    Fragment fShare, fragmentMenuRotation, fragmentMenuSkew, fragmentMenuDrawingTools, fragmentMenuAdjustEffectLevel, fragmentMenuCropper;
+    Fragment fragmentMenuRotation, fragmentMenuSkew, fragmentMenuDrawingTools, fragmentMenuAdjustEffectLevel, fragmentMenuCropper;
 
     @StringRes(R.string.effect_adjuster)
     String effectAdjuster;
@@ -199,7 +195,8 @@ public class ADrawingMagic extends SuperActivity implements OnPostingCompleteLis
         fragmentMenuSkew = new FTiltFragmentController_();
 
         // Set clearing tools as a first
-        getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, fragmentMenuDrawingTools).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.flFragmentHolder, fragmentMenuDrawingTools).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.flFragmentHolder, fragmentMenuRotation).commit();
     }
 
 
@@ -208,9 +205,7 @@ public class ADrawingMagic extends SuperActivity implements OnPostingCompleteLis
      */
     private void initViewPager() {
         viewPager.setAdapter(viewPagerAdapter);
-        // // TODO: 24/09/2015 replace magic number
-        viewPager.setOffscreenPageLimit(3);
-        viewPager.setPageTransformer(true, new CubeOutTransformer());
+        viewPager.setOffscreenPageLimit(viewPagerAdapter.getCount());
         viewPagerIndicator.setViewPager(viewPager);
         viewPagerIndicator.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                                                        @Override
@@ -226,12 +221,14 @@ public class ADrawingMagic extends SuperActivity implements OnPostingCompleteLis
                                                                    gpuImage.setVisibility(GONE);
                                                                    cropImageView.setVisibility(GONE);
                                                                    drawingView.setDrawingEnabled(true);
-                                                                   getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, fragmentMenuDrawingTools).commit();
+                                                                   getSupportFragmentManager().beginTransaction().hide(fragmentMenuRotation).commit();
+                                                                   getSupportFragmentManager().beginTransaction().show(fragmentMenuDrawingTools).commit();
                                                                    break;
 
                                                                case CANVAS_TRANSFORMER_FRAGMENT:
                                                                    // TODO: 27/09/15 Remember selected transform tools and display this fragment
-                                                                   getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, fragmentMenuRotation).commit();
+                                                                   getSupportFragmentManager().beginTransaction().show(fragmentMenuRotation).commit();
+                                                                   getSupportFragmentManager().beginTransaction().hide(fragmentMenuDrawingTools).commit();
                                                                    drawingView.setVisibility(VISIBLE);
                                                                    gpuImage.setVisibility(GONE);
                                                                    cropImageView.setVisibility(GONE);
@@ -413,18 +410,6 @@ public class ADrawingMagic extends SuperActivity implements OnPostingCompleteLis
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(Social.SOCIAL_NETWORK_TAG);
-
-        if (Conditions.isNotNull(fragment)) {
-            getSupportFragmentManager().beginTransaction().add(R.id.container, fShare).commit();
-            fragment.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
-
     @OnActivityResult(REQUEST_PICK_IMAGE)
     void onResult(int resultCode, final Intent data) {
 
@@ -455,6 +440,31 @@ public class ADrawingMagic extends SuperActivity implements OnPostingCompleteLis
             ex.printStackTrace();
         }
         gpuImage.setImage(data.getData());
+
+    }
+
+    @Touch
+    void gpuImage(MotionEvent motionEvent) {
+        switch (motionEvent.getAction()) {
+            case MotionEvent.ACTION_MOVE:
+            case MotionEvent.ACTION_DOWN:
+                // TODO: Replace weird shift
+                float x = (motionEvent.getX() / 1000f) + 0.2f;
+                float y = (motionEvent.getY() / 1000f) + 0.2f;
+                if (currentFilter instanceof GPUImageSwirlFilter) {
+                    ((GPUImageSwirlFilter) currentFilter).setCenter(new PointF(x, y));
+                }
+
+                if (currentFilter instanceof GPUImageBulgeDistortionFilter) {
+                    ((GPUImageBulgeDistortionFilter) currentFilter).setCenter(new PointF(x, y));
+                }
+                Log.e(String.format("x:%s y:%s", x, y));
+                gpuImage.requestRender();
+
+                break;
+        }
+
+        // Something Here
     }
 
 
@@ -480,7 +490,9 @@ public class ADrawingMagic extends SuperActivity implements OnPostingCompleteLis
         //// TODO: 05/10/2015 String to resources
         String fileName = String.format("Drawing magic %s", System.currentTimeMillis() + ".jpg");
         Bitmap finalImage = cropImageView.getCropShape() == CropShape.RECTANGLE ? cropImageView.getCroppedImage() : cropImageView.getCroppedOvalImage();
-        Notification.showSuccess(this, "Successfully saved " + GraphicUtils.saveImageToGallery(getContentResolver(), finalImage, fileName, "Drawing Magic"));
+        String savedToPath = GraphicUtils.saveImageToGallery(getContentResolver(), finalImage, fileName, "Drawing Magic");
+        Utils.shareImage(this, savedToPath);
+        Notification.showSuccess(this, String.format("Successfully saved to %s", savedToPath));
     }
 
     @Override
@@ -500,11 +512,6 @@ public class ADrawingMagic extends SuperActivity implements OnPostingCompleteLis
 
             case Event.ON_APPLY_DRAWING_ON_CANVAS:
                 onApplyImageTransformationChanges();
-                break;
-
-            case SHARE_VK:
-                fShare = FragmentShare_.builder().networkId(VkSocialNetwork.ID).build();
-                getSupportFragmentManager().beginTransaction().add(R.id.container, fShare).commit();
                 break;
 
             case ON_FINAL_SAVE_IMAGE:
@@ -643,30 +650,6 @@ public class ADrawingMagic extends SuperActivity implements OnPostingCompleteLis
     @Override
     public void userHasReleasedFinger() {
         //onApplyImageTransformationChanges();
-    }
-
-    @Override
-    public void onSocialNetworkManagerInitialized() {
-        //when init SocialNetworks - get and setup login only for initialized SocialNetworks
-        for (SocialNetwork socialNetwork : Social.getInitializedSocialNetworks()) {
-            socialNetwork.setOnLoginCompleteListener(this);
-            Log.e("Social network initializaed");
-            //initSocialNetwork(socialNetwork);
-        }
-    }
-
-    @Override
-    public void onLoginSuccess(int socialNetworkID) {
-    }
-
-    @Override
-    public void onError(int socialNetworkID, String requestID, String errorMessage, Object data) {
-        Notification.showError(this, errorMessage);
-    }
-
-    @Override
-    public void onPostSuccessfully(int socialNetworkID) {
-        Notification.showSuccess(this, "Successfully posted");
     }
 }
 

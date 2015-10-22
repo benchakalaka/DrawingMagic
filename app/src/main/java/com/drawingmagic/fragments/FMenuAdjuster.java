@@ -91,9 +91,9 @@ public class FMenuAdjuster extends Fragment {
 
     @SeekBarProgressChange
     void sBar(int progress,boolean fromUser) {
-        if(fromUser) {
+      //  if(fromUser) {
             EventBus.getDefault().post(new Event(eventId, progress));
-        }
+      //  }
     }
 
 //    @SeekBarTouchStop

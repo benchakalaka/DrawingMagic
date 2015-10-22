@@ -10,6 +10,10 @@ import com.drawingmagic.core.GPUImageFilterTools;
  */
 public class FilterItemHolder {
 
+    private final String filterName;
+    private final GPUImageFilterTools.FilterType filter;
+
+
     public FilterItemHolder(String filterName, GPUImageFilterTools.FilterType filter) {
         this.filterName = filterName;
         this.filter = filter;
@@ -19,11 +23,8 @@ public class FilterItemHolder {
         return filterName;
     }
 
-    private final String filterName;
 
     public GPUImageFilterTools.FilterType getFilter() {
         return filter;
     }
-
-    private final GPUImageFilterTools.FilterType filter;
 }

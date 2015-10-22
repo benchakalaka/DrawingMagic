@@ -9,7 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="20dp"
-        android:background="@color/black" />
+        android:background="@color/default_background_colour"
+        android:contentDescription="@null" />
 
     <com.github.clans.fab.FloatingActionButton
         android:id="@+id/fabSave"

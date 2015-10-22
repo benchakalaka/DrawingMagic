@@ -4,9 +4,22 @@
     android:id="@+id/rlRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="3dp"
     android:background="@color/default_transparency"
-    android:padding="3dp"
-    android:layout_margin="3dp">
+    android:padding="3dp">
+
+    <net.steamcrafted.materialiconlib.MaterialIconView
+        android:id="@+id/mivIsAdjustable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="2dp"
+        android:scaleType="center"
+        app:materialIcon="arrow_down_bold_circle"
+        app:materialIconColor="@color/deep_green"
+        app:materialIconSize="@dimen/small_icon_size" />
 
     <net.steamcrafted.materialiconlib.MaterialIconView
         android:id="@+id/mivImage"
@@ -21,14 +34,14 @@
     <TextView
         android:id="@+id/tvDescription"
         android:layout_width="wrap_content"
-        android:layout_marginTop="@dimen/margin_effect_preview_description_top"
         android:layout_height="wrap_content"
         android:layout_below="@+id/mivImage"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/margin_effect_preview_description_top"
         android:singleLine="true"
-        android:textStyle="italic"
         android:text="sadasd"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/default_text_colour" />
+        android:textColor="@color/default_text_colour"
+        android:textStyle="italic" />
 </RelativeLayout>
