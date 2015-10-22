@@ -46,7 +46,7 @@ public class GraphicUtils {
 
         // this will not scale but will flip on the Y axis
         Matrix matrix = new Matrix();
-        matrix.preScale(-1, 1);
+        matrix.preScale(-1, -1);
 
         // create a Bitmap with the flip matrix applied to it.
         // we only want the bottom half of the image
@@ -62,14 +62,13 @@ public class GraphicUtils {
         canvas.drawBitmap(originalImage, 0, 0, null);
         // draw in the gap
         Paint defaultPaint = new Paint();
-        canvas.drawRect(0, height, width, height + reflectionGap, defaultPaint);
+        canvas.drawRect(0, height, width + reflectionGap, height, defaultPaint);
         // draw in the reflection
         canvas.drawBitmap(reflectionImage, 0, height + reflectionGap, null);
 
         // create a shader that is a linear gradient that covers the reflection
         Paint paint = new Paint();
-        LinearGradient shader = new LinearGradient(0, originalImage.getHeight(), 0,
-                bitmapWithReflection.getHeight() + reflectionGap, 0x70ffffff, 0x00ffffff,
+        LinearGradient shader = new LinearGradient(0, originalImage.getHeight(), 0, bitmapWithReflection.getHeight() + reflectionGap, 0x70ffffff, 0x00ffffff,
                 Shader.TileMode.CLAMP);
         // set the paint to use this shader (linear gradient)
         paint.setShader(shader);
