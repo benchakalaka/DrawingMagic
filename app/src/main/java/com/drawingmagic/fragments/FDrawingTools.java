@@ -1,5 +1,7 @@
 package com.drawingmagic.fragments;
 
+import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.view.View;
@@ -77,21 +79,20 @@ public class FDrawingTools extends Fragment {
     @ViewById
     SeekBar sbBrushSize;
 
-
     @SeekBarProgressChange
     void sbBrushSize(int brushSize) {
-        drawingSettings.setBrushWidth(brushSize, (getActivity()).getResources().getDisplayMetrics());
+        drawingSettings.setBrushWidth(brushSize, getContext().getResources().getDisplayMetrics());
         listener.onSetUpDrawingShapesOkClicked(drawingSettings);
     }
 
 
     @AfterViews
     void afterViews() {
-        // check activity for inheritance from OnSelectTypeOfShapeListener
+        // check activity for inheritance from OnChangeDrawingSettingsListener
         try {
-            this.listener = (OnChangeDrawingSettingsListener) getActivity();
+            this.listener = (OnChangeDrawingSettingsListener) getContext();
         } catch (ClassCastException ex) {
-            throw new ClassCastException(getActivity().getLocalClassName() + "must implement OnSelectTypeOfShapeListener");
+            throw new ClassCastException("Class must implement OnChangeDrawingSettingsListener");
         }
 
         selectViewByTypeOfGrid(GridType.FULL_GRID);
@@ -101,9 +102,6 @@ public class FDrawingTools extends Fragment {
 
         // color picker view
         initColorPicker();
-    }
-
-    public FDrawingTools() {
     }
 
     @Click
@@ -152,13 +150,6 @@ public class FDrawingTools extends Fragment {
         listener.onSetUpDrawingShapesOkClicked(drawingSettings);
     }
 
-    /**
-     * Any view has to implement current interface in order to interact with dialog
-     */
-    public interface OnChangeDrawingSettingsListener {
-        void onSetUpDrawingShapesOkClicked(DrawingSettings shape);
-    }
-
 
     /**
      * Return string representation of shape (i.e typeOfShape = ShapesType.RECTANGLE -> "Draw rectangle")
@@ -180,8 +171,9 @@ public class FDrawingTools extends Fragment {
                 return freeDrawing;
             case ShapesType.TRIANGLE:
                 return drawTriangle;
+            default:
+                return "Unknown";
         }
-        return "?";
     }
 
 
@@ -220,7 +212,7 @@ public class FDrawingTools extends Fragment {
         int typeOfShape = Integer.parseInt(shape.getTag().toString());
 
         drawingSettings.setCurrentShape(typeOfShape);
-        Notification.showSuccess(getActivity(), getStringMessageByTypesOfShape(typeOfShape));
+        Notification.showSuccess((Activity) getContext(), getStringMessageByTypesOfShape(typeOfShape));
         selectShape((MaterialIconView) shape);
     }
 
@@ -243,5 +235,12 @@ public class FDrawingTools extends Fragment {
         drawingSettings.setDisplayLinesWhileDrawing(!drawingSettings.isDisplayLinesWhileDrawing());
         playAnimationOnView(rlDisplayLinesWhileDrawing);
         listener.onSetUpDrawingShapesOkClicked(drawingSettings);
+    }
+
+    /**
+     * Any view has to implement current interface in order to interact with dialog
+     */
+    public interface OnChangeDrawingSettingsListener {
+        void onSetUpDrawingShapesOkClicked(DrawingSettings shape);
     }
 }

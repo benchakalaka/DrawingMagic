@@ -50,6 +50,10 @@ import static android.graphics.Bitmap.Config;
 import static android.view.View.GONE;
 import static android.view.View.LAYER_TYPE_SOFTWARE;
 import static android.view.View.VISIBLE;
+import static com.drawingmagic.GlobalConstants.DIVISION_COORDINATES_COEFFICIENT;
+import static com.drawingmagic.GlobalConstants.HALF_MAX_PROGRESS;
+import static com.drawingmagic.GlobalConstants.MAX_PROGRESS;
+import static com.drawingmagic.GlobalConstants.MAX_TILT_FACTOR;
 import static com.drawingmagic.adapters.ViewPagerAdapter.CANVAS_CROPPER_TOOLS_FRAGMENT;
 import static com.drawingmagic.adapters.ViewPagerAdapter.CANVAS_TRANSFORMER_FRAGMENT;
 import static com.drawingmagic.adapters.ViewPagerAdapter.DRAWING_TOOLS_FRAGMENT;
@@ -408,8 +412,8 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
             fragmentMenuAdjustEffectLevel = FMenuAdjuster_.builder().
                     adjusterTitle(filterName).
                     fragmentTitle(effectAdjuster).
-                    currentProgress(50).
-                    progressMax(100).
+                    currentProgress(MAX_PROGRESS >>> 1).
+                    progressMax(MAX_PROGRESS).
                     eventId(ON_ADJUST_FILTER_LEVEL).build();
 
             getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, fragmentMenuAdjustEffectLevel).commit();
@@ -460,9 +464,10 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_MOVE:
             case MotionEvent.ACTION_DOWN:
-                // TODO: Repla```ce weird shift
-                float x = (motionEvent.getX() / 1000f) + 0.2f;
-                float y = (motionEvent.getY() / 1000f) + 0.2f;
+                float x = (motionEvent.getX() / DIVISION_COORDINATES_COEFFICIENT);
+                float y = (motionEvent.getY() / DIVISION_COORDINATES_COEFFICIENT);
+
+                //  TODO: 23/10/2015 Replace with common adjustable interface
                 if (currentFilter instanceof GPUImageSwirlFilter) {
                     ((GPUImageSwirlFilter) currentFilter).setCenter(new PointF(x, y));
                 }
@@ -474,8 +479,10 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                 gpuImage.requestRender();
 
                 break;
+
+            default:
+                break;
         }
-        // Something Here
     }
 
 
@@ -523,7 +530,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 
     private void mirrorImage(int direction) {
         if (direction == MIRROR_VERTICAL) {
-            drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(GraphicUtils.applyReflection(drawingView.getDrawingData().getCanvasBitmap())).build());
+            drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(GraphicUtils.applyReflection(drawingView.getDrawingData().getCanvasBitmap(), MIRROR_VERTICAL)).build());
         }
 
         if (direction == MIRROR_HORIZONTAL) {
@@ -618,20 +625,16 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 
             case ON_TILT_FACTOR_X_CHANGED:
                 float tiltFactorX = (int) event.payload;
-                // if progress more then a half (tiltFactorX % 50) / 100f  ====> i.e (55 % 50 = 5 and 5 / 100 ==0.05), tiltFactor == 0.05
-                // if progress less then a half (tiltFactorX - 50) / 100f ====> i.e - (23 - 50 = 17 and 17/100)== -0.17)
-                //// TODO: 21/09/2015 Replace magic numbers
-                // replace with InternalMath class
-                tiltFactorX = tiltFactorX > 50 ? (tiltFactorX % 50 / 100f) : ((tiltFactorX - 50) / 100f);
-                drawingView.setTiltFactorX((int) event.payload == 100 ? 0.5f : tiltFactorX);
+                tiltFactorX = tiltFactorX > (HALF_MAX_PROGRESS) ? (tiltFactorX % HALF_MAX_PROGRESS / MAX_PROGRESS) : ((tiltFactorX - HALF_MAX_PROGRESS) / MAX_PROGRESS);
+                drawingView.setTiltFactorX((int) event.payload == MAX_PROGRESS ? MAX_TILT_FACTOR : tiltFactorX);
                 Logger.e("  ON_TILT_FACTOR_X_CHANGED : " + tiltFactorX);
                 break;
 
 
             case ON_TILT_FACTOR_Y_CHANGED:
                 float tiltFactorY = (int) event.payload;
-                tiltFactorY = tiltFactorY > 50 ? (tiltFactorY % 50 / 100f) : ((tiltFactorY - 50) / 100f);
-                drawingView.setTiltFactorY((int) event.payload == 100 ? 0.5f : tiltFactorY);
+                tiltFactorY = tiltFactorY > HALF_MAX_PROGRESS ? (tiltFactorY % HALF_MAX_PROGRESS / MAX_PROGRESS) : ((tiltFactorY - HALF_MAX_PROGRESS) / MAX_PROGRESS);
+                drawingView.setTiltFactorY((int) event.payload == MAX_PROGRESS ? MAX_TILT_FACTOR : tiltFactorY);
                 Logger.e("  ON_TILT_FACTOR_Y_CHANGED : " + tiltFactorY);
                 break;
 
@@ -677,9 +680,6 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
         startActivityForResult(photoPickerIntent, ADrawingMagic.REQUEST_PICK_IMAGE);
     }
 
-    public void setRotationDegree(float degree) {
-        drawingView.setRotationDegree(degree);
-    }
 
     public void setRotationDegree(float degree, boolean zoomIn) {
         drawingView.setRotationDegree(degree, zoomIn);

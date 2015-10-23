@@ -22,7 +22,6 @@ import android.view.ScaleGestureDetector;
 import android.view.View;
 
 import com.drawingmagic.SuperActivity;
-import com.drawingmagic.dialogs.DialogCanvasSettings;
 import com.drawingmagic.utils.Conditions;
 import com.drawingmagic.utils.Logger;
 
@@ -58,7 +57,7 @@ public class DrawingView extends View {
     // Dashed effect for all shapes
     private final DashPathEffect dashedEffect = new DashPathEffect(new float[]{15, 15, 15, 15}, 0);
     long lastDoubleTouchTime = 0;
-    private final static long ONE_SECOND_IN_MILLISECONDS = 300;
+    private static final long ONE_SECOND_IN_MILLISECONDS = 300;
     // current paint which contains user's brush settings
     private final PaintSerializable currentPaint = new PaintSerializable();
     // current X,Y position lives in touchX/Y, start position is in touchDownX/Y
@@ -86,8 +85,8 @@ public class DrawingView extends View {
     private float scalePointX, scalePointY;
     // Max zoom value
     private boolean isDrawingEnabled = true;
-    private final static float MAX_ZOOM_FACTOR = 5.0f;
-    private final static float MIN_ZOOM = 1.0f;
+    private static final float MAX_ZOOM_FACTOR = 5.0f;
+    private static final float MIN_ZOOM = 1.0f;
     // rotation factor
     private float rotationDegree = 0f;
 
@@ -96,7 +95,7 @@ public class DrawingView extends View {
      */
     private boolean isMatrixTransformationApplied = false;
     private final Matrix transformMatrix = new Matrix();
-    private final static float CIRCLE_TEXT_RADIUS = 20;
+    private static final float CIRCLE_TEXT_RADIUS = 20;
     private static final float SCALE_DELTA = 0.05f;
     private static final float DEFAULT_ROTATE_SCALE_FACTOR = 1.0f;
     private float mScaleFactor = DEFAULT_ROTATE_SCALE_FACTOR;
@@ -499,8 +498,7 @@ public class DrawingView extends View {
      */
     private RectF calculateRectangle() {
         if (touchX < touchDownX) {
-            if (touchY <
-                    touchDownY) {
+            if (touchY < touchDownY) {
                 rectangleOfDrawing.set(touchX, touchY, touchDownX, touchDownY);
             } else {
                 rectangleOfDrawing.set(touchX, touchDownY, touchDownX, touchY);
@@ -658,7 +656,7 @@ public class DrawingView extends View {
     /**
      * Types of shapes
      */
-    public static class ShapesType {
+    public static final class ShapesType {
         public static final int STANDARD_DRAWING = -1;
         public static final int CIRCLE = 0;
         public static final int RECTANGLE = 1;
@@ -700,7 +698,7 @@ public class DrawingView extends View {
             return this;
         }
 
-        public DrawingDataBuilder withCanvasSettings(DialogCanvasSettings.CanvasSettings canvasSettings) {
+        public DrawingDataBuilder withCanvasSettings(CanvasSettings canvasSettings) {
             this.drawingData.setCanvasSettings(canvasSettings);
             return this;
         }
@@ -786,6 +784,31 @@ public class DrawingView extends View {
     }
 
     /**
+     * Class represents Canvas settings
+     */
+    public static class CanvasSettings {
+        // init default values, rotate degree ==0, means that there is no rotation required
+        private int rotateDegree = 0;
+        private boolean keepAspectRatio = true;
+
+        public int getRotateDegree() {
+            return rotateDegree;
+        }
+
+        public void setRotateDegree(int rotateDegree) {
+            this.rotateDegree = rotateDegree;
+        }
+
+        public boolean isKeepAspectRatio() {
+            return keepAspectRatio;
+        }
+
+        public void setKeepAspectRatio(boolean keepAspectRatio) {
+            this.keepAspectRatio = keepAspectRatio;
+        }
+    }
+
+    /**
      * Text settings for drawingView
      */
     public class TextSettings {
@@ -839,20 +862,20 @@ public class DrawingView extends View {
         private Bitmap canvasBitmap;
         // text to draw on canvas
         private String textToDrawOnCanvas = null;
-        private DialogCanvasSettings.CanvasSettings canvasSettings;
+        private CanvasSettings canvasSettings;
         // Display lines while user drawing
         private boolean displayLinesWhileDrawing = false;
         // Display lines while user drawing
         private boolean displayDashedMenu = true;
 
-        public DialogCanvasSettings.CanvasSettings getCanvasSettings() {
+        public CanvasSettings getCanvasSettings() {
             if (null == canvasSettings) {
-                canvasSettings = new DialogCanvasSettings.CanvasSettings();
+                canvasSettings = new CanvasSettings();
             }
             return canvasSettings;
         }
 
-        public void setCanvasSettings(DialogCanvasSettings.CanvasSettings canvasSettings) {
+        public void setCanvasSettings(CanvasSettings canvasSettings) {
             this.canvasSettings = canvasSettings;
         }
 

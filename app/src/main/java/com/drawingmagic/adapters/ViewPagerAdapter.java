@@ -7,9 +7,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import com.drawingmagic.fragments.FCanvasTransformer_;
 import com.drawingmagic.fragments.FCropperTools;
 import com.drawingmagic.fragments.FCropperTools_;
-import com.drawingmagic.fragments.FDrawingTools;
 import com.drawingmagic.fragments.FDrawingTools_;
-import com.drawingmagic.fragments.FEffectsTools;
 import com.drawingmagic.fragments.FEffectsTools_;
 
 import java.util.ArrayList;
@@ -29,26 +27,14 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
 
     private final ArrayList<Fragment> fragments = new ArrayList<>();
 
-    private final static Fragment fDrawingTools = new FDrawingTools_(), fCanvasTransformerTools = new FCanvasTransformer_(), fEffectsTools = new FEffectsTools_(), fCanvasCroppingTools = new FCropperTools_();
+    private final Fragment fragmentDrawingTools = new FDrawingTools_(), fragmentCanvasTransformerTools = new FCanvasTransformer_(), fragmentEffectsTools = new FEffectsTools_(), fragmentCanvasCroppingTools = new FCropperTools_();
 
     public ViewPagerAdapter(FragmentManager fragmentManager) {
         super(fragmentManager);
-        fragments.add(DRAWING_TOOLS_FRAGMENT, fDrawingTools);
-        fragments.add(CANVAS_TRANSFORMER_FRAGMENT, fCanvasTransformerTools);
-        fragments.add(EFFECTS_TOOLS_FRAGMENT, fEffectsTools);
-        fragments.add(CANVAS_CROPPER_TOOLS_FRAGMENT, fCanvasCroppingTools);
-    }
-
-    public FDrawingTools getCanvasTransformerFragment() {
-        return (FDrawingTools) getItem(CANVAS_TRANSFORMER_FRAGMENT);
-    }
-
-    public FDrawingTools getDrawingToolsFragment() {
-        return (FDrawingTools) getItem(DRAWING_TOOLS_FRAGMENT);
-    }
-
-    public FEffectsTools getEffectsToolsFragment() {
-        return (FEffectsTools) getItem(EFFECTS_TOOLS_FRAGMENT);
+        fragments.add(DRAWING_TOOLS_FRAGMENT, fragmentDrawingTools);
+        fragments.add(CANVAS_TRANSFORMER_FRAGMENT, fragmentCanvasTransformerTools);
+        fragments.add(EFFECTS_TOOLS_FRAGMENT, fragmentEffectsTools);
+        fragments.add(CANVAS_CROPPER_TOOLS_FRAGMENT, fragmentCanvasCroppingTools);
     }
 
     public FCropperTools getCropperToolsFragment() {

@@ -32,6 +32,7 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
 import com.drawingmagic.helpers.CameraHelper;
+import com.drawingmagic.utils.Conditions;
 import com.drawingmagic.utils.Logger;
 import com.drawingmagic.utils.Notification;
 
@@ -41,7 +42,6 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -80,8 +80,7 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener 
         // To be safe, you should check that the SDCard is mounted
         // using Environment.getExternalStorageState() before doing this.
 
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), "MyCameraApp");
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "MyCameraApp");
         // This location works best if you want the created images to be shared
         // between applications and persist after your app has been uninstalled.
 
@@ -95,11 +94,9 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener 
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         File mediaFile;
         if (type == MEDIA_TYPE_IMAGE) {
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "IMG_" + timeStamp + ".jpg");
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_" + timeStamp + ".jpg");
         } else if (type == MEDIA_TYPE_VIDEO) {
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "VID_" + timeStamp + ".mp4");
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator + "VID_" + timeStamp + ".mp4");
         } else {
             return null;
         }
@@ -187,9 +184,8 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener 
                     public void onPictureTaken(byte[] data, final Camera camera) {
 
                         final File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
-                        if (pictureFile == null) {
-                            Logger.e(
-                                    "Error creating media file, check storage permissions");
+                        if (Conditions.isNull(pictureFile)) {
+                            Logger.e("Error creating media file, check storage permissions");
                             return;
                         }
 
@@ -197,29 +193,23 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener 
                             FileOutputStream fos = new FileOutputStream(pictureFile);
                             fos.write(data);
                             fos.close();
-                        } catch (FileNotFoundException e) {
-                            Logger.e("File not found: " + e.getMessage());
                         } catch (IOException e) {
-                            Logger.e("Error accessing file: " + e.getMessage());
+                            Logger.e(e);
                         }
 
-                        data = null;
                         Bitmap bitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath());
                         // mGPUImage.setImage(bitmap);
                         final GLSurfaceView view = (GLSurfaceView) findViewById(R.id.surfaceView);
                         view.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-                        mGPUImage.saveToPictures(bitmap, "GPUImage",
-                                System.currentTimeMillis() + ".jpg",
-                                new OnPictureSavedListener() {
+                        mGPUImage.saveToPictures(bitmap, "GPUImage", System.currentTimeMillis() + ".jpg", new OnPictureSavedListener() {
 
-                                    @Override
-                                    public void onPictureSaved(final Uri
-                                                                       uri) {
-                                        pictureFile.delete();
-                                        camera.startPreview();
-                                        view.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-                                    }
-                                });
+                            @Override
+                            public void onPictureSaved(final Uri uri) {
+                                pictureFile.delete();
+                                camera.startPreview();
+                                view.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+                            }
+                        });
                     }
                 });
     }
@@ -295,7 +285,7 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener 
             try {
                 c = mCameraHelper.openCamera(id);
             } catch (Exception e) {
-                e.printStackTrace();
+                Logger.e(e);
             }
             return c;
         }

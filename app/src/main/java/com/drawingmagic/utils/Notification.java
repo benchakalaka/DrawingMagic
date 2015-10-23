@@ -16,7 +16,11 @@ import com.github.pierry.simpletoast.SimpleToast;
  * Package: com.touchip.organizer.utils
  * Datascope Systems Ltd.
  */
-public class Notification {
+public final class Notification {
+
+    private Notification() {
+
+    }
 
     /**
      * Show message with specific FontAwesomeImage
@@ -46,6 +50,9 @@ public class Notification {
 
             case INFO:
                 SimpleToast.info(activity, message, fatImageString);
+                break;
+            default:
+                Logger.e(String.format("Unknown type of toast %s", type));
                 break;
         }
 

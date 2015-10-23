@@ -101,7 +101,11 @@ import jp.co.cyberagent.android.gpuimage.GPUImageVignetteFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageWeakPixelInclusionFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageWhiteBalanceFilter;
 
-public class GPUImageFilterTools {
+public final class GPUImageFilterTools {
+
+    private GPUImageFilterTools() {
+
+    }
 
     public static GPUImageFilter createFilterForType(final Context context, final FilterType type) {
         switch (type) {

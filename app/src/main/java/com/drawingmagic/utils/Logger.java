@@ -14,7 +14,11 @@ import java.util.Map;
  * Package: com.touchip.organizer.utils
  * Datascope Systems Ltd.
  */
-public class Logger {
+public final class Logger {
+
+    private Logger() {
+
+    }
 
     /**
      * Log with DEBUG level

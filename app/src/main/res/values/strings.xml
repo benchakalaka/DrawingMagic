@@ -112,6 +112,7 @@
     <string name="flip_horizontal">Flip horizontal</string>
     <string name="mirror_horizontal">Mirror horizontally</string>
     <string name="mirror_vertical">Mirror verticaly</string>
+    <string name="splash_screen_title">Splash Scree Sample</string>
     <!-- FILTERS -->
 
 

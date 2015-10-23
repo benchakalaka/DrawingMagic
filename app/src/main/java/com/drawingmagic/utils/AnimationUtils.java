@@ -16,7 +16,11 @@ import com.nineoldandroids.animation.Animator;
  * Package: com.touchip.organizer.utils
  * Datascope Systems Ltd.
  */
-public class AnimationUtils {
+public final class AnimationUtils {
+
+    private AnimationUtils() {
+
+    }
 
     /**
      * Default duration of animations
