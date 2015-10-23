@@ -27,7 +27,7 @@ import com.drawingmagic.utils.Logger;
 import com.drawingmagic.utils.Notification;
 import com.drawingmagic.utils.Utils;
 import com.drawingmagic.views.ABSMenuApplyRestoreCancel_;
-import com.drawingmagic.views.abs.ABS_;
+import com.drawingmagic.views.abs.ActionBarView_;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import org.androidannotations.annotations.AfterViews;
@@ -156,7 +156,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 
     @AfterViews
     void afterViews() {
-        Utils.configureCustomActionBar(getSupportActionBar(), ABS_.build(this).withRightMenu(ABSMenuApplyRestoreCancel_.build(this)).withMenuButton());
+        Utils.configureCustomActionBar(getSupportActionBar(), ActionBarView_.build(this).withRightMenu(ABSMenuApplyRestoreCancel_.build(this)).withMenuButton());
 
         // init drawing view
         initDrawingView();
