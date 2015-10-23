@@ -10,7 +10,7 @@ import com.drawingmagic.eventbus.Event;
 import com.drawingmagic.fragments.FEffectsTools;
 import com.drawingmagic.helpers.FilterItemHolder;
 import com.drawingmagic.utils.AnimationUtils;
-import com.drawingmagic.utils.Log;
+import com.drawingmagic.utils.Logger;
 
 import net.steamcrafted.materialiconlib.MaterialIconView;
 
@@ -58,7 +58,7 @@ public class ImageFilterPreview extends RelativeLayout {
         tvDescription.setText(filterDescriptor.getFilterName());
         mivImage.setIcon(FEffectsTools.FILTERS_MAP.get(filterDescriptor));
         mivIsAdjustable.setVisibility(new GPUImageFilterTools.FilterAdjuster(GPUImageFilterTools.createFilterForType(getContext(), this.filterDescriptor.getFilter())).canAdjust() ? VISIBLE : GONE);
-        Log.e("Create preview for Filter : " + filterDescriptor.getFilterName());
+        Logger.e("Create preview for Filter : " + filterDescriptor.getFilterName());
     }
 
     public FilterItemHolder getFilter() {

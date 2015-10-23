@@ -23,7 +23,7 @@ import com.drawingmagic.fragments.FTiltFragmentController_;
 import com.drawingmagic.helpers.FilterItemHolder;
 import com.drawingmagic.utils.Conditions;
 import com.drawingmagic.utils.GraphicUtils;
-import com.drawingmagic.utils.Log;
+import com.drawingmagic.utils.Logger;
 import com.drawingmagic.utils.Notification;
 import com.drawingmagic.utils.Utils;
 import com.drawingmagic.views.ABSMenuApplyRestoreCancel_;
@@ -130,10 +130,9 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 
 
     /**
-     * BITMAP_ORIGIN -------> BITMAP_MODIFIED -------> (DrawingView, TransformView, GPUEffects, CropView)
+     * bitmapOrigin -------> bitmapModified -------> (DrawingView, TransformView, GPUEffects, CropView)
      */
-    public static Bitmap BITMAP_ORIGIN, BITMAP_MODIFIED;
-    private Bitmap croppedBitmap;
+    private Bitmap bitmapOrigin, bitmapModified;
 
     // View pager adapter
     private final ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
@@ -173,7 +172,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 
         cropImageView.setGuidelines(SHOW_GUIDELINES_ALWAYS);
         cropImageView.setAspectRatio(DEFAULT_ASPECT_RATIO_VALUES, DEFAULT_ASPECT_RATIO_VALUES);
-        cropImageView.setImageBitmap(BITMAP_MODIFIED);
+        cropImageView.setImageBitmap(bitmapModified);
         cropImageView.setCropShape(CropShape.RECTANGLE);
 
         switch (selectedMenuItem) {
@@ -266,12 +265,12 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                                                                    gpuImage.setVisibility(GONE);
                                                                    cropImageView.setVisibility(VISIBLE);
                                                                    drawingView.setDrawingEnabled(true);
-                                                                   cropImageView.setImageBitmap(BITMAP_MODIFIED);
+                                                                   cropImageView.setImageBitmap(bitmapModified);
                                                                    getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, fragmentMenuCropper).commit();
                                                                    break;
 
                                                                default:
-                                                                   Log.e("onPageSelected: Unknown page position  : " + viewPager.getCurrentItem());
+                                                                   Logger.e("onPageSelected: Unknown page position  : " + viewPager.getCurrentItem());
                                                                    break;
 
                                                            }
@@ -295,7 +294,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
             case DRAWING_TOOLS_FRAGMENT:
                 drawingView.resetAllTransformation();
                 drawingView.clearRedoPaths();
-                drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(BITMAP_MODIFIED).withPaths(null).build());
+                drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(bitmapModified).withPaths(null).build());
                 break;
 
             // Cancel any effect
@@ -305,7 +304,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 
             // Cancel cropping
             case CANVAS_CROPPER_TOOLS_FRAGMENT:
-                croppedBitmap = BITMAP_MODIFIED;
+                Bitmap croppedBitmap = bitmapModified;
                 cropImageView.setImageBitmap(croppedBitmap);
                 break;
 
@@ -318,7 +317,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
         switch (viewPager.getCurrentItem()) {
             // Cancel any drawing transformation
             case DRAWING_TOOLS_FRAGMENT:
-                BITMAP_MODIFIED = BITMAP_ORIGIN.copy(Config.RGB_565, true);
+                bitmapModified = bitmapOrigin.copy(Config.RGB_565, true);
                 onApplyImageTransformationChanges();
                 break;
 
@@ -329,7 +328,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 
             // Cancel cropping
             case CANVAS_CROPPER_TOOLS_FRAGMENT:
-                cropImageView.setImageBitmap(BITMAP_MODIFIED);
+                cropImageView.setImageBitmap(bitmapModified);
                 break;
 
             default:
@@ -343,19 +342,19 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
         switch (viewPager.getCurrentItem()) {
             case DRAWING_TOOLS_FRAGMENT:
                 drawingView.setGridType(GridType.NO_GRID);
-                drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(BITMAP_ORIGIN).build());
-                BITMAP_MODIFIED = drawingView.getDrawingCache().copy(Config.RGB_565, true);
+                drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(bitmapOrigin).build());
+                bitmapModified = drawingView.getDrawingCache().copy(Config.RGB_565, true);
                 drawingView.setGridType(gridType);
                 break;
 
             case CANVAS_TRANSFORMER_FRAGMENT:
-                BITMAP_MODIFIED = drawingView.getDrawingCache().copy(Config.RGB_565, true);
+                bitmapModified = drawingView.getDrawingCache().copy(Config.RGB_565, true);
                 //drawingView.setGridType(gridType);
                 drawingView.resetAllTransformation();
                 break;
 
             case EFFECTS_TOOLS_FRAGMENT:
-                BITMAP_MODIFIED = gpuImage.getGPUImage().getBitmapWithFilterApplied();
+                bitmapModified = gpuImage.getGPUImage().getBitmapWithFilterApplied();
                 applyEffect(null);
                 break;
 
@@ -368,10 +367,10 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                 break;
         }
 
-        drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(BITMAP_MODIFIED).build());
+        drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(bitmapModified).build());
 
         gpuImage.getGPUImage().deleteImage();
-        gpuImage.setImage(BITMAP_MODIFIED);
+        gpuImage.setImage(bitmapModified);
     }
 
     /**
@@ -418,7 +417,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
             // Filter is not adjustable, remove adjust menu
             if (!filterAdjuster.canAdjust()) {
                 getSupportFragmentManager().beginTransaction().remove(fragmentMenuAdjustEffectLevel).commit();
-                Log.e("Filter " + filterName + " is not adjustable, hide seekBar");
+                Logger.e("Filter " + filterName + " is not adjustable, hide seekBar");
             }
         }
     }
@@ -435,22 +434,22 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
             drawingView.post(new Runnable() {
                 @Override
                 public void run() {
-                    if (Conditions.isNotNull(BITMAP_ORIGIN)) {
-                        BITMAP_ORIGIN.recycle();
+                    if (Conditions.isNotNull(bitmapOrigin)) {
+                        bitmapOrigin.recycle();
                     }
 
-                    if (Conditions.isNotNull(BITMAP_MODIFIED)) {
-                        BITMAP_MODIFIED.recycle();
+                    if (Conditions.isNotNull(bitmapModified)) {
+                        bitmapModified.recycle();
                     }
 
-                    Log.e("FilePath:" + Utils.getRealPathFromURI(ADrawingMagic.this, data.getData()));
-                    BITMAP_ORIGIN = decodeSampledBitmapFromResource(new File(Utils.getRealPathFromURI(ADrawingMagic.this, data.getData())).getAbsolutePath(), drawingView.getWidth(), drawingView.getHeight());
-                    BITMAP_MODIFIED = BITMAP_ORIGIN.copy(Config.RGB_565, true);
-                    drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(BITMAP_MODIFIED).withPaths(null).build());
+                    Logger.e("FilePath:" + Utils.getRealPathFromURI(ADrawingMagic.this, data.getData()));
+                    bitmapOrigin = decodeSampledBitmapFromResource(new File(Utils.getRealPathFromURI(ADrawingMagic.this, data.getData())).getAbsolutePath(), drawingView.getWidth(), drawingView.getHeight());
+                    bitmapModified = bitmapOrigin.copy(Config.RGB_565, true);
+                    drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(bitmapModified).withPaths(null).build());
                 }
             });
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Logger.e(ex);
         }
         gpuImage.setImage(data.getData());
 
@@ -461,7 +460,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_MOVE:
             case MotionEvent.ACTION_DOWN:
-                // TODO: Replace weird shift
+                // TODO: Repla```ce weird shift
                 float x = (motionEvent.getX() / 1000f) + 0.2f;
                 float y = (motionEvent.getY() / 1000f) + 0.2f;
                 if (currentFilter instanceof GPUImageSwirlFilter) {
@@ -471,7 +470,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                 if (currentFilter instanceof GPUImageBulgeDistortionFilter) {
                     ((GPUImageBulgeDistortionFilter) currentFilter).setCenter(new PointF(x, y));
                 }
-                Log.e(String.format("x:%s y:%s", x, y));
+                Logger.e(String.format("x:%s y:%s", x, y));
                 gpuImage.requestRender();
 
                 break;
@@ -535,7 +534,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 
     @Override
     public void onEventMainThread(Event event) {
-        Log.e(event.toString());
+        Logger.e(event.toString());
         switch (event.type) {
             case FLIP:
                 flipImage((int) event.payload);
@@ -591,18 +590,18 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 
             case ON_ADJUST_FILTER_LEVEL:
                 adjustFilter((int) event.payload);
-                Log.e("  ON_ADJUST_FILTER_LEVEL : " + (int) event.payload);
+                Logger.e("  ON_ADJUST_FILTER_LEVEL : " + (int) event.payload);
                 break;
 
 
             case ON_APPLY_EFFECT:
                 applyEffect((FilterItemHolder) event.payload);
-                Log.e("  ON_APPLY_EFFECT : " + ((FilterItemHolder) event.payload).getFilterName());
+                Logger.e("  ON_APPLY_EFFECT : " + ((FilterItemHolder) event.payload).getFilterName());
                 break;
 
 
             case ON_RESTORE_IMAGE_BEFORE_CROPPING:
-                cropImageView.setImageBitmap(BITMAP_MODIFIED);
+                cropImageView.setImageBitmap(bitmapModified);
                 break;
 
 
@@ -613,7 +612,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 
             case ON_ADJUSTER_VALUE_CHANGED:
                 //drawingView.setRotationDegree((int) event.payload);
-                Log.e("  ON_ADJUSTER_VALUE_CHANGED : " + (int) event.payload);
+                Logger.e("  ON_ADJUSTER_VALUE_CHANGED : " + (int) event.payload);
                 break;
 
 
@@ -625,7 +624,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                 // replace with InternalMath class
                 tiltFactorX = tiltFactorX > 50 ? (tiltFactorX % 50 / 100f) : ((tiltFactorX - 50) / 100f);
                 drawingView.setTiltFactorX((int) event.payload == 100 ? 0.5f : tiltFactorX);
-                Log.e("  ON_TILT_FACTOR_X_CHANGED : " + tiltFactorX);
+                Logger.e("  ON_TILT_FACTOR_X_CHANGED : " + tiltFactorX);
                 break;
 
 
@@ -633,7 +632,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                 float tiltFactorY = (int) event.payload;
                 tiltFactorY = tiltFactorY > 50 ? (tiltFactorY % 50 / 100f) : ((tiltFactorY - 50) / 100f);
                 drawingView.setTiltFactorY((int) event.payload == 100 ? 0.5f : tiltFactorY);
-                Log.e("  ON_TILT_FACTOR_Y_CHANGED : " + tiltFactorY);
+                Logger.e("  ON_TILT_FACTOR_Y_CHANGED : " + tiltFactorY);
                 break;
 
 
@@ -663,7 +662,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 
 
             default:
-                Log.e("Unknown event " + event);
+                Logger.e("Unknown event " + event);
         }
 
     }
@@ -824,9 +823,9 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 //
 //
 //    /**
-//     * BITMAP_ORIGIN -------> BITMAP_MODIFIED -------> (DrawingView, TransformView, GPUEffects, CropView)
+//     * bitmapOrigin -------> bitmapModified -------> (DrawingView, TransformView, GPUEffects, CropView)
 //     */
-//    public static Bitmap BITMAP_ORIGIN, BITMAP_MODIFIED;
+//    public static Bitmap bitmapOrigin, bitmapModified;
 //    private Bitmap croppedBitmap;
 //
 //    // View pager adapter
@@ -867,7 +866,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 //
 //        cropImageView.setGuidelines(SHOW_GUIDELINES_ALWAYS);
 //        cropImageView.setAspectRatio(DEFAULT_ASPECT_RATIO_VALUES, DEFAULT_ASPECT_RATIO_VALUES);
-//        cropImageView.setImageBitmap(BITMAP_MODIFIED);
+//        cropImageView.setImageBitmap(bitmapModified);
 //        cropImageView.setCropShape(CropShape.RECTANGLE);
 //
 //        switch (selectedMenuItem) {
@@ -955,7 +954,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 //                                                                   drawingView.setVisibility(GONE);
 //                                                                   gpuImage.setVisibility(GONE);
 //                                                                   cropImageView.setVisibility(VISIBLE);
-//                                                                   cropImageView.setImageBitmap(BITMAP_MODIFIED);
+//                                                                   cropImageView.setImageBitmap(bitmapModified);
 //                                                                   getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, fragmentMenuCropper).commit();
 //                                                                   break;
 //
@@ -984,7 +983,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 //            case DRAWING_TOOLS_FRAGMENT:
 //                drawingView.resetAllTransformation();
 //                drawingView.clearRedoPaths();
-//                drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(BITMAP_MODIFIED).withPaths(null).build());
+//                drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(bitmapModified).withPaths(null).build());
 //                break;
 //
 //            // Cancel any effect
@@ -994,7 +993,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 //
 //            // Cancel cropping
 //            case CANVAS_CROPPER_TOOLS_FRAGMENT:
-//                croppedBitmap = BITMAP_MODIFIED;
+//                croppedBitmap = bitmapModified;
 //                cropImageView.setImageBitmap(croppedBitmap);
 //                break;
 //
@@ -1007,7 +1006,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 //        switch (viewPager.getCurrentItem()) {
 //            // Cancel any drawing transformation
 //            case DRAWING_TOOLS_FRAGMENT:
-//                BITMAP_MODIFIED = BITMAP_ORIGIN.copy(Config.RGB_565, true);
+//                bitmapModified = bitmapOrigin.copy(Config.RGB_565, true);
 //                onApplyImageTransformationChanges();
 //                break;
 //
@@ -1018,7 +1017,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 //
 //            // Cancel cropping
 //            case CANVAS_CROPPER_TOOLS_FRAGMENT:
-//                cropImageView.setImageBitmap(BITMAP_MODIFIED);
+//                cropImageView.setImageBitmap(bitmapModified);
 //                break;
 //
 //            default:
@@ -1032,19 +1031,19 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 //        switch (viewPager.getCurrentItem()) {
 //            case DRAWING_TOOLS_FRAGMENT:
 //                drawingView.setGridType(GridType.NO_GRID);
-//                drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(BITMAP_ORIGIN).build());
-//                BITMAP_MODIFIED = drawingView.getDrawingCache().copy(Config.RGB_565, true);
+//                drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(bitmapOrigin).build());
+//                bitmapModified = drawingView.getDrawingCache().copy(Config.RGB_565, true);
 //                drawingView.setGridType(gridType);
 //                break;
 //
 //            case CANVAS_TRANSFORMER_FRAGMENT:
-//                BITMAP_MODIFIED = drawingView.getDrawingCache().copy(Config.RGB_565, true);
+//                bitmapModified = drawingView.getDrawingCache().copy(Config.RGB_565, true);
 //                //drawingView.setGridType(gridType);
 //                drawingView.resetAllTransformation();
 //                break;
 //
 //            case EFFECTS_TOOLS_FRAGMENT:
-//                BITMAP_MODIFIED = gpuImage.getGPUImage().getBitmapWithFilterApplied();
+//                bitmapModified = gpuImage.getGPUImage().getBitmapWithFilterApplied();
 //                applyEffect(null);
 //                break;
 //
@@ -1057,10 +1056,10 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 //                break;
 //        }
 //
-//        drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(BITMAP_MODIFIED).build());
+//        drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(bitmapModified).build());
 //
 //        gpuImage.getGPUImage().deleteImage();
-//        gpuImage.setImage(BITMAP_MODIFIED);
+//        gpuImage.setImage(bitmapModified);
 //    }
 //
 //    /**
@@ -1138,18 +1137,18 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 //            drawingView.post(new Runnable() {
 //                @Override
 //                public void run() {
-//                    if (Conditions.isNotNull(BITMAP_ORIGIN)) {
-//                        BITMAP_ORIGIN.recycle();
+//                    if (Conditions.isNotNull(bitmapOrigin)) {
+//                        bitmapOrigin.recycle();
 //                    }
 //
-//                    if (Conditions.isNotNull(BITMAP_MODIFIED)) {
-//                        BITMAP_MODIFIED.recycle();
+//                    if (Conditions.isNotNull(bitmapModified)) {
+//                        bitmapModified.recycle();
 //                    }
 //
 //                    Log.e("FilePath:" + Utils.getRealPathFromURI(ADrawingMagic.this, data.getData()));
-//                    BITMAP_ORIGIN = decodeSampledBitmapFromResource(new File(Utils.getRealPathFromURI(ADrawingMagic.this, data.getData())).getAbsolutePath(), drawingView.getWidth(), drawingView.getHeight());
-//                    BITMAP_MODIFIED = BITMAP_ORIGIN.copy(Config.RGB_565, true);
-//                    drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(BITMAP_MODIFIED).withPaths(null).build());
+//                    bitmapOrigin = decodeSampledBitmapFromResource(new File(Utils.getRealPathFromURI(ADrawingMagic.this, data.getData())).getAbsolutePath(), drawingView.getWidth(), drawingView.getHeight());
+//                    bitmapModified = bitmapOrigin.copy(Config.RGB_565, true);
+//                    drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(bitmapModified).withPaths(null).build());
 //                }
 //            });
 //        } catch (Exception ex) {
@@ -1257,7 +1256,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 //
 //
 //            case ON_RESTORE_IMAGE_BEFORE_CROPPING:
-//                cropImageView.setImageBitmap(BITMAP_MODIFIED);
+//                cropImageView.setImageBitmap(bitmapModified);
 //                break;
 //
 //

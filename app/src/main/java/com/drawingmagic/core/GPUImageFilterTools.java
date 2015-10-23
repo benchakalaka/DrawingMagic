@@ -21,6 +21,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.PointF;
 
 import com.drawingmagic.R;
+import com.drawingmagic.utils.Logger;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -285,7 +286,7 @@ public class GPUImageFilterTools {
             filter.setBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher));
             return filter;
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e(e);
             return null;
         }
     }

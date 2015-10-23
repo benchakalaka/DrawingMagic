@@ -24,7 +24,7 @@ import android.view.View;
 import com.drawingmagic.SuperActivity;
 import com.drawingmagic.dialogs.DialogCanvasSettings;
 import com.drawingmagic.utils.Conditions;
-import com.drawingmagic.utils.Log;
+import com.drawingmagic.utils.Logger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -224,7 +224,7 @@ public class DrawingView extends View {
         // remove all previous drawn paths/shapes/lines etc...
         shapePath.reset();
 
-        if (drawingData.getShape().getDashedState()) {
+        if (drawingData.getShape().isDashed()) {
             currentPaint.setPathEffect(dashedEffect);
         } else {
             currentPaint.setPathEffect(null);
@@ -263,7 +263,7 @@ public class DrawingView extends View {
                 canvas.drawPath(calculateTriangle(shapePath), currentPaint);
                 break;
             default:
-                Log.e("Unknown SHAPE");
+                Logger.e("Unknown SHAPE");
                 return;
 
         }
@@ -281,14 +281,14 @@ public class DrawingView extends View {
     @Override
     public boolean onTouchEvent(@NonNull MotionEvent event) {
         if (event.getPointerCount() == 2) {
-            Log.e("TWO FINGERS DRAWING VIEW, IGNORE");
+            Logger.e("TWO FINGERS DRAWING VIEW, IGNORE");
 
             isFingerTouchingCanvas = false;
             event.setLocation(event.getX() / mScaleFactor + rect.left, event.getY() / mScaleFactor + rect.top);
             mScaleDetector.onTouchEvent(event);
 
             lastDoubleTouchTime = System.currentTimeMillis();
-            Log.e("lastDoubleTouchTime = " + lastDoubleTouchTime);
+            Logger.e("lastDoubleTouchTime = " + lastDoubleTouchTime);
 
             return false;
         }
@@ -296,7 +296,7 @@ public class DrawingView extends View {
         long value = System.currentTimeMillis() - lastDoubleTouchTime;
 
         if (lastDoubleTouchTime != 0 && value < ONE_SECOND_IN_MILLISECONDS) {
-            Log.e("System.currentTimeMillis() - lastDoubleTouchTime = " + value + " , so EXIT");
+            Logger.e("System.currentTimeMillis() - lastDoubleTouchTime = " + value + " , so EXIT");
             return false;
         }
         float curX = event.getX() / (mScaleFactor * (currentScaleZoomFactor)) + rect.left;
@@ -339,7 +339,7 @@ public class DrawingView extends View {
                     ps.brushStrokeWith = currentPaint.getStrokeWidth();
                     ps.colour = currentPaint.getColor();
                     ps.isFillInside = currentPaint.isFillInside;
-                    ps.isDashed = this.drawingData.getShape().getDashedState();
+                    ps.isDashed = this.drawingData.getShape().isDashed();
 
 
                     PathSerializable newPath = new PathSerializable();
@@ -387,10 +387,12 @@ public class DrawingView extends View {
                             drawingData.paths.add(newPath);
                             break;
                         default:
-                            Log.e("MotionEvent.ACTION_UP Unknown SHAPE");
+                            Logger.e("MotionEvent.ACTION_UP Unknown SHAPE");
                             break;
                     }
-                    if (null != listener) this.listener.userHasReleasedFinger();
+                    if (Conditions.isNotNull(listener)) {
+                        this.listener.userHasReleasedFinger();
+                    }
 
 
                 default:
@@ -410,7 +412,7 @@ public class DrawingView extends View {
     public void undo() {
         if (!drawingData.paths.isEmpty()) {
             redoPaths.add(drawingData.paths.remove(drawingData.getPaths().size() - 1));
-            Log.e(drawingData.paths.size() + " - Paths left in list");
+            Logger.e(drawingData.paths.size() + " - Paths left in list");
             invalidate();
         }
     }

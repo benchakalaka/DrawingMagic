@@ -23,7 +23,7 @@ public class DrawingSettings {
     private boolean displayLinesWhileDrawing = false;
     private int gridType = GridType.FULL_GRID;
 
-    public boolean getDashedState() {
+    public boolean isDashed() {
         return this.dashed;
     }
 

@@ -219,7 +219,7 @@ public class GraphicUtils {
 
     public static Bitmap decodeSampledBitmapFromResource(String filename, int reqWidth, int reqHeight) {
 
-        Log.e("W: " + reqWidth + " , H:" + reqHeight);
+        Logger.e("W: " + reqWidth + " , H:" + reqHeight);
 
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = new BitmapFactory.Options();
@@ -229,7 +229,7 @@ public class GraphicUtils {
         // Calculate inSampleSize
         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
 
-        Log.e("inSampleSize =  " + options.inSampleSize);
+        Logger.e("inSampleSize =  " + options.inSampleSize);
 
         options.inPreferredConfig = Bitmap.Config.RGB_565;
         options.inDither = true;

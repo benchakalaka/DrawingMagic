@@ -16,7 +16,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.drawingmagic.SuperActivity;
-import com.drawingmagic.utils.Utils;
 
 /**
  * Created by ihor.karpachev on 13/04/2015.

@@ -25,7 +25,6 @@ import android.hardware.Camera.Parameters;
 import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.os.Environment;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -33,6 +32,7 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
 import com.drawingmagic.helpers.CameraHelper;
+import com.drawingmagic.utils.Logger;
 import com.drawingmagic.utils.Notification;
 
 import org.androidannotations.annotations.AfterViews;
@@ -65,9 +65,9 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener 
     @ViewById
     SeekBar seekBar;
     @ViewById
-    Button button_choose_filter, button_capture;
+    Button btnChooseFilter, btnCapture;
     @ViewById
-    ImageView img_switch_camera;
+    ImageView ivSwitchCamera;
     @ViewById
     GLSurfaceView surfaceView;
     private GPUImage mGPUImage;
@@ -86,11 +86,9 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener 
         // between applications and persist after your app has been uninstalled.
 
         // Create the storage directory if it does not exist
-        if (!mediaStorageDir.exists()) {
-            if (!mediaStorageDir.mkdirs()) {
-                Log.d("MyCameraApp", "failed to create directory");
-                return null;
-            }
+        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
+            Logger.e("failed to create directory");
+            return null;
         }
 
         // Create a media file name
@@ -129,7 +127,7 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener 
 
 
         if (!mCameraHelper.hasFrontCamera() || !mCameraHelper.hasBackCamera()) {
-            img_switch_camera.setVisibility(View.GONE);
+            ivSwitchCamera.setVisibility(View.GONE);
         }
         mCamera.onResume();
 
@@ -142,7 +140,7 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener 
     }
 
     @Click
-    void button_choose_filter() {
+    void btnChooseFilter() {
 //        GPUImageFilterTools.showDialog(this, new OnGpuImageFilterChosenListener() {
 //
 //            @Override
@@ -154,7 +152,7 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener 
     }
 
     @Click
-    void button_capture() {
+    void btnCapture() {
         if (mCamera.mCameraInstance.getParameters().getFocusMode().equals(
                 Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
             takePicture();
@@ -170,7 +168,7 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener 
     }
 
     @Click
-    void img_switch_camera() {
+    void ivSwitchCamera() {
         mCamera.switchCamera();
     }
 
@@ -180,7 +178,7 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener 
         params.setRotation(ROTATE_90_DEGREE);
         mCamera.mCameraInstance.setParameters(params);
         for (Camera.Size size : params.getSupportedPictureSizes()) {
-            Log.i("ASDF", "Supported: " + size.width + "x" + size.height);
+            Logger.e("Supported: " + size.width + "x" + size.height);
         }
         mCamera.mCameraInstance.takePicture(null, null,
                 new Camera.PictureCallback() {
@@ -190,7 +188,7 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener 
 
                         final File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
                         if (pictureFile == null) {
-                            Log.d("ASDF",
+                            Logger.e(
                                     "Error creating media file, check storage permissions");
                             return;
                         }
@@ -200,9 +198,9 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener 
                             fos.write(data);
                             fos.close();
                         } catch (FileNotFoundException e) {
-                            Log.d("ASDF", "File not found: " + e.getMessage());
+                            Logger.e("File not found: " + e.getMessage());
                         } catch (IOException e) {
-                            Log.d("ASDF", "Error accessing file: " + e.getMessage());
+                            Logger.e("Error accessing file: " + e.getMessage());
                         }
 
                         data = null;

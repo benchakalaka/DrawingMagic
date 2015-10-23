@@ -25,7 +25,7 @@ import de.greenrobot.event.EventBus;
  * Datascope Systems Ltd.
  */
 @EViewGroup(R.layout.abs)
-public class ABS extends RelativeLayout {
+public class ActionBarView extends RelativeLayout {
 
     @ViewById
     MaterialIconView ivMenu;
@@ -36,7 +36,7 @@ public class ABS extends RelativeLayout {
     @ViewById
     FrameLayout flRightMenuHolder;
 
-    public ABS(Context context) {
+    public ActionBarView(Context context) {
         super(context);
     }
 
@@ -46,9 +46,10 @@ public class ABS extends RelativeLayout {
      * @param title string representation of title to be set
      * @return ABS instance
      */
-    public ABS withTitle(String title) {
-        if (!TextUtils.isEmpty(title))
+    public ActionBarView withTitle(String title) {
+        if (!TextUtils.isEmpty(title)) {
             tvTitle.setText(title);
+        }
         return this;
     }
 
@@ -58,7 +59,7 @@ public class ABS extends RelativeLayout {
      *
      * @return ABS instance
      */
-    public ABS withMenuButton() {
+    public ActionBarView withMenuButton() {
         ivMenu.setVisibility(View.VISIBLE);
         return this;
     }
@@ -69,7 +70,7 @@ public class ABS extends RelativeLayout {
      * @param rightMenu view to be added
      * @return ABS instance
      */
-    public ABS withRightMenu(View rightMenu) {
+    public ActionBarView withRightMenu(View rightMenu) {
         flRightMenuHolder.setVisibility(View.VISIBLE);
         flRightMenuHolder.addView(rightMenu);
         return this;

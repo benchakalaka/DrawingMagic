@@ -226,7 +226,7 @@ public class FDrawingTools extends Fragment {
 
     @Click
     void rlDashed() {
-        drawingSettings.setDashedState(!drawingSettings.getDashedState());
+        drawingSettings.setDashedState(!drawingSettings.isDashed());
         listener.onSetUpDrawingShapesOkClicked(drawingSettings);
         playAnimationOnView(rlDashed);
     }
