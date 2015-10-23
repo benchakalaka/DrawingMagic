@@ -7,7 +7,7 @@ import com.daimajia.androidviewhover.BlurLayout;
 import com.drawingmagic.eventbus.Event;
 import com.drawingmagic.utils.Utils;
 import com.drawingmagic.views.HoverView_;
-import com.drawingmagic.views.abs.ABS_;
+import com.drawingmagic.views.abs.ActionBarView_;
 import com.romainpiel.shimmer.Shimmer;
 import com.romainpiel.shimmer.ShimmerTextView;
 
@@ -36,7 +36,7 @@ public class AStart extends SuperActivity implements HooverMenuClickListener {
     void afterViews() {
 
         // getSupportFragmentManager().beginTransaction().add(R.id.container, new MainFragment()).commit();
-        Utils.configureCustomActionBar(getSupportActionBar(), ABS_.build(this));
+        Utils.configureCustomActionBar(getSupportActionBar(), ActionBarView_.build(this));
 
         BlurLayout.setGlobalDefaultDuration(DEFAULT_GLOBAL_BLUR_DURATION);
 
