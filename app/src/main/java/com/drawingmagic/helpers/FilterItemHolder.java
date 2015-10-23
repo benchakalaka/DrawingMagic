@@ -9,12 +9,22 @@ import com.drawingmagic.core.GPUImageFilterTools;
  * Datascope Systems Ltd.
  */
 public class FilterItemHolder {
-    //// TODO: 17/09/2015 getter, setter
+
+    private final String filterName;
+    private final GPUImageFilterTools.FilterType filter;
+
+
     public FilterItemHolder(String filterName, GPUImageFilterTools.FilterType filter) {
         this.filterName = filterName;
         this.filter = filter;
     }
 
-    public final String filterName;
-    public final GPUImageFilterTools.FilterType filter;
+    public String getFilterName() {
+        return filterName;
+    }
+
+
+    public GPUImageFilterTools.FilterType getFilter() {
+        return filter;
+    }
 }

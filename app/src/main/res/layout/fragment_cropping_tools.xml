@@ -1,0 +1,120 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/default_background_colour">
+
+    <ImageView
+        android:id="@+id/ivFinalImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="20dp"
+        android:background="@color/default_background_colour"
+        android:contentDescription="@null" />
+
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/fabSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:src="@drawable/ic_launcher"
+        fab:fab_colorNormal="@color/default_text_colour"
+        fab:fab_colorPressed="@color/white"
+        fab:fab_colorRipple="@color/default_transparency" />
+
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/fabMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        fab:menu_animationDelayPerItem="50"
+        fab:menu_backgroundColor="@android:color/transparent"
+        fab:menu_buttonSpacing="0dp"
+        fab:menu_colorNormal="@color/default_ab_background_colour"
+        fab:menu_colorPressed="@color/black"
+        fab:menu_colorRipple="#99FFFFFF"
+        fab:menu_fab_label="Share"
+        fab:menu_fab_size="normal"
+        fab:menu_icon="@drawable/ic_launcher"
+        fab:menu_labels_colorNormal="#333333"
+        fab:menu_labels_colorPressed="#444444"
+        fab:menu_labels_colorRipple="#66FFFFFF"
+        fab:menu_labels_cornerRadius="3dp"
+        fab:menu_labels_ellipsize="none"
+        fab:menu_labels_margin="0dp"
+        fab:menu_labels_maxLines="-1"
+        fab:menu_labels_paddingBottom="4dp"
+        fab:menu_labels_paddingLeft="8dp"
+        fab:menu_labels_paddingRight="8dp"
+        fab:menu_labels_paddingTop="4dp"
+        fab:menu_labels_position="left"
+        fab:menu_labels_showShadow="true"
+        fab:menu_labels_singleLine="false"
+        fab:menu_labels_textColor="#FFFFFF"
+        fab:menu_labels_textSize="14sp"
+        fab:menu_openDirection="up"
+        fab:menu_shadowColor="#66000000"
+        fab:menu_shadowRadius="4dp"
+        fab:menu_shadowXOffset="1dp"
+        fab:menu_shadowYOffset="3dp"
+        fab:menu_showShadow="true">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fabOdnoklassniki"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_launcher"
+            fab:fab_colorNormal="@color/default_text_colour"
+            fab:fab_colorPressed="@color/white"
+            fab:fab_colorRipple="@color/default_transparency"
+            fab:fab_label="Odnoklassniki" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fabInstagram"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_launcher"
+            fab:fab_colorNormal="@color/default_text_colour"
+            fab:fab_colorPressed="@color/white"
+            fab:fab_colorRipple="@color/default_transparency"
+            fab:fab_label="Instagram" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fabTwitter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_launcher"
+            fab:fab_colorNormal="@color/default_text_colour"
+            fab:fab_colorPressed="@color/white"
+            fab:fab_colorRipple="@color/default_transparency"
+            fab:fab_label="Twitter" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fabFacebook"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_launcher"
+            fab:fab_colorNormal="@color/default_text_colour"
+            fab:fab_colorPressed="@color/white"
+            fab:fab_colorRipple="@color/default_transparency"
+            fab:fab_label="Facebook" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fabVk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ic_launcher"
+            fab:fab_colorNormal="@color/default_text_colour"
+            fab:fab_colorPressed="@color/white"
+            fab:fab_colorRipple="@color/default_transparency"
+            fab:fab_label="VK" />
+
+    </com.github.clans.fab.FloatingActionMenu>
+</RelativeLayout>

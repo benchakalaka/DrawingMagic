@@ -5,8 +5,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.drawingmagic.R;
+import com.drawingmagic.core.GPUImageFilterTools;
+import com.drawingmagic.eventbus.Event;
+import com.drawingmagic.fragments.FEffectsTools;
 import com.drawingmagic.helpers.FilterItemHolder;
-import com.drawingmagic.utils.Log;
+import com.drawingmagic.utils.AnimationUtils;
+import com.drawingmagic.utils.Logger;
 
 import net.steamcrafted.materialiconlib.MaterialIconView;
 
@@ -15,8 +19,7 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
 
-import static com.drawingmagic.fragments.FEffectsTools.OnChangeEffectListener;
-import static net.steamcrafted.materialiconlib.MaterialDrawableBuilder.IconValue;
+import de.greenrobot.event.EventBus;
 
 /**
  * Project DrawingMagic.
@@ -32,31 +35,30 @@ public class ImageFilterPreview extends RelativeLayout {
     TextView tvDescription;
 
     @ViewById
-    MaterialIconView mivImage;
+    MaterialIconView mivImage, mivIsAdjustable;
 
     @ViewById
     RelativeLayout rlRoot;
 
-    private OnChangeEffectListener changeEffectListener;
 
-    public ImageFilterPreview(Context context, FilterItemHolder filterItem, OnChangeEffectListener changeEffectListener) {
+    public ImageFilterPreview(Context context, FilterItemHolder filterItem) {
         super(context);
         this.filterDescriptor = filterItem;
-        this.changeEffectListener = changeEffectListener;
     }
 
-    public void setUpView(FilterItemHolder filterItem, OnChangeEffectListener changeEffectListener) {
+    public ImageFilterPreview setItem(FilterItemHolder filterItem) {
         this.filterDescriptor = filterItem;
-        this.changeEffectListener = changeEffectListener;
         afterViews();
+        return this;
     }
 
 
     @AfterViews
     void afterViews() {
-        tvDescription.setText(filterDescriptor.filterName);
-        mivImage.setIcon(IconValue.XBOX_CONTROLLER);
-        Log.e("Create preview for Filter : " + filterDescriptor.filterName);
+        tvDescription.setText(filterDescriptor.getFilterName());
+        mivImage.setIcon(FEffectsTools.FILTERS_MAP.get(filterDescriptor));
+        mivIsAdjustable.setVisibility(new GPUImageFilterTools.FilterAdjuster(GPUImageFilterTools.createFilterForType(getContext(), this.filterDescriptor.getFilter())).canAdjust() ? VISIBLE : GONE);
+        Logger.e("Create preview for Filter : " + filterDescriptor.getFilterName());
     }
 
     public FilterItemHolder getFilter() {
@@ -65,6 +67,7 @@ public class ImageFilterPreview extends RelativeLayout {
 
     @Click
     void rlRoot() {
-        changeEffectListener.onNewFilterSelected(this.filterDescriptor);
+        AnimationUtils.animate(rlRoot, AnimationUtils.AnimationTechniques.ZOOM_IN);
+        EventBus.getDefault().post(new Event(Event.ON_APPLY_EFFECT, filterDescriptor));
     }
 }

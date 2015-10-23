@@ -16,15 +16,14 @@ import static com.drawingmagic.core.DrawingView.ShapesType;
  */
 public class DrawingSettings {
     private int currentShape = ShapesType.STANDARD_DRAWING;
-    // // TODO: 15/09/15 replace magic number\
-    private int brushWidth = 5;
+    private int brushWidth = DrawingView.DEFAULT_BRUSH_SIZE;
     private int currentColour = Color.BLUE;
     private boolean fillInside = false;
     private boolean dashed = false;
     private boolean displayLinesWhileDrawing = false;
     private int gridType = GridType.FULL_GRID;
 
-    public boolean getDashedState() {
+    public boolean isDashed() {
         return this.dashed;
     }
 
@@ -52,9 +51,6 @@ public class DrawingSettings {
         return currentColour;
     }
 
-    public void setCurrentColour(String currentColour) {
-        this.currentColour = Color.parseColor(currentColour);
-    }
 
     public void setCurrentColour(int currentColour) {
         this.currentColour = currentColour;

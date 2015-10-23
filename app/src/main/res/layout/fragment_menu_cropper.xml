@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/default_transparency"
+    android:orientation="horizontal">
+
+    <net.steamcrafted.materialiconlib.MaterialIconView
+        android:id="@+id/mivApply"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:scaleType="center"
+        app:materialIcon="check"
+        app:materialIconColor="@color/default_text_colour"
+        app:materialIconSize="@dimen/default_menu_icons_size" />
+
+    <net.steamcrafted.materialiconlib.MaterialIconView
+        android:id="@+id/mivCroppingShape"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:scaleType="center"
+        app:materialIcon="image_filter_center_focus"
+        app:materialIconColor="@color/default_text_colour"
+        app:materialIconSize="@dimen/default_menu_icons_size" />
+
+</LinearLayout>
+

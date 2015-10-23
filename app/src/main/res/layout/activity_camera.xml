@@ -10,7 +10,7 @@
         android:layout_above="@+id/bar" />
 
     <ImageView
-        android:id="@+id/img_switch_camera"
+        android:id="@+id/ivSwitchCamera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
@@ -36,13 +36,13 @@
             android:max="100" />
 
         <Button
-            android:id="@+id/button_choose_filter"
+            android:id="@+id/btnChooseFilter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/choose_filter" />
 
         <Button
-            android:id="@+id/button_capture"
+            android:id="@+id/btnCapture"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@android:drawable/ic_menu_camera" />

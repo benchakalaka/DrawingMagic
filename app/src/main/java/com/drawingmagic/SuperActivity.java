@@ -1,6 +1,7 @@
 package com.drawingmagic;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
+import android.support.v7.app.AppCompatActivity;
+
 import com.drawingmagic.eventbus.Event;
 
 import de.greenrobot.event.EventBus;
@@ -10,7 +11,8 @@ import de.greenrobot.event.EventBus;
  * Created by ihorkarpachev.
  * On 13/09/15 at 18:11.
  */
-public abstract class SuperActivity extends SherlockFragmentActivity {
+public abstract class SuperActivity extends AppCompatActivity {
+
 
     /**
      * Start manager on activity start
@@ -21,12 +23,12 @@ public abstract class SuperActivity extends SherlockFragmentActivity {
         EventBus.getDefault().register(this);
     }
 
-
     @Override
     protected void onPause() {
         EventBus.getDefault().unregister(this);
         super.onPause();
     }
+
 
     public abstract void onEventMainThread(Event event);
 }

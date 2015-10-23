@@ -25,15 +25,15 @@ import android.hardware.Camera.Parameters;
 import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.os.Environment;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
-import com.drawingmagic.core.GPUImageFilterTools;
 import com.drawingmagic.helpers.CameraHelper;
+import com.drawingmagic.utils.Logger;
+import com.drawingmagic.utils.Notification;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
@@ -53,7 +53,6 @@ import jp.co.cyberagent.android.gpuimage.GPUImage.OnPictureSavedListener;
 import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
 
 import static com.drawingmagic.core.GPUImageFilterTools.FilterAdjuster;
-import static com.drawingmagic.core.GPUImageFilterTools.OnGpuImageFilterChosenListener;
 import static com.drawingmagic.helpers.CameraHelper.CameraInfo2;
 
 
@@ -62,12 +61,13 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener 
 
     private static final int MEDIA_TYPE_IMAGE = 1;
     private static final int MEDIA_TYPE_VIDEO = 2;
+    private static final int ROTATE_90_DEGREE = 90;
     @ViewById
     SeekBar seekBar;
     @ViewById
-    Button button_choose_filter, button_capture;
+    Button btnChooseFilter, btnCapture;
     @ViewById
-    ImageView img_switch_camera;
+    ImageView ivSwitchCamera;
     @ViewById
     GLSurfaceView surfaceView;
     private GPUImage mGPUImage;
@@ -86,11 +86,9 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener 
         // between applications and persist after your app has been uninstalled.
 
         // Create the storage directory if it does not exist
-        if (!mediaStorageDir.exists()) {
-            if (!mediaStorageDir.mkdirs()) {
-                Log.d("MyCameraApp", "failed to create directory");
-                return null;
-            }
+        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
+            Logger.e("failed to create directory");
+            return null;
         }
 
         // Create a media file name
@@ -129,7 +127,7 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener 
 
 
         if (!mCameraHelper.hasFrontCamera() || !mCameraHelper.hasBackCamera()) {
-            img_switch_camera.setVisibility(View.GONE);
+            ivSwitchCamera.setVisibility(View.GONE);
         }
         mCamera.onResume();
 
@@ -142,18 +140,19 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener 
     }
 
     @Click
-    void button_choose_filter() {
-        GPUImageFilterTools.showDialog(this, new OnGpuImageFilterChosenListener() {
-
-            @Override
-            public void onGpuImageFilterChosenListener(final GPUImageFilter filter) {
-                switchFilterTo(filter);
-            }
-        });
+    void btnChooseFilter() {
+//        GPUImageFilterTools.showDialog(this, new OnGpuImageFilterChosenListener() {
+//
+//            @Override
+//            public void onGpuImageFilterChosenListener(final GPUImageFilter filter) {
+//                switchFilterTo(filter);
+//            }
+//        });
+        Notification.showError(this, "NEED TO BE IMPLMENTED");
     }
 
     @Click
-    void button_capture() {
+    void btnCapture() {
         if (mCamera.mCameraInstance.getParameters().getFocusMode().equals(
                 Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
             takePicture();
@@ -169,17 +168,17 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener 
     }
 
     @Click
-    void img_switch_camera() {
+    void ivSwitchCamera() {
         mCamera.switchCamera();
     }
 
     private void takePicture() {
         // TODO get a size that is about the size of the screen
         Camera.Parameters params = mCamera.mCameraInstance.getParameters();
-        params.setRotation(90);
+        params.setRotation(ROTATE_90_DEGREE);
         mCamera.mCameraInstance.setParameters(params);
         for (Camera.Size size : params.getSupportedPictureSizes()) {
-            Log.i("ASDF", "Supported: " + size.width + "x" + size.height);
+            Logger.e("Supported: " + size.width + "x" + size.height);
         }
         mCamera.mCameraInstance.takePicture(null, null,
                 new Camera.PictureCallback() {
@@ -189,7 +188,7 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener 
 
                         final File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
                         if (pictureFile == null) {
-                            Log.d("ASDF",
+                            Logger.e(
                                     "Error creating media file, check storage permissions");
                             return;
                         }
@@ -199,9 +198,9 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener 
                             fos.write(data);
                             fos.close();
                         } catch (FileNotFoundException e) {
-                            Log.d("ASDF", "File not found: " + e.getMessage());
+                            Logger.e("File not found: " + e.getMessage());
                         } catch (IOException e) {
-                            Log.d("ASDF", "Error accessing file: " + e.getMessage());
+                            Logger.e("Error accessing file: " + e.getMessage());
                         }
 
                         data = null;

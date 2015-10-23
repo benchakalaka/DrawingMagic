@@ -10,9 +10,11 @@ import org.androidannotations.annotations.EActivity;
  * On 13/09/15 at 17:47.
  */
 @EActivity(R.layout.activity_user_settings)
-public class AUserSettings extends SuperActivity{
+public class AUserSettings extends SuperActivity {
     @Override
     public void onEventMainThread(Event event) {
 
     }
+
+
 }

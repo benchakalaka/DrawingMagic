@@ -24,6 +24,7 @@ public class PathSerializable extends Path implements Serializable {
 
     private PaintSerializable paint = new PaintSerializable();
     private float savedCanvasX, savedCanvasY;
+    private final static float DEFAULT_ROUND_RECTANGLE_RADIUS = 15;
 
     public void setDrawText(float x, float y, String textToDraw) {
         this.textX = x;
@@ -111,7 +112,7 @@ public class PathSerializable extends Path implements Serializable {
 
     @Override
     public void addRoundRect(RectF rect, float rx, float ry, Direction dir) {
-        actions.add(new ActionRoundrectangle(rect));
+        actions.add(new ActionRoundRectangle(rect));
         super.addRoundRect(rect, rx, ry, dir);
     }
 
@@ -126,9 +127,9 @@ public class PathSerializable extends Path implements Serializable {
                 RectF r = new RectF(oval.getLeft(), oval.getTop(), oval.getRight(), oval.getBottom());
                 super.addOval(r, Direction.CW);
             } else if (p.getType().equals(PathActionType.ADD_ROUND_RECT)) {
-                ActionRoundrectangle oval = (ActionRoundrectangle) p;
+                ActionRoundRectangle oval = (ActionRoundRectangle) p;
                 RectF r = new RectF(oval.getLeft(), oval.getTop(), oval.getRight(), oval.getBottom());
-                super.addRoundRect(r, 15, 15, Direction.CW);
+                super.addRoundRect(r, DEFAULT_ROUND_RECTANGLE_RADIUS, DEFAULT_ROUND_RECTANGLE_RADIUS, Direction.CW);
             }
         }
     }
@@ -172,11 +173,11 @@ public class PathSerializable extends Path implements Serializable {
         }
     }
 
-    public class ActionRoundrectangle implements PathAction, Serializable {
+    public class ActionRoundRectangle implements PathAction, Serializable {
         private static final long serialVersionUID = 2436181604041442662L;
         private final float left, top, right, bottom;
 
-        public ActionRoundrectangle(RectF rect) {
+        public ActionRoundRectangle(RectF rect) {
             this.left = rect.left;
             this.top = rect.top;
             this.right = rect.right;
