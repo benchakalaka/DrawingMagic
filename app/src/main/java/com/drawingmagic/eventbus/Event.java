@@ -33,7 +33,8 @@ public final class Event {
     public static final int ON_RESTORE_IMAGE_BEFORE_DRAWING = 26;
     public static final int FLIP = 27;
     public static final int MIRROR = 28;
-
+    public static final int ON_APPLY_FRAME = 29;
+    public static final int ON_GRID_TYPE_CHANGED = 30;
 
     /**
      * Type of created event. Used for specifying type of event without creating class hierarchy of

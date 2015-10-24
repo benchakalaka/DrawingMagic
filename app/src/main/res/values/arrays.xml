@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="grid_state_icons">
+        <item>grid_off</item>
+        <item>border_outside</item>
+        <item>grid</item>
+    </string-array>
+</resources>

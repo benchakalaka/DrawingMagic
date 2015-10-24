@@ -72,7 +72,7 @@ public class FDrawingTools extends Fragment {
     ImageView ivColour0, ivColour1, ivColour2, ivColour3, ivColour4, ivColour5, ivColour6, ivColour7, ivColour8, ivColour9, ivColour10, ivColour11;
 
     @ViewById
-    RelativeLayout rlDashed, rlFillShape, rlDisplayLinesWhileDrawing, rlNoGrid, rlPartlyGrid, rlFullGrid;
+    RelativeLayout rlDashed, rlFillShape, rlDisplayLinesWhileDrawing;
 
     @ViewById
     SeekBar sbBrushSize;
@@ -98,31 +98,15 @@ public class FDrawingTools extends Fragment {
 
         // set current brush size
         sbBrushSize.setProgress(DEFAULT_BRUSH_SIZE);
-
+        this.
         // color picker view
         initColorPicker();
+
     }
 
     public FDrawingTools() {
     }
-
-    @Click
-    void rlNoGrid() {
-        playAnimationOnView(rlNoGrid);
-        selectViewByTypeOfGrid(GridType.NO_GRID);
-    }
-
-    @Click
-    void rlPartlyGrid() {
-        playAnimationOnView(rlPartlyGrid);
-        selectViewByTypeOfGrid(GridType.PARTLY_GRID);
-    }
-
-    @Click
-    void rlFullGrid() {
-        playAnimationOnView(rlFullGrid);
-        selectViewByTypeOfGrid(GridType.FULL_GRID);
-    }
+    
 
     private void selectShape(MaterialIconView icon) {
         playAnimationOnView(icon);

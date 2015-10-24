@@ -1,0 +1,23 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+
+    <net.steamcrafted.materialiconlib.MaterialIconView
+        android:id="@+id/mivGridState"
+        android:layout_margin="10dp"
+        android:layout_width="@dimen/dimension_cirle_menu_grid"
+        android:layout_height="@dimen/dimension_cirle_menu_grid"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginEnd="5dp"
+        android:layout_marginRight="5dp"
+        android:scaleType="center"
+        android:background="@drawable/bg_circle"
+        app:materialIcon="grid_off"
+        app:materialIconColor="@color/default_text_colour"
+        app:materialIconSize="@dimen/default_icon_size" />
+
+</merge>
