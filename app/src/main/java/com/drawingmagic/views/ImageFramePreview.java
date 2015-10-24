@@ -9,7 +9,7 @@ import com.drawingmagic.R;
 import com.drawingmagic.eventbus.Event;
 import com.drawingmagic.helpers.FrameProvider;
 import com.drawingmagic.utils.AnimationUtils;
-import com.drawingmagic.utils.Log;
+import com.drawingmagic.utils.Logger;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
@@ -48,7 +48,7 @@ public class ImageFramePreview extends RelativeLayout {
     void afterViews() {
         tvDescription.setText(frameInfo.getFrameName());
         ivFrameIcon.setImageDrawable(frameInfo.getFramePreview(getResources()));
-        Log.e("Create preview for Filter : " + frameInfo.getFrameName());
+        Logger.e("Create preview for Filter : " + frameInfo.getFrameName());
     }
 
     public FrameProvider getFrameInfo() {

@@ -1,12 +1,11 @@
 <!--
   ~ Created by Ihor Karpachev, Copyright (c) 2015. .
   -->
-
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="@color/default_background_colour">
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@color/default_background_colour">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -189,36 +188,6 @@
                     app:materialIconColor="@color/default_text_colour"
                     app:materialIconSize="@dimen/default_menu_icons_size" />
 
-                    <net.steamcrafted.materialiconlib.MaterialIconView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginEnd="2dp"
-                        android:layout_marginRight="2dp"
-                        android:layout_toLeftOf="@+id/tvMirrorVertically"
-                        android:layout_toStartOf="@+id/tvMirrorVertically"
-                        android:scaleType="center"
-                        app:materialIcon="swap_vertical"
-                        app:materialIconColor="@color/default_text_colour"
-                        app:materialIconSize="@dimen/default_icon_size" />
-
-                    <TextView
-                        android:id="@+id/tvMirrorVertically"
-                        style="@style/tools_description_text_view"
-                        android:text="@string/mirror_vertical" />
-                </RelativeLayout>
-            </LinearLayout>
-            <!-- Mirror option -->
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:scrollbars="horizontal"
-                    android:layout_width="wrap_content"
-                    android:id="@+id/llFramesContainer"
-                    android:layout_height="match_parent"/>
-            </HorizontalScrollView>
                 <TextView
                     android:id="@+id/tvMirrorVertically"
                     style="@style/tools_description_text_view"
@@ -227,6 +196,16 @@
             </RelativeLayout>
         </LinearLayout>
         <!-- Mirror option -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
+            <LinearLayout
+                android:id="@+id/llFramesContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:scrollbars="horizontal" />
+        </HorizontalScrollView>
     </LinearLayout>
 </ScrollView>

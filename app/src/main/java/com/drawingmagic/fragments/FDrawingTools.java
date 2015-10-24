@@ -222,4 +222,7 @@ public class FDrawingTools extends Fragment {
         playAnimationOnView(rlDisplayLinesWhileDrawing);
         listener.onSetUpDrawingShapesOkClicked(drawingSettings);
     }
+    public interface OnChangeDrawingSettingsListener {
+        void onSetUpDrawingShapesOkClicked(DrawingSettings shape);
+    }
 }

@@ -17,7 +17,6 @@ import com.drawingmagic.core.DrawingSettings;
 import com.drawingmagic.core.DrawingView;
 import com.drawingmagic.core.GPUImageFilterTools;
 import com.drawingmagic.eventbus.Event;
-import com.drawingmagic.fragments.FDrawingTools.OnChangeDrawingSettingsListener;
 import com.drawingmagic.fragments.FMenuAdjuster_;
 import com.drawingmagic.fragments.FMenuCropper_;
 import com.drawingmagic.fragments.FMenuDrawingTools_;
@@ -26,15 +25,15 @@ import com.drawingmagic.helpers.FilterItemHolder;
 import com.drawingmagic.helpers.FrameProvider;
 import com.drawingmagic.utils.Conditions;
 import com.drawingmagic.utils.GraphicUtils;
-import com.drawingmagic.utils.Log;
+import com.drawingmagic.utils.Logger;
 import com.drawingmagic.utils.Notification;
 import com.drawingmagic.utils.Utils;
 import com.drawingmagic.views.ABSMenuApplyRestoreCancel_;
 import com.drawingmagic.views.ViewMenuTop;
 import com.drawingmagic.views.ViewMenuTop_;
-import com.drawingmagic.views.abs.ABS_;
+import com.drawingmagic.views.abs.ActionBarView_;
 import com.theartofdev.edmodo.cropper.CropImageView;
-
+import static com.drawingmagic.GlobalConstants.*;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
@@ -80,7 +79,7 @@ import static com.drawingmagic.views.HoverView.MENU_ITEM_GALLERY;
 import static com.theartofdev.edmodo.cropper.CropImageView.CropShape;
 import static jp.co.cyberagent.android.gpuimage.GPUImage.ScaleType.CENTER_INSIDE;
 import static jp.co.cyberagent.android.gpuimage.GPUImageView.OnPictureSavedListener;
-
+import com.drawingmagic.fragments.FDrawingTools.OnChangeDrawingSettingsListener;
 /**
  * Project DrawingMagic.
  * Created by ihorkarpachev
@@ -115,7 +114,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
     /**
      * BITMAP_ORIGIN -------> BITMAP_MODIFIED -------> (DrawingView, TransformView, GPUEffects, CropView)
      */
-    public static Bitmap BITMAP_ORIGIN, BITMAP_MODIFIED;
+    private Bitmap bitmapOrigin, bitmapModified;
     private Bitmap croppedBitmap;
 
     // View pager adapter
@@ -222,6 +221,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                                                                case DRAWING_TOOLS_FRAGMENT:
                                                                    drawingView.setVisibility(VISIBLE);
                                                                    gpuImage.setVisibility(GONE);
+                                                                   menuViewTop.setVisibility(VISIBLE);
                                                                    cropImageView.setVisibility(GONE);
                                                                    drawingView.setDrawingEnabled(true);
                                                                    getSupportFragmentManager().beginTransaction().hide(fragmentMenuRotation).commit();
@@ -558,7 +558,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                 onApplyImageTransformationChanges();
                 break;
             case ON_GRID_TYPE_CHANGED:
-                Log.e("SET GRID TYPE " + event.payload);
+                Logger.e("SET GRID TYPE " + event.payload);
                 drawingView.setGridType((Integer) event.payload);
                 break;
 

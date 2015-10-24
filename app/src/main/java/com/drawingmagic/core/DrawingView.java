@@ -22,7 +22,6 @@ import android.view.ScaleGestureDetector;
 import android.view.View;
 
 import com.drawingmagic.SuperActivity;
-import com.drawingmagic.dialogs.DialogCanvasSettings;
 import com.drawingmagic.helpers.FrameProvider;
 import com.drawingmagic.utils.Conditions;
 import com.drawingmagic.utils.Logger;
@@ -879,7 +878,7 @@ public class DrawingView extends View {
         public void setFrame(FrameProvider frameProvider) {
             this.frameProvider = frameProvider;
         }
-        public DialogCanvasSettings.CanvasSettings getCanvasSettings() {
+        public CanvasSettings getCanvasSettings() {
             if (null == canvasSettings) {
                 canvasSettings = new CanvasSettings();
             }
