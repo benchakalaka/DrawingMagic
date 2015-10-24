@@ -2,196 +2,192 @@
   ~ Created by Ihor Karpachev, Copyright (c) 2015. .
   -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@color/default_background_colour">
 
-    <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="@color/default_background_colour">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
 
-            <LinearLayout
+            <!-- Rotate option -->
+            <RelativeLayout
+                android:id="@+id/rlRotate"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:baselineAligned="false"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content"
+                android:layout_margin="2dp"
+                android:layout_weight="1"
+                android:background="@color/default_transparency">
 
-                <!-- Rotate option -->
-                <RelativeLayout
-                    android:id="@+id/rlRotate"
-                    android:layout_width="match_parent"
+                <net.steamcrafted.materialiconlib.MaterialIconView
+                    android:id="@+id/mivRotate"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="2dp"
-                    android:layout_weight="1"
-                    android:background="@color/default_transparency">
+                    android:layout_centerInParent="true"
+                    android:scaleType="center"
+                    app:materialIcon="twitter_retweet"
+                    app:materialIconColor="@color/default_text_colour"
+                    app:materialIconSize="@dimen/default_menu_icons_size" />
 
-                    <net.steamcrafted.materialiconlib.MaterialIconView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginEnd="2dp"
-                        android:layout_marginRight="2dp"
-                        android:layout_toLeftOf="@+id/tvRotate"
-                        android:layout_toStartOf="@+id/tvRotate"
-                        android:scaleType="center"
-                        app:materialIcon="rotate_left"
-                        app:materialIconColor="@color/default_text_colour"
-                        app:materialIconSize="@dimen/default_icon_size" />
+                <TextView
+                    android:id="@+id/tvRotate"
+                    style="@style/tools_description_text_view"
+                    android:layout_below="@+id/mivRotate"
 
-                    <TextView
-                        android:id="@+id/tvRotate"
-                        style="@style/tools_description_text_view"
-                        android:text="@string/rotate" />
-                </RelativeLayout>
-                <!-- Rotate option -->
+                    android:text="@string/rotate" />
+            </RelativeLayout>
+            <!-- Rotate option -->
 
 
-                <!-- Skew option -->
-                <RelativeLayout
-                    android:id="@+id/rlSkew"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="2dp"
-                    android:layout_weight="1"
-                    android:background="@color/default_transparency">
-
-                    <net.steamcrafted.materialiconlib.MaterialIconView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginEnd="2dp"
-                        android:layout_marginRight="2dp"
-                        android:layout_toLeftOf="@+id/tvSkew"
-                        android:layout_toStartOf="@+id/tvSkew"
-                        android:scaleType="center"
-                        app:materialIcon="rotate_left"
-                        app:materialIconColor="@color/default_text_colour"
-                        app:materialIconSize="@dimen/default_icon_size" />
-
-                    <TextView
-                        android:id="@+id/tvSkew"
-                        style="@style/tools_description_text_view"
-                        android:text="@string/skew" />
-                </RelativeLayout>
-                <!-- Skew option -->
-            </LinearLayout>
-
-
-            <!-- Flip option -->
-            <LinearLayout
+            <!-- Skew option -->
+            <RelativeLayout
+                android:id="@+id/rlSkew"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:baselineAligned="false"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content"
+                android:layout_margin="2dp"
+                android:layout_weight="1"
+                android:background="@color/default_transparency">
 
-                <RelativeLayout
-                    android:id="@+id/rlFlipHorizontal"
-                    android:layout_width="match_parent"
+                <net.steamcrafted.materialiconlib.MaterialIconView
+                    android:id="@+id/mivSkew"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="2dp"
-                    android:layout_weight="1"
-                    android:background="@color/default_transparency">
+                    android:layout_centerInParent="true"
+                    android:scaleType="center"
+                    app:materialIcon="escalator"
+                    app:materialIconColor="@color/default_text_colour"
+                    app:materialIconSize="@dimen/default_menu_icons_size" />
 
-                    <net.steamcrafted.materialiconlib.MaterialIconView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginEnd="2dp"
-                        android:layout_marginRight="2dp"
-                        android:layout_toLeftOf="@+id/tvFlipH"
-                        android:layout_toStartOf="@+id/tvFlipH"
-                        android:scaleType="center"
-                        app:materialIcon="swap_horizontal"
-                        app:materialIconColor="@color/default_text_colour"
-                        app:materialIconSize="@dimen/default_icon_size" />
-
-                    <TextView
-                        android:id="@+id/tvFlipH"
-                        style="@style/tools_description_text_view"
-                        android:text="@string/flip_horizontal" />
-                </RelativeLayout>
+                <TextView
+                    android:id="@+id/tvSkew"
+                    style="@style/tools_description_text_view"
+                    android:layout_below="@+id/mivSkew"
+                    android:text="@string/skew" />
+            </RelativeLayout>
+            <!-- Skew option -->
+        </LinearLayout>
 
 
-                <RelativeLayout
-                    android:id="@+id/rlFlipVertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="2dp"
-                    android:layout_weight="1"
-                    android:background="@color/default_transparency">
+        <!-- Flip option -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
 
-                    <net.steamcrafted.materialiconlib.MaterialIconView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginEnd="2dp"
-                        android:layout_marginRight="2dp"
-                        android:layout_toLeftOf="@+id/tvFlipV"
-                        android:layout_toStartOf="@+id/tvFlipV"
-                        android:scaleType="center"
-                        app:materialIcon="swap_vertical"
-                        app:materialIconColor="@color/default_text_colour"
-                        app:materialIconSize="@dimen/default_icon_size" />
-
-                    <TextView
-                        android:id="@+id/tvFlipV"
-                        style="@style/tools_description_text_view"
-                        android:text="@string/flip_vertical" />
-                </RelativeLayout>
-            </LinearLayout>
-            <!-- Flip option -->
-
-
-            <!-- Mirror option -->
-            <LinearLayout
+            <RelativeLayout
+                android:id="@+id/rlFlipHorizontal"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:baselineAligned="false"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content"
+                android:layout_margin="2dp"
+                android:layout_weight="1"
+                android:background="@color/default_transparency">
 
-                <RelativeLayout
-                    android:id="@+id/rlMirrorHorizontal"
-                    android:layout_width="match_parent"
+                <net.steamcrafted.materialiconlib.MaterialIconView
+                    android:id="@+id/mivFlipH"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="2dp"
-                    android:layout_weight="1"
-                    android:background="@color/default_transparency">
+                    android:layout_centerInParent="true"
+                    android:scaleType="center"
+                    app:materialIcon="swap_horizontal"
+                    app:materialIconColor="@color/default_text_colour"
+                    app:materialIconSize="@dimen/default_menu_icons_size" />
 
-                    <net.steamcrafted.materialiconlib.MaterialIconView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginEnd="2dp"
-                        android:layout_marginRight="2dp"
-                        android:layout_toLeftOf="@+id/tvMirrorHorizontally"
-                        android:layout_toStartOf="@+id/tvMirrorHorizontally"
-                        android:scaleType="center"
-                        app:materialIcon="swap_horizontal"
-                        app:materialIconColor="@color/default_text_colour"
-                        app:materialIconSize="@dimen/default_icon_size" />
-
-                    <TextView
-                        android:id="@+id/tvMirrorHorizontally"
-                        style="@style/tools_description_text_view"
-                        android:text="@string/mirror_horizontal" />
-                </RelativeLayout>
+                <TextView
+                    android:id="@+id/tvFlipH"
+                    style="@style/tools_description_text_view"
+                    android:layout_below="@+id/mivFlipH"
+                    android:text="@string/flip_horizontal" />
+            </RelativeLayout>
 
 
-                <RelativeLayout
-                    android:id="@+id/rlMirrorVertical"
-                    android:layout_width="match_parent"
+            <RelativeLayout
+                android:id="@+id/rlFlipVertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="2dp"
+                android:layout_weight="1"
+                android:background="@color/default_transparency">
+
+                <net.steamcrafted.materialiconlib.MaterialIconView
+                    android:id="@+id/mivFlipV"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="2dp"
-                    android:layout_weight="1"
-                    android:background="@color/default_transparency">
+                    android:layout_centerInParent="true"
+                    android:scaleType="center"
+                    app:materialIcon="swap_vertical"
+                    app:materialIconColor="@color/default_text_colour"
+                    app:materialIconSize="@dimen/default_menu_icons_size" />
+
+                <TextView
+                    android:id="@+id/tvFlipV"
+                    style="@style/tools_description_text_view"
+                    android:layout_below="@+id/mivFlipV"
+                    android:text="@string/flip_vertical" />
+            </RelativeLayout>
+        </LinearLayout>
+        <!-- Flip option -->
+
+
+        <!-- Mirror option -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:id="@+id/rlMirrorHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="2dp"
+                android:layout_weight="1"
+                android:background="@color/default_transparency">
+
+                <net.steamcrafted.materialiconlib.MaterialIconView
+                    android:id="@+id/mivMirrorH"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:scaleType="center"
+                    app:materialIcon="alert"
+                    app:materialIconColor="@color/default_text_colour"
+                    app:materialIconSize="@dimen/default_menu_icons_size" />
+
+                <TextView
+                    android:id="@+id/tvMirrorHorizontally"
+                    style="@style/tools_description_text_view"
+                    android:layout_below="@+id/mivMirrorH"
+                    android:text="@string/mirror_horizontal" />
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/rlMirrorVertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="2dp"
+                android:layout_weight="1"
+                android:background="@color/default_transparency">
+
+                <net.steamcrafted.materialiconlib.MaterialIconView
+                    android:id="@+id/mivMirrorV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:scaleType="center"
+                    app:materialIcon="alert"
+                    app:materialIconColor="@color/default_text_colour"
+                    app:materialIconSize="@dimen/default_menu_icons_size" />
 
                     <net.steamcrafted.materialiconlib.MaterialIconView
                         android:layout_width="wrap_content"
@@ -223,6 +219,14 @@
                     android:id="@+id/llFramesContainer"
                     android:layout_height="match_parent"/>
             </HorizontalScrollView>
+                <TextView
+                    android:id="@+id/tvMirrorVertically"
+                    style="@style/tools_description_text_view"
+                    android:layout_below="@+id/mivMirrorV"
+                    android:text="@string/mirror_vertical" />
+            </RelativeLayout>
         </LinearLayout>
-    </ScrollView>
-</RelativeLayout>
+        <!-- Mirror option -->
+
+    </LinearLayout>
+</ScrollView>

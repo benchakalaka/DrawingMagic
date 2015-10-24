@@ -26,7 +26,7 @@ import android.widget.GridView;
 import com.drawingmagic.R;
 import com.drawingmagic.helpers.FilterItemHolder;
 import com.drawingmagic.utils.Conditions;
-import com.drawingmagic.utils.Log;
+import com.drawingmagic.utils.Logger;
 import com.drawingmagic.views.ImageFilterPreview;
 import com.drawingmagic.views.ImageFilterPreview_;
 
@@ -122,7 +122,7 @@ public class FEffectsTools extends Fragment {
         FILTERS_MAP.put(new FilterItemHolder(getString(R.string.blend_chroma_key), FilterType.BLEND_CHROMA_KEY), IconValue.CAKE);
         FILTERS_MAP.put(new FilterItemHolder(getString(R.string.blend_normal), FilterType.BLEND_NORMAL), IconValue.CAKE);
 
-        Log.e(String.format("Filters map has been initialized (Size:%s)", FILTERS_MAP.size()));
+        Logger.e(String.format("Filters map has been initialized (Size:%s)", FILTERS_MAP.size()));
     }
 
 

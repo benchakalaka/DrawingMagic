@@ -21,6 +21,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.PointF;
 
 import com.drawingmagic.R;
+import com.drawingmagic.utils.Logger;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -100,7 +101,11 @@ import jp.co.cyberagent.android.gpuimage.GPUImageVignetteFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageWeakPixelInclusionFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageWhiteBalanceFilter;
 
-public class GPUImageFilterTools {
+public final class GPUImageFilterTools {
+
+    private GPUImageFilterTools() {
+
+    }
 
     public static GPUImageFilter createFilterForType(final Context context, final FilterType type) {
         switch (type) {
@@ -285,7 +290,7 @@ public class GPUImageFilterTools {
             filter.setBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher));
             return filter;
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e(e);
             return null;
         }
     }

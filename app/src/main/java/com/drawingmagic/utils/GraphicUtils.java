@@ -10,9 +10,10 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
-import android.graphics.Shader;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+
+import static android.graphics.Shader.TileMode.CLAMP;
 
 /**
  * Created by ihor.karpachev on 05/10/2015.
@@ -20,7 +21,11 @@ import android.text.TextUtils;
  * Package: com.drawingmagic.utils
  * Datascope Systems Ltd.
  */
-public class GraphicUtils {
+public final class GraphicUtils {
+
+    private GraphicUtils() {
+
+    }
 
     // Flip type direction
     public static final int FLIP_VERTICAL = 1;
@@ -30,106 +35,111 @@ public class GraphicUtils {
     public static final int MIRROR_VERTICAL = 1;
     public static final int MIRROR_HORIZONTAL = 2;
 
+    // Reflection gap between origin image and reflected image (gap space between original and reflected)
+    private static final int REFLECTION_GAP = 4;
+
+    // this will not scale but will flip on the Y axis
+    private final static Matrix MATRIX = new Matrix();
 
     /**
      * Mirror reflection
      *
      * @param originalImage bitmap to be mirrored
-     * @return mirored bitmap
+     * @return mirrored bitmap
      */
     public static Bitmap applyReflection(Bitmap originalImage, int direction) {
-        // gap space between original and reflected
-        final int reflectionGap = 4;
         // get image size
         int width = originalImage.getWidth();
         int height = originalImage.getHeight();
+        int halfWidth = width >>> 1;
+        int halfHeight = height >>> 1;
+
+        MATRIX.reset();
+
+        boolean isHorizontal = direction == MIRROR_HORIZONTAL;
 
         // this will not scale but will flip on the Y axis
-        Matrix matrix = new Matrix();
-        matrix.preScale(-1, 1);
+        MATRIX.preScale(isHorizontal ? -1 : 1, isHorizontal ? 1 : -1);
 
-        // create a Bitmap with the flip matrix applied to it.
+        // create a Bitmap with the flip MATRIX applied to it.
         // we only want the bottom half of the image
-        Bitmap reflectionImage = Bitmap.createBitmap(originalImage, width / 2, 0, width / 2, height, matrix, false);
+        Bitmap reflectionImage = Bitmap.createBitmap(originalImage, isHorizontal ? halfWidth : 0, isHorizontal ? 0 : halfHeight, isHorizontal ? halfWidth : width, isHorizontal ? height : halfHeight, MATRIX, false);
 
         // create a new bitmap with same width but taller to fit reflection
-        Bitmap bitmapWithReflection = Bitmap.createBitmap(width, (height + height / 2), Bitmap.Config.ARGB_8888);
+        Bitmap bitmapWithReflection = Bitmap.createBitmap(isHorizontal ? (width + halfWidth) : width, isHorizontal ? height : (height + halfHeight), Bitmap.Config.ARGB_8888);
 
         // create a new Canvas with the bitmap that's big enough for
         // the image plus gap plus reflection
         Canvas canvas = new Canvas(bitmapWithReflection);
         // draw in the original image
         canvas.drawBitmap(originalImage, 0, 0, null);
+
         // draw in the gap
         Paint defaultPaint = new Paint();
-        canvas.drawRect(0, height, width, height + reflectionGap, defaultPaint);
+        canvas.drawRect(isHorizontal ? width : 0, isHorizontal ? (height - REFLECTION_GAP) : height + REFLECTION_GAP, width, height, defaultPaint);
         // draw in the reflection
-        canvas.drawBitmap(reflectionImage, 0, height + reflectionGap, null);
+        canvas.drawBitmap(reflectionImage, isHorizontal ? width + REFLECTION_GAP : 0, isHorizontal ? 0 : height + REFLECTION_GAP, null);
 
         // create a shader that is a linear gradient that covers the reflection
         Paint paint = new Paint();
-        LinearGradient shader = new LinearGradient(0, originalImage.getHeight(), 0,
-                bitmapWithReflection.getHeight() + reflectionGap, 0x70ffffff, 0x00ffffff,
-                Shader.TileMode.CLAMP);
+        LinearGradient shader = new LinearGradient(isHorizontal ? bitmapWithReflection.getWidth() : 0, originalImage.getHeight(), 0, isHorizontal ? 0 : bitmapWithReflection.getHeight() + REFLECTION_GAP, 0x70ffffff, 0x00ffffff, CLAMP);
         // set the paint to use this shader (linear gradient)
         paint.setShader(shader);
         // set the Transfer mode to be porter duff and destination in
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
         // draw a rectangle using the paint with our linear gradient
-        canvas.drawRect(0, height, width, bitmapWithReflection.getHeight() + reflectionGap, paint);
-
+        canvas.drawRect(isHorizontal ? width + REFLECTION_GAP : 0, isHorizontal ? 0 : height, isHorizontal ? width + reflectionImage.getWidth() : width, isHorizontal ? height + reflectionImage.getHeight() : bitmapWithReflection.getHeight() + REFLECTION_GAP, paint);
         return bitmapWithReflection;
     }
 
-    /**
-     * Mirror reflection
-     *
-     * @param originalImage bitmap to be mirrored
-     * @return mirored bitmap
-     */
-    public static Bitmap applyReflection(Bitmap originalImage) {
-        // gap space between original and reflected
-        final int reflectionGap = 4;
-        // get image size
-        int width = originalImage.getWidth();
-        int height = originalImage.getHeight();
 
-        // this will not scale but will flip on the Y axis
-        Matrix matrix = new Matrix();
-        matrix.preScale(1, -1);
-
-        // create a Bitmap with the flip matrix applied to it.
-        // we only want the bottom half of the image
-        Bitmap reflectionImage = Bitmap.createBitmap(originalImage, 0, height / 2, width, height / 2, matrix, false);
-
-        // create a new bitmap with same width but taller to fit reflection
-        Bitmap bitmapWithReflection = Bitmap.createBitmap(width, (height + height / 2), Bitmap.Config.ARGB_8888);
-
-        // create a new Canvas with the bitmap that's big enough for
-        // the image plus gap plus reflection
-        Canvas canvas = new Canvas(bitmapWithReflection);
-        // draw in the original image
-        canvas.drawBitmap(originalImage, 0, 0, null);
-        // draw in the gap
-        Paint defaultPaint = new Paint();
-        canvas.drawRect(0, height, width, height + reflectionGap, defaultPaint);
-        // draw in the reflection
-        canvas.drawBitmap(reflectionImage, 0, height + reflectionGap, null);
-
-        // create a shader that is a linear gradient that covers the reflection
-        Paint paint = new Paint();
-        LinearGradient shader = new LinearGradient(0, originalImage.getHeight(), 0,
-                bitmapWithReflection.getHeight() + reflectionGap, 0x70ffffff, 0x00ffffff,
-                Shader.TileMode.CLAMP);
-        // set the paint to use this shader (linear gradient)
-        paint.setShader(shader);
-        // set the Transfer mode to be porter duff and destination in
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
-        // draw a rectangle using the paint with our linear gradient
-        canvas.drawRect(0, height, width, bitmapWithReflection.getHeight() + reflectionGap, paint);
-
-        return bitmapWithReflection;
-    }
+    // // TODO: 23/10/2015 Delete comments when main method is ready
+//    public static Bitmap applyReflectionWorkingCopy(Bitmap originalImage, int direction) {
+//        // gap space between original and reflected
+//        // get image size
+//        int width = originalImage.getWidth();
+//        int height = originalImage.getHeight();
+//
+//        MATRIX.reset();
+//
+//        boolean isHorizontal = direction == MIRROR_HORIZONTAL;
+//
+//        // this will not scale but will flip on the Y axis
+//        MATRIX.preScale(isHorizontal ? -1 : 1, isHorizontal ? 1 : -1);
+//
+//        // create a Bitmap with the flip MATRIX applied to it.
+//        // we only want the bottom half of the image
+//        Bitmap reflectionImage = Bitmap.createBitmap(originalImage, isHorizontal ? width / 2 : 0, isHorizontal ? 0 : height / 2, isHorizontal ? width / 2 : width, isHorizontal ? height : height / 2, MATRIX, false);
+//
+//        // create a new bitmap with same width but taller to fit reflection
+//        Bitmap bitmapWithReflection = Bitmap.createBitmap(isHorizontal ? (width + width / 2) : width, isHorizontal ? height : (height + height / 2), Bitmap.Config.ARGB_8888);
+//
+//
+//        // create a new Canvas with the bitmap that's big enough for
+//        // the image plus gap plus reflection
+//        Canvas canvas = new Canvas(bitmapWithReflection);
+//        // draw in the original image
+//        canvas.drawBitmap(originalImage, 0, 0, null);
+//
+//        // draw in the gap
+//        Paint defaultPaint = new Paint();
+//        canvas.drawRect(isHorizontal ? width : 0, isHorizontal ? (height - REFLECTION_GAP) : height + REFLECTION_GAP, width, height, defaultPaint);
+//        // draw in the reflection
+//        canvas.drawBitmap(reflectionImage, isHorizontal ? width + REFLECTION_GAP : 0, isHorizontal ? 0 : height + REFLECTION_GAP, null);
+//
+//        // create a shader that is a linear gradient that covers the reflection
+//        Paint paint = new Paint();
+//        LinearGradient shader = new LinearGradient(isHorizontal ? bitmapWithReflection.getWidth() : 0, originalImage.getHeight(), 0, isHorizontal ? 0 : bitmapWithReflection.getHeight() + REFLECTION_GAP, 0x70ffffff, 0x00ffffff, CLAMP);
+//        //LinearGradient shader = new LinearGradient(                                                0, originalImage.getHeight(), 0,                   bitmapWithReflection.getHeight() + REFLECTION_GAP, 0x70ffffff, 0x00ffffff, CLAMP);
+//        // set the paint to use this shader (linear gradient)
+//        paint.setShader(shader);
+//        // set the Transfer mode to be porter duff and destination in
+//        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+//        // draw a rectangle using the paint with our linear gradient
+//        canvas.drawRect(isHorizontal ? width + REFLECTION_GAP : 0, isHorizontal ? 0 : height, isHorizontal ? width + reflectionImage.getWidth() : width, isHorizontal ? height + reflectionImage.getHeight() : bitmapWithReflection.getHeight() + REFLECTION_GAP, paint);
+//        //canvas.drawRect(                                       0,                    height,                                                     width, bitmapWithReflection.getHeight() + REFLECTION_GAP, paint);
+//        return bitmapWithReflection;
+//    }
 
     /**
      * Flip Bitmap over X or Y Axis, depends on direction
@@ -139,7 +149,7 @@ public class GraphicUtils {
      * @return
      */
     public static Bitmap flip(Bitmap src, int type) {
-        // create new matrix for transformation
+        // create new MATRIX for transformation
         Matrix matrix = new Matrix();
         // if vertical
         if (type == FLIP_VERTICAL) {
@@ -220,7 +230,7 @@ public class GraphicUtils {
 
     public static Bitmap decodeSampledBitmapFromResource(String filename, int reqWidth, int reqHeight) {
 
-        Log.e("W: " + reqWidth + " , H:" + reqHeight);
+        Logger.e("W: " + reqWidth + " , H:" + reqHeight);
 
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = new BitmapFactory.Options();
@@ -230,7 +240,7 @@ public class GraphicUtils {
         // Calculate inSampleSize
         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
 
-        Log.e("inSampleSize =  " + options.inSampleSize);
+        Logger.e("inSampleSize =  " + options.inSampleSize);
 
         options.inPreferredConfig = Bitmap.Config.RGB_565;
         options.inDither = true;

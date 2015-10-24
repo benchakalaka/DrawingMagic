@@ -14,7 +14,10 @@ import java.util.Set;
  * Package: com.touchip.organizer.utils
  * Datascope Systems Ltd.
  */
-public class Conditions {
+public final class Conditions {
+
+    private Conditions() {
+    }
 
     /**
      * Check list to null or empty value

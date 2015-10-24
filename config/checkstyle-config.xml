@@ -87,7 +87,7 @@
         </module>
         <module name="UpperEll" />
         <module name="MethodLength">
-            <property name="max" value="100" />
+            <property name="max" value="200" />
         </module>
         <module name="LineLength">
             <property name="max" value="300" />

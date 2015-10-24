@@ -15,16 +15,12 @@ import static com.drawingmagic.core.PathSerializable.PathAction.PathActionType;
 public class PathSerializable extends Path implements Serializable {
 
     private static final long serialVersionUID = -5974912367682897467L;
-
     private final List<PathAction> actions = new ArrayList<>();
-
     private float textX, textY;
-
     private String text = "";
-
     private PaintSerializable paint = new PaintSerializable();
     private float savedCanvasX, savedCanvasY;
-    private final static float DEFAULT_ROUND_RECTANGLE_RADIUS = 15;
+    private static final float DEFAULT_ROUND_RECTANGLE_RADIUS = 15;
 
     public void setDrawText(float x, float y, String textToDraw) {
         this.textX = x;

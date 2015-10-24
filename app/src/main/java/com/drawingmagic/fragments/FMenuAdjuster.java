@@ -55,7 +55,6 @@ public class FMenuAdjuster extends Fragment {
     int finishedProgress;
 
 
-
     @AfterViews
     void afterViews() {
         setAdjusterTitle(adjusterTitle);
@@ -90,14 +89,7 @@ public class FMenuAdjuster extends Fragment {
 
 
     @SeekBarProgressChange
-    void sBar(int progress,boolean fromUser) {
-      //  if(fromUser) {
-            EventBus.getDefault().post(new Event(eventId, progress));
-      //  }
+    void sBar(int progress, boolean fromUser) {
+        EventBus.getDefault().post(new Event(eventId, progress));
     }
-
-//    @SeekBarTouchStop
-//    void sBar() {
-//        EventBus.getDefault().post(new Event(finishedProgress));
-//    }
 }
