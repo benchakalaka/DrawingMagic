@@ -23,6 +23,7 @@ import android.view.View;
 
 import com.drawingmagic.SuperActivity;
 import com.drawingmagic.dialogs.DialogCanvasSettings;
+import com.drawingmagic.helpers.FrameProvider;
 import com.drawingmagic.utils.Conditions;
 import com.drawingmagic.utils.Log;
 
@@ -168,7 +169,10 @@ public class DrawingView extends View {
         canvas.getClipBounds(rect);
 
         canvas.drawBitmap(drawingData.getCanvasBitmap(), SCALE_TO_FIT_CENTER_MATRIX, PAINT_BITMAP);
-
+        FrameProvider frameProvider = drawingData.getFrame();
+        if (Conditions.isNotNull(frameProvider)) {
+            canvas.drawBitmap(frameProvider.drawFrame(currentPaint,getResources(),drawingData.getCanvasBitmap().getWidth(),drawingData.getCanvasBitmap().getHeight()), SCALE_TO_FIT_CENTER_MATRIX, PAINT_BITMAP);
+        }
         //canvas.restore();
         // 2) draw all previously stored paths
         for (PathSerializable path : drawingData.getPaths()) {
@@ -651,6 +655,7 @@ public class DrawingView extends View {
         public static final int NO_GRID = -1;
         public static final int PARTLY_GRID = 0;
         public static final int FULL_GRID = 1;
+        public static final int[] GRID_TYPES = {NO_GRID, PARTLY_GRID, FULL_GRID};
     }
 
     /**
@@ -724,7 +729,6 @@ public class DrawingView extends View {
             this.drawingData.setShape(shape);
             return this;
         }
-
         public DrawingDataBuilder withGridEnabled(boolean isEnabled) {
             drawingData.setGridEnable(isEnabled);
             return this;
@@ -842,7 +846,14 @@ public class DrawingView extends View {
         private boolean displayLinesWhileDrawing = false;
         // Display lines while user drawing
         private boolean displayDashedMenu = true;
+        private FrameProvider frameProvider;
 
+        public FrameProvider getFrame() {
+            return this.frameProvider;
+        }
+        public void setFrame(FrameProvider frameProvider) {
+            this.frameProvider = frameProvider;
+        }
         public DialogCanvasSettings.CanvasSettings getCanvasSettings() {
             if (null == canvasSettings) {
                 canvasSettings = new DialogCanvasSettings.CanvasSettings();

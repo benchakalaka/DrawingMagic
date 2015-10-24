@@ -2,6 +2,7 @@
 <resources>
     <color name="default_background_colour">#009688</color>
     <color name="default_ab_background_colour">#00695c</color>
+    <color name="default_ab_background_colour_transparent">#8000695c</color>
     <color name="default_text_colour">#80cbc4</color>
     <color name="default_transparency">#66000000</color>
 
