@@ -57,6 +57,8 @@ import static com.drawingmagic.adapters.ViewPagerAdapter.EFFECTS_TOOLS_FRAGMENT;
 import static com.drawingmagic.core.DrawingView.GridType;
 import static com.drawingmagic.core.DrawingView.OnTouchCanvasCallback;
 import static com.drawingmagic.core.DrawingView.ShapesType;
+import static com.drawingmagic.eventbus.Event.FLIP;
+import static com.drawingmagic.eventbus.Event.MIRROR;
 import static com.drawingmagic.eventbus.Event.ON_ABS_MENU_APPLY;
 import static com.drawingmagic.eventbus.Event.ON_ABS_MENU_CANCEL;
 import static com.drawingmagic.eventbus.Event.ON_ABS_MENU_CLICKED;
@@ -64,6 +66,7 @@ import static com.drawingmagic.eventbus.Event.ON_ABS_MENU_RESTORE;
 import static com.drawingmagic.eventbus.Event.ON_ADJUSTER_VALUE_CHANGED;
 import static com.drawingmagic.eventbus.Event.ON_ADJUST_FILTER_LEVEL;
 import static com.drawingmagic.eventbus.Event.ON_APPLY_CROPPING;
+import static com.drawingmagic.eventbus.Event.ON_APPLY_DRAWING_ON_CANVAS;
 import static com.drawingmagic.eventbus.Event.ON_APPLY_EFFECT;
 import static com.drawingmagic.eventbus.Event.ON_CHANGE_CROPPING_SHAPE;
 import static com.drawingmagic.eventbus.Event.ON_CLEAR_CANVAS;
@@ -71,13 +74,23 @@ import static com.drawingmagic.eventbus.Event.ON_FINAL_SAVE_IMAGE;
 import static com.drawingmagic.eventbus.Event.ON_FINISHED_ROTATION;
 import static com.drawingmagic.eventbus.Event.ON_REDO;
 import static com.drawingmagic.eventbus.Event.ON_RESTORE_IMAGE_BEFORE_CROPPING;
+import static com.drawingmagic.eventbus.Event.ON_RESTORE_IMAGE_BEFORE_DRAWING;
 import static com.drawingmagic.eventbus.Event.ON_ROTATE;
 import static com.drawingmagic.eventbus.Event.ON_ROTATE_TRANSFORMATION;
 import static com.drawingmagic.eventbus.Event.ON_SKEW_TRANSFORMATION;
 import static com.drawingmagic.eventbus.Event.ON_TILT_FACTOR_X_CHANGED;
 import static com.drawingmagic.eventbus.Event.ON_TILT_FACTOR_Y_CHANGED;
 import static com.drawingmagic.eventbus.Event.ON_UNDO;
+import static com.drawingmagic.utils.AnimationUtils.AnimationTechniques.FADE_IN;
+import static com.drawingmagic.utils.AnimationUtils.AnimationTechniques.FLIP_IN_X;
+import static com.drawingmagic.utils.AnimationUtils.animateSlow;
+import static com.drawingmagic.utils.GraphicUtils.FLIP_HORIZONTAL;
+import static com.drawingmagic.utils.GraphicUtils.FLIP_VERTICAL;
+import static com.drawingmagic.utils.GraphicUtils.MIRROR_HORIZONTAL;
+import static com.drawingmagic.utils.GraphicUtils.MIRROR_VERTICAL;
 import static com.drawingmagic.utils.GraphicUtils.decodeSampledBitmapFromResource;
+import static com.drawingmagic.utils.GraphicUtils.flip;
+import static com.drawingmagic.utils.GraphicUtils.saveImageToGallery;
 import static com.drawingmagic.views.HoverView.DRAWING_CACHE_QUALITY_HIGH;
 import static com.drawingmagic.views.HoverView.MENU_ITEM_CAMERA;
 import static com.drawingmagic.views.HoverView.MENU_ITEM_EMPTY_CANVAS;
@@ -463,7 +476,6 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 
                 break;
         }
-
         // Something Here
     }
 
@@ -490,7 +502,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
         //// TODO: 05/10/2015 String to resources
         String fileName = String.format("Drawing magic %s", System.currentTimeMillis() + ".jpg");
         Bitmap finalImage = cropImageView.getCropShape() == CropShape.RECTANGLE ? cropImageView.getCroppedImage() : cropImageView.getCroppedOvalImage();
-        String savedToPath = GraphicUtils.saveImageToGallery(getContentResolver(), finalImage, fileName, "Drawing Magic");
+        String savedToPath = saveImageToGallery(getContentResolver(), finalImage, fileName, "Drawing Magic");
         Utils.shareImage(this, savedToPath);
         Notification.showSuccess(this, String.format("Successfully saved to %s", savedToPath));
     }
@@ -500,17 +512,44 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
         Notification.showSuccess(this, "Saved: " + uri.toString());
     }
 
+    /**
+     * Flip image by X or Y axis
+     *
+     * @param direction flip direction, Horizontal or Vertical
+     */
+    private void flipImage(int direction) {
+        drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(flip(drawingView.getDrawingData().getCanvasBitmap(), (direction == FLIP_HORIZONTAL) ? direction : FLIP_VERTICAL)).build());
+        animateSlow(drawingView, direction == FLIP_HORIZONTAL ? FADE_IN : FLIP_IN_X);
+    }
+
+    private void mirrorImage(int direction) {
+        if (direction == MIRROR_VERTICAL) {
+            drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(GraphicUtils.applyReflection(drawingView.getDrawingData().getCanvasBitmap())).build());
+        }
+
+        if (direction == MIRROR_HORIZONTAL) {
+            drawingView.setDrawingData(drawingView.builder().from(drawingView.getDrawingData()).withBitmap(GraphicUtils.applyReflection(drawingView.getDrawingData().getCanvasBitmap(), MIRROR_HORIZONTAL)).build());
+        }
+    }
+
 
     @Override
     public void onEventMainThread(Event event) {
         Log.e(event.toString());
         switch (event.type) {
+            case FLIP:
+                flipImage((int) event.payload);
+                break;
 
-            case Event.ON_RESTORE_IMAGE_BEFORE_DRAWING:
+            case MIRROR:
+                mirrorImage((int) event.payload);
+                break;
+
+            case ON_RESTORE_IMAGE_BEFORE_DRAWING:
                 restoreOriginalImageBeforeTransformation();
                 break;
 
-            case Event.ON_APPLY_DRAWING_ON_CANVAS:
+            case ON_APPLY_DRAWING_ON_CANVAS:
                 onApplyImageTransformationChanges();
                 break;
 
@@ -626,6 +665,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
             default:
                 Log.e("Unknown event " + event);
         }
+
     }
 
     private void invertCroppingShape() {
