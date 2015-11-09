@@ -1,22 +1,27 @@
-package com.drawingmagic.fragments;
+package com.drawingmagic.views.menu;
 
-import android.support.v4.app.Fragment;
+import android.content.Context;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import com.drawingmagic.R;
 import com.drawingmagic.eventbus.Event;
 import com.drawingmagic.utils.AnimationUtils;
 
 import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.Touch;
 
 import de.greenrobot.event.EventBus;
 
 import static com.drawingmagic.utils.AnimationUtils.AnimationTechniques.ZOOM_IN;
 
-@EFragment(R.layout.fragment_menu_cropper)
-public class FMenuCropper extends Fragment {
+@EViewGroup(R.layout.view_menu_cropper)
+public class CropperMenu extends LinearLayout {
+
+    public CropperMenu(Context context) {
+        super(context);
+    }
 
     @Click
     void mivApply() {

@@ -42,8 +42,8 @@
                 android:visibility="gone"
                 custom:imageResource="@drawable/kid" />
 
-            <FrameLayout
-                android:id="@+id/flFragmentHolder"
+            <RelativeLayout
+                android:id="@+id/rlBottomMenuHolder"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true" />

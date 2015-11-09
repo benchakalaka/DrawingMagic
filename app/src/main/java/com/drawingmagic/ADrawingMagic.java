@@ -5,11 +5,10 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PointF;
 import android.net.Uri;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
 import com.drawingmagic.adapters.ViewPagerAdapter;
@@ -17,10 +16,7 @@ import com.drawingmagic.core.DrawingSettings;
 import com.drawingmagic.core.DrawingView;
 import com.drawingmagic.core.GPUImageFilterTools;
 import com.drawingmagic.eventbus.Event;
-import com.drawingmagic.fragments.FMenuAdjuster_;
-import com.drawingmagic.fragments.FMenuCropper_;
-import com.drawingmagic.fragments.FMenuDrawingTools_;
-import com.drawingmagic.fragments.FTiltFragmentController_;
+import com.drawingmagic.fragments.FDrawingTools.OnChangeDrawingSettingsListener;
 import com.drawingmagic.helpers.FilterItemHolder;
 import com.drawingmagic.helpers.FrameProvider;
 import com.drawingmagic.utils.Conditions;
@@ -32,8 +28,16 @@ import com.drawingmagic.views.ABSMenuApplyRestoreCancel_;
 import com.drawingmagic.views.ViewMenuTop;
 import com.drawingmagic.views.ViewMenuTop_;
 import com.drawingmagic.views.abs.ActionBarView_;
+import com.drawingmagic.views.menu.AdjusterMenu;
+import com.drawingmagic.views.menu.AdjusterMenu_;
+import com.drawingmagic.views.menu.CropperMenu;
+import com.drawingmagic.views.menu.CropperMenu_;
+import com.drawingmagic.views.menu.DrawingToolsMenu;
+import com.drawingmagic.views.menu.DrawingToolsMenu_;
+import com.drawingmagic.views.menu.SkewMenu;
+import com.drawingmagic.views.menu.SkewMenu_;
 import com.theartofdev.edmodo.cropper.CropImageView;
-import static com.drawingmagic.GlobalConstants.*;
+
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
@@ -54,6 +58,10 @@ import static android.graphics.Bitmap.Config;
 import static android.view.View.GONE;
 import static android.view.View.LAYER_TYPE_SOFTWARE;
 import static android.view.View.VISIBLE;
+import static com.drawingmagic.GlobalConstants.DIVISION_COORDINATES_COEFFICIENT;
+import static com.drawingmagic.GlobalConstants.HALF_MAX_PROGRESS;
+import static com.drawingmagic.GlobalConstants.MAX_PROGRESS;
+import static com.drawingmagic.GlobalConstants.MAX_TILT_FACTOR;
 import static com.drawingmagic.adapters.ViewPagerAdapter.CANVAS_CROPPER_TOOLS_FRAGMENT;
 import static com.drawingmagic.adapters.ViewPagerAdapter.CANVAS_TRANSFORMER_FRAGMENT;
 import static com.drawingmagic.adapters.ViewPagerAdapter.DRAWING_TOOLS_FRAGMENT;
@@ -61,7 +69,31 @@ import static com.drawingmagic.adapters.ViewPagerAdapter.EFFECTS_TOOLS_FRAGMENT;
 import static com.drawingmagic.core.DrawingView.GridType;
 import static com.drawingmagic.core.DrawingView.OnTouchCanvasCallback;
 import static com.drawingmagic.core.DrawingView.ShapesType;
-import static com.drawingmagic.eventbus.Event.*;
+import static com.drawingmagic.eventbus.Event.FLIP;
+import static com.drawingmagic.eventbus.Event.MIRROR;
+import static com.drawingmagic.eventbus.Event.ON_ABS_MENU_APPLY;
+import static com.drawingmagic.eventbus.Event.ON_ABS_MENU_CANCEL;
+import static com.drawingmagic.eventbus.Event.ON_ABS_MENU_CLICKED;
+import static com.drawingmagic.eventbus.Event.ON_ABS_MENU_RESTORE;
+import static com.drawingmagic.eventbus.Event.ON_ADJUSTER_VALUE_CHANGED;
+import static com.drawingmagic.eventbus.Event.ON_ADJUST_FILTER_LEVEL;
+import static com.drawingmagic.eventbus.Event.ON_APPLY_CROPPING;
+import static com.drawingmagic.eventbus.Event.ON_APPLY_DRAWING_ON_CANVAS;
+import static com.drawingmagic.eventbus.Event.ON_APPLY_EFFECT;
+import static com.drawingmagic.eventbus.Event.ON_APPLY_FRAME;
+import static com.drawingmagic.eventbus.Event.ON_CHANGE_CROPPING_SHAPE;
+import static com.drawingmagic.eventbus.Event.ON_CLEAR_CANVAS;
+import static com.drawingmagic.eventbus.Event.ON_FINAL_SAVE_IMAGE;
+import static com.drawingmagic.eventbus.Event.ON_GRID_TYPE_CHANGED;
+import static com.drawingmagic.eventbus.Event.ON_REDO;
+import static com.drawingmagic.eventbus.Event.ON_RESTORE_IMAGE_BEFORE_CROPPING;
+import static com.drawingmagic.eventbus.Event.ON_RESTORE_IMAGE_BEFORE_DRAWING;
+import static com.drawingmagic.eventbus.Event.ON_ROTATE;
+import static com.drawingmagic.eventbus.Event.ON_ROTATE_TRANSFORMATION;
+import static com.drawingmagic.eventbus.Event.ON_SKEW_TRANSFORMATION;
+import static com.drawingmagic.eventbus.Event.ON_TILT_FACTOR_X_CHANGED;
+import static com.drawingmagic.eventbus.Event.ON_TILT_FACTOR_Y_CHANGED;
+import static com.drawingmagic.eventbus.Event.ON_UNDO;
 import static com.drawingmagic.utils.AnimationUtils.AnimationTechniques.FADE_IN;
 import static com.drawingmagic.utils.AnimationUtils.AnimationTechniques.FLIP_IN_X;
 import static com.drawingmagic.utils.AnimationUtils.animateSlow;
@@ -79,7 +111,7 @@ import static com.drawingmagic.views.HoverView.MENU_ITEM_GALLERY;
 import static com.theartofdev.edmodo.cropper.CropImageView.CropShape;
 import static jp.co.cyberagent.android.gpuimage.GPUImage.ScaleType.CENTER_INSIDE;
 import static jp.co.cyberagent.android.gpuimage.GPUImageView.OnPictureSavedListener;
-import com.drawingmagic.fragments.FDrawingTools.OnChangeDrawingSettingsListener;
+
 /**
  * Project DrawingMagic.
  * Created by ihorkarpachev
@@ -98,15 +130,12 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
     GPUImageView gpuImage;
     @ViewById
     CropImageView cropImageView;
-    @ViewById
-    FrameLayout flFragmentHolder;
     @Extra
     int selectedMenuItem;
     @ViewById
-    RelativeLayout container;
+    RelativeLayout container, rlBottomMenuHolder;
     @StringRes(R.string.rotate)
     String rotatePicture;
-
     @StringRes(R.string.angle)
     String rotateAngle;
 
@@ -115,7 +144,6 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
      * BITMAP_ORIGIN -------> BITMAP_MODIFIED -------> (DrawingView, TransformView, GPUEffects, CropView)
      */
     private Bitmap bitmapOrigin, bitmapModified;
-    private Bitmap croppedBitmap;
 
     // View pager adapter
     private final ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
@@ -128,9 +156,12 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
     private ViewMenuTop menuViewTop;
     private GPUImageFilter currentFilter;
     private GPUImageFilterTools.FilterAdjuster filterAdjuster;
-    // TODO: 27/09/15 Change names of fragments for adjusting as menu
-    // Transformation/Menu fragments
-    Fragment fragmentMenuRotation, fragmentMenuSkew, fragmentMenuDrawingTools, fragmentMenuAdjustEffectLevel, fragmentMenuCropper;
+
+
+    private AdjusterMenu adjusterMenu;
+    private DrawingToolsMenu drawingToolsMenu;
+    private CropperMenu cropperMenu;
+    private SkewMenu skewMenu;
 
     @StringRes(R.string.effect_adjuster)
     String effectAdjuster;
@@ -175,24 +206,54 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                 break;
         }
 
-        fragmentMenuCropper = new FMenuCropper_();
-        fragmentMenuDrawingTools = new FMenuDrawingTools_();
 
-        // set current value in the middle of seek bar (half of MAXIMUM_ROTATION_DEGREE)
-        fragmentMenuRotation = FMenuAdjuster_.builder().
-                adjusterTitle(rotateAngle).
-                fragmentTitle(rotatePicture).
-                currentProgress(MAX_ROTATION_DEGREE_ONE_DIRECTION).
-                progressMax(MAX_ROTATION_DEGREE_ONE_DIRECTION << 1).
-                finishedProgress(ON_FINISHED_ROTATION).
-                eventId(ON_ROTATE).build();
+        createMenuViews();
 
-        fragmentMenuSkew = new FTiltFragmentController_();
-        menuViewTop = configureAndAddTopMenu(container);
+        // Hide all views
+        hideAllMenuViews();
         // Set clearing tools as a first
-        getSupportFragmentManager().beginTransaction().add(R.id.flFragmentHolder, fragmentMenuDrawingTools).commit();
-        getSupportFragmentManager().beginTransaction().add(R.id.flFragmentHolder, fragmentMenuRotation).commit();
+        drawingToolsMenu.setVisibility(VISIBLE);
+
+        menuViewTop = configureAndAddTopMenu(container);
     }
+
+    private void setupAdjuster(String adjusterTitle, String adjusterLabel, int value, int max, int eventId) {
+        adjusterMenu.setAdjusterTitle(adjusterTitle);
+        adjusterMenu.setSeekBarAdjusterTitle(adjusterLabel);
+        adjusterMenu.setSeekBarCurrentAndMaxValues(value, max);
+        adjusterMenu.setEventIdToBeSent(eventId);
+
+    }
+
+    private void createMenuViews() {
+
+        // Create Drawing tools
+        drawingToolsMenu = DrawingToolsMenu_.build(this);
+
+        // Create rotate adjuster
+        adjusterMenu = AdjusterMenu_.build(this);
+        setupAdjuster(rotateAngle, rotatePicture, MAX_ROTATION_DEGREE_ONE_DIRECTION / 2, MAX_ROTATION_DEGREE_ONE_DIRECTION, ON_ROTATE);
+
+        // Create Skew menu
+        skewMenu = SkewMenu_.build(this);
+
+        // Create cropper
+        cropperMenu = CropperMenu_.build(this);
+
+        // Add all views to view holder
+        rlBottomMenuHolder.addView(drawingToolsMenu);
+        rlBottomMenuHolder.addView(adjusterMenu);
+        rlBottomMenuHolder.addView(skewMenu);
+        rlBottomMenuHolder.addView(cropperMenu);
+    }
+
+    private void hideAllMenuViews() {
+        drawingToolsMenu.setVisibility(View.GONE);
+        adjusterMenu.setVisibility(View.GONE);
+        skewMenu.setVisibility(View.GONE);
+        cropperMenu.setVisibility(View.GONE);
+    }
+
 
     private ViewMenuTop configureAndAddTopMenu(ViewGroup container) {
         ViewMenuTop view = ViewMenuTop_.build(this);
@@ -202,6 +263,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
         container.addView(view);
         return view;
     }
+
     /**
      * Init View Pager
      */
@@ -224,14 +286,18 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                                                                    menuViewTop.setVisibility(VISIBLE);
                                                                    cropImageView.setVisibility(GONE);
                                                                    drawingView.setDrawingEnabled(true);
-                                                                   getSupportFragmentManager().beginTransaction().hide(fragmentMenuRotation).commit();
-                                                                   getSupportFragmentManager().beginTransaction().show(fragmentMenuDrawingTools).commit();
+                                                                   // Hide all views
+                                                                   hideAllMenuViews();
+                                                                   // Set clearing tools as a first
+                                                                   drawingToolsMenu.setVisibility(VISIBLE);
                                                                    break;
 
                                                                case CANVAS_TRANSFORMER_FRAGMENT:
                                                                    // TODO: 27/09/15 Remember selected transform tools and display this fragment
-                                                                   getSupportFragmentManager().beginTransaction().show(fragmentMenuRotation).commit();
-                                                                   getSupportFragmentManager().beginTransaction().hide(fragmentMenuDrawingTools).commit();
+                                                                   // Hide all views
+                                                                   hideAllMenuViews();
+                                                                   adjusterMenu.setVisibility(VISIBLE);
+                                                                   //////////////////////////////////
                                                                    drawingView.setVisibility(VISIBLE);
                                                                    gpuImage.setVisibility(GONE);
                                                                    cropImageView.setVisibility(GONE);
@@ -246,10 +312,10 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                                                                    cropImageView.setVisibility(GONE);
                                                                    menuViewTop.setVisibility(GONE);
                                                                    drawingView.setDrawingEnabled(true);
-                                                                   getSupportFragmentManager().beginTransaction().remove(fragmentMenuRotation).commit();
-                                                                   getSupportFragmentManager().beginTransaction().remove(fragmentMenuSkew).commit();
+                                                                   hideAllMenuViews();
                                                                    if (Conditions.isNotNull(currentFilter)) {
-                                                                       getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, fragmentMenuAdjustEffectLevel).commit();
+                                                                       //// TODO: 26/10/2015 Filter name
+                                                                       setupAdjuster("TODO !", "TODO 2", MAX_PROGRESS >>> 1, MAX_PROGRESS, ON_ADJUST_FILTER_LEVEL);
                                                                    }
                                                                    break;
 
@@ -260,7 +326,8 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                                                                    cropImageView.setVisibility(VISIBLE);
                                                                    drawingView.setDrawingEnabled(true);
                                                                    cropImageView.setImageBitmap(bitmapModified);
-                                                                   getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, fragmentMenuCropper).commit();
+                                                                   hideAllMenuViews();
+                                                                   cropperMenu.setVisibility(VISIBLE);
                                                                    break;
 
                                                                default:
@@ -396,25 +463,11 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
             currentFilter = filter;
             gpuImage.setFilter(currentFilter);
             filterAdjuster = new GPUImageFilterTools.FilterAdjuster(currentFilter);
-
-            // TODO: 28/09/15 Replace with creation only once
-            // create adjustable fragment
-            fragmentMenuAdjustEffectLevel = FMenuAdjuster_.builder().
-                    adjusterTitle(filterName).
-                    fragmentTitle(effectAdjuster).
-                    currentProgress(MAX_PROGRESS >>> 1).
-                    progressMax(MAX_PROGRESS).
-                    eventId(ON_ADJUST_FILTER_LEVEL).build();
-
-            getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, fragmentMenuAdjustEffectLevel).commit();
-
-            // Filter is not adjustable, remove adjust menu
-            if (!filterAdjuster.canAdjust()) {
-                getSupportFragmentManager().beginTransaction().remove(fragmentMenuAdjustEffectLevel).commit();
-                Logger.e("Filter " + filterName + " is not adjustable, hide seekBar");
-            }
+            setupAdjuster(filterName ,filterName, MAX_PROGRESS >>> 1, MAX_PROGRESS,ON_ADJUST_FILTER_LEVEL );
+            adjusterMenu.setVisibility(filterAdjuster.canAdjust() ? VISIBLE : GONE);
         }
     }
+
 
     @OnActivityResult(REQUEST_PICK_IMAGE)
     void onResult(int resultCode, final Intent data) {
@@ -554,9 +607,6 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                 saveImage();
                 break;
 
-            case ON_FINISHED_ROTATION:
-                onApplyImageTransformationChanges();
-                break;
             case ON_GRID_TYPE_CHANGED:
                 Logger.e("SET GRID TYPE " + event.payload);
                 drawingView.setGridType((Integer) event.payload);
@@ -566,11 +616,13 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                 invertCroppingShape();
                 break;
             case ON_SKEW_TRANSFORMATION:
-                getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, fragmentMenuSkew).commit();
+                hideAllMenuViews();
+                skewMenu.setVisibility(VISIBLE);
                 break;
 
             case ON_ROTATE_TRANSFORMATION:
-                getSupportFragmentManager().beginTransaction().replace(R.id.flFragmentHolder, fragmentMenuRotation).commit();
+                hideAllMenuViews();
+                adjusterMenu.setVisibility(VISIBLE);
                 break;
 
             case ON_ABS_MENU_APPLY:
@@ -581,7 +633,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
                 restoreOriginalImageBeforeTransformation();
                 break;
             case ON_APPLY_FRAME:
-                drawingView.getDrawingData().setFrame((FrameProvider)event.payload);
+                drawingView.getDrawingData().setFrame((FrameProvider) event.payload);
                 drawingView.invalidate();
                 break;
             case ON_ABS_MENU_CANCEL:

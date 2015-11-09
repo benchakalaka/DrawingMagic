@@ -27,7 +27,7 @@ import de.greenrobot.event.EventBus;
  * Project DrawingMagic
  * Copyright (c) 2013-2015 Datascope Ltd. All Rights Reserved.
  */
-@EViewGroup(R.layout.view_menu_drawing_tools_top)
+@EViewGroup(R.layout.view_grid_state)
 public class ViewMenuTop extends RelativeLayout {
     @ViewById
     MaterialIconView mivGridState;

@@ -23,7 +23,6 @@ public final class Event {
     public static final int ON_ROTATE_TRANSFORMATION = 16;
     public static final int ON_SKEW_TRANSFORMATION = 17;
     public static final int ON_CHANGE_CROPPING_SHAPE = 18;
-    public static final int ON_FINISHED_ROTATION = 19;
     public static final int ON_FINAL_SAVE_IMAGE = 20;
     public static final int SHARE_VK = 21;
     public static final int SHARE_FACEBOOK = 22;
@@ -107,8 +106,6 @@ public final class Event {
                 return getClass().getCanonicalName() + " ON_SKEW_TRANSFORMATION";
             case ON_CHANGE_CROPPING_SHAPE:
                 return getClass().getCanonicalName() + " ON_CHANGE_CROPPING_SHAPE";
-            case ON_FINISHED_ROTATION:
-                return getClass().getCanonicalName() + " ON_FINISHED_ROTATION";
             case ON_FINAL_SAVE_IMAGE:
                 return getClass().getCanonicalName() + " ON_FINAL_SAVE_IMAGE";
             case SHARE_FACEBOOK:

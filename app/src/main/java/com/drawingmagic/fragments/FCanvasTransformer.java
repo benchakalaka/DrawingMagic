@@ -4,7 +4,6 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.support.v4.app.Fragment;
@@ -16,7 +15,6 @@ import com.drawingmagic.eventbus.Event;
 import com.drawingmagic.helpers.FrameProvider;
 import com.drawingmagic.helpers.FrameResourceItemHolder;
 import com.drawingmagic.utils.AnimationUtils;
-import com.drawingmagic.views.ImageFramePreview_;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
@@ -110,9 +108,9 @@ public class FCanvasTransformer extends Fragment {
     @AfterViews
     void afterViews() {
         initFrames();
-        for(int i=0;i<FRAMES_ARRAY.size();i++) {
-            llFramesContainer.addView(ImageFramePreview_.build(getActivity(), FRAMES_ARRAY.get(i)));
-        }
+//        for(int i=0;i<FRAMES_ARRAY.size();i++) {
+//            llFramesContainer.addView(ImageFramePreview_.build(getActivity(), FRAMES_ARRAY.get(i)));
+//        }
     }
 
     @ViewById
