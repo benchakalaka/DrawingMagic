@@ -33,13 +33,15 @@
         android:textSize="50sp"
         app:reflectionColor="@color/white" />
 
+
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/civ"
         android:layout_width="96dp"
         android:layout_height="96dp"
-        android:layout_centerInParent="true"
-        android:src="@drawable/ic_launcher"
-        app:border_color="#FFAA0000"
+        android:layout_below="@+id/stv"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/icon"
+        app:border_color="@color/Yankeesblue"
         app:border_width="2dp" />
 
 </RelativeLayout>

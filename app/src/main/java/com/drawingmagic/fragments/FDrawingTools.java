@@ -84,7 +84,6 @@ public class FDrawingTools extends Fragment {
         listener.onSetUpDrawingShapesOkClicked(drawingSettings);
     }
 
-
     @AfterViews
     void afterViews() {
         // check activity for inheritance from OnChangeDrawingSettingsListener

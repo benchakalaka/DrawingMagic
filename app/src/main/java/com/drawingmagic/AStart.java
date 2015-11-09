@@ -31,11 +31,11 @@ public class AStart extends SuperActivity implements HooverMenuClickListener {
     private static final int DEFAULT_SHIMMER_DURATION = 1500;
 
     private Shimmer shimmer = new Shimmer();
+    private View hoverUserProfile;
 
     @AfterViews
     void afterViews() {
 
-        // getSupportFragmentManager().beginTransaction().add(R.id.container, new MainFragment()).commit();
         Utils.configureCustomActionBar(getSupportActionBar(), ActionBarView_.build(this));
 
         BlurLayout.setGlobalDefaultDuration(DEFAULT_GLOBAL_BLUR_DURATION);
@@ -43,7 +43,7 @@ public class AStart extends SuperActivity implements HooverMenuClickListener {
         shimmer.setDuration(DEFAULT_SHIMMER_DURATION);
         shimmer.start(stv);
 
-        View hoverUserProfile = HoverView_.build(this);
+        hoverUserProfile = HoverView_.build(this);
 
         blProfile.setHoverView(hoverUserProfile);
 
@@ -60,6 +60,7 @@ public class AStart extends SuperActivity implements HooverMenuClickListener {
 
         blProfile.enableZoomBackground(true);
     }
+
 
     @Override
     public void onEventMainThread(Event event) {
