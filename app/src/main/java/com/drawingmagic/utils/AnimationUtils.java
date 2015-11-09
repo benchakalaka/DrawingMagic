@@ -16,7 +16,11 @@ import com.nineoldandroids.animation.Animator;
  * Package: com.touchip.organizer.utils
  * Datascope Systems Ltd.
  */
-public class AnimationUtils {
+public final class AnimationUtils {
+
+    private AnimationUtils() {
+
+    }
 
     /**
      * Default duration of animations
@@ -85,7 +89,7 @@ public class AnimationUtils {
      * @param animationTechniques which techniques to use
      * @param listener            listener
      */
-    public static void animate(View target, AnimationTechniques animationTechniques, com.nineoldandroids.animation.Animator.AnimatorListener listener) {
+    public static void animate(View target, AnimationTechniques animationTechniques, Animator.AnimatorListener listener) {
         YoYo.with(getActualTechniques(animationTechniques)).duration(NORMAL).withListener(listener).playOn(target);
     }
 
@@ -126,7 +130,7 @@ public class AnimationUtils {
      * @param animationTechniques which techniques to use
      * @param listener            listener
      */
-    public static void animateSlow(View target, AnimationTechniques animationTechniques, com.nineoldandroids.animation.Animator.AnimatorListener listener) {
+    public static void animateSlow(View target, AnimationTechniques animationTechniques, Animator.AnimatorListener listener) {
         YoYo.with(getActualTechniques(animationTechniques)).duration(SLOW).withListener(listener).playOn(target);
     }
 

@@ -1,16 +1,17 @@
-package com.drawingmagic.fragments;
+package com.drawingmagic.views.menu;
 
-import android.support.v4.app.Fragment;
 import android.view.View;
+import android.widget.RelativeLayout;
 
 import com.drawingmagic.R;
+import com.drawingmagic.SuperActivity;
 import com.drawingmagic.eventbus.Event;
 import com.drawingmagic.utils.AnimationUtils;
 
 import net.steamcrafted.materialiconlib.MaterialIconView;
 
 import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
 
 import de.greenrobot.event.EventBus;
@@ -23,8 +24,9 @@ import static com.drawingmagic.eventbus.Event.ON_RESTORE_IMAGE_BEFORE_DRAWING;
  * Created by ihorkarpachev.
  * On 20/09/15 at 13:32.
  */
-@EFragment(R.layout.fragment_menu_drawing_tools)
-public class FMenuDrawingTools extends Fragment {
+@EViewGroup(R.layout.view_menu_drawing_tools)
+public class DrawingToolsMenu extends RelativeLayout {
+
     @ViewById
     MaterialIconView mivApply, mivCancel;
 
@@ -51,6 +53,7 @@ public class FMenuDrawingTools extends Fragment {
         EventBus.getDefault().post(new Event(ON_RESTORE_IMAGE_BEFORE_DRAWING));
     }
 
-    public FMenuDrawingTools() {
+    public DrawingToolsMenu(SuperActivity context) {
+        super(context);
     }
 }

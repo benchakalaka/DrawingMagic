@@ -25,7 +25,11 @@ import static android.content.Intent.createChooser;
  * Created by ihorkarpachev.
  * On 14/09/15 at 13:40.
  */
-public class Utils {
+public final class Utils {
+
+    private Utils() {
+
+    }
 
     /**
      * Share image via existing social networks or email
