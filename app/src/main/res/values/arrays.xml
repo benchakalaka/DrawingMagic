@@ -5,4 +5,13 @@
         <item>border_outside</item>
         <item>grid</item>
     </string-array>
+
+    <string-array name="guide_array">
+        <item>Make your photos in just four basic simple steps. On each step you will configure your own magic.</item>
+        <item>Step 1. Draw on photo using brush tools.</item>
+        <item>Step 2. Apply any transformation you like in order to change photo matrix</item>
+        <item>Step 3. Pick up photo filter from predefined set.</item>
+        <item>Step 4. Finally - crop your image and save/share it.</item>
+    </string-array>
+
 </resources>

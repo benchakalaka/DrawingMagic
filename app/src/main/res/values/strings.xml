@@ -112,8 +112,8 @@
     <string name="flip_horizontal">Flip horizontal</string>
     <string name="mirror_horizontal">Mirror horizontally</string>
     <string name="mirror_vertical">Mirror verticaly</string>
-    <string name="splash_screen_title">Splash Scree Sample</string>
-    <!-- FILTERS -->
-
-
+    <string name="splash_screen_title">Welcome to Photo Magic ;)</string>
+    <string name="got_it">Got it!</string>
+    <string name="next">Next</string>
+    <string name="grid_partly">Grid edges switched on</string>
 </resources>

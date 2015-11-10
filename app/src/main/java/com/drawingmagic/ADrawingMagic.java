@@ -170,7 +170,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
 
     @AfterViews
     void afterViews() {
-        Utils.configureCustomActionBar(getSupportActionBar(), ActionBarView_.build(this).withRightMenu(ABSMenuApplyRestoreCancel_.build(this)).withMenuButton());
+        Utils.configureActionBar(ActionBarView_.build(this).withRightMenu(ABSMenuApplyRestoreCancel_.build(this)).withMenuButton());
 
         // init drawing view
         initDrawingView();
@@ -463,7 +463,7 @@ public class ADrawingMagic extends SuperActivity implements OnChangeDrawingSetti
             currentFilter = filter;
             gpuImage.setFilter(currentFilter);
             filterAdjuster = new GPUImageFilterTools.FilterAdjuster(currentFilter);
-            setupAdjuster(filterName ,filterName, MAX_PROGRESS >>> 1, MAX_PROGRESS,ON_ADJUST_FILTER_LEVEL );
+            setupAdjuster(filterName, filterName, MAX_PROGRESS >>> 1, MAX_PROGRESS, ON_ADJUST_FILTER_LEVEL);
             adjusterMenu.setVisibility(filterAdjuster.canAdjust() ? VISIBLE : GONE);
         }
     }

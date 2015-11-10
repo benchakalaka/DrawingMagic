@@ -60,7 +60,6 @@
                 android:id="@+id/viewPagerIndicator"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                app:siIndicatorColor="@color/default_ab_background_colour"
                 app:siIndicatorColors="@array/indicator_colors"
                 app:siSelectedTextColor="@android:color/white"
                 app:siTextColor="@color/default_text_colour"

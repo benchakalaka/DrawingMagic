@@ -6,4 +6,12 @@
         <item>@color/indicator_3</item>
         <item>@color/indicator_4</item>
     </array>
+
+    <integer-array name="guide_images">
+        <item>@drawable/guide_1</item>
+        <item>@drawable/guide_2</item>
+        <item>@drawable/guide_3</item>
+        <item>@drawable/guide_4</item>
+        <item>@drawable/guide_5</item>
+    </integer-array>
 </resources>

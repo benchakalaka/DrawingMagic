@@ -4,7 +4,7 @@
 
 package com.drawingmagic.utils;
 
-import android.app.Activity;
+import android.content.Context;
 
 import com.github.pierry.simpletoast.SimpleToast;
 
@@ -29,7 +29,7 @@ public final class Notification {
      * @param message        message to be displayed
      * @param fatImageString e.g. {fa-home}, {fa-close}
      */
-    public static void showWithFontAwesomeImage(Activity activity, String message, String fatImageString, NotificationType type) {
+    public static void showWithFontAwesomeImage(Context activity, String message, String fatImageString, NotificationType type) {
         switch (type) {
 
             case SUCCESS:
@@ -64,7 +64,7 @@ public final class Notification {
      * @param activity context of activity
      * @param message  message to be displayed
      */
-    public static void showMuted(Activity activity, String message) {
+    public static void showMuted(Context activity, String message) {
         SimpleToast.muted(activity, message);
     }
 
@@ -74,7 +74,7 @@ public final class Notification {
      * @param activity context of activity
      * @param message  message id to be displayed
      */
-    public static void showMuted(Activity activity, int message) {
+    public static void showMuted(Context activity, int message) {
         SimpleToast.muted(activity, activity.getResources().getString(message));
     }
 
@@ -84,7 +84,7 @@ public final class Notification {
      * @param activity context of activity
      * @param message  message to be displayed
      */
-    public static void showWarning(Activity activity, String message) {
+    public static void showWarning(Context activity, String message) {
         SimpleToast.warning(activity, message);
     }
 
@@ -94,7 +94,7 @@ public final class Notification {
      * @param activity context of activity
      * @param message  message id to be displayed
      */
-    public static void showWarning(Activity activity, int message) {
+    public static void showWarning(Context activity, int message) {
         SimpleToast.warning(activity, activity.getResources().getString(message));
     }
 
@@ -104,7 +104,7 @@ public final class Notification {
      * @param activity context of activity
      * @param message  message to be displayed
      */
-    public static void showError(Activity activity, String message) {
+    public static void showError(Context activity, String message) {
         SimpleToast.error(activity, message);
     }
 
@@ -114,7 +114,7 @@ public final class Notification {
      * @param activity context of activity
      * @param message  message id to be displayed
      */
-    public static void showError(Activity activity, int message) {
+    public static void showError(Context activity, int message) {
         SimpleToast.error(activity, activity.getResources().getString(message));
     }
 
@@ -124,7 +124,7 @@ public final class Notification {
      * @param activity context of activity
      * @param message  message to be displayed
      */
-    public static void showSuccess(Activity activity, String message) {
+    public static void showSuccess(Context activity, String message) {
         SimpleToast.ok(activity, message);
     }
 
@@ -134,7 +134,7 @@ public final class Notification {
      * @param activity context of activity
      * @param message  message id to be displayed
      */
-    public static void showSuccess(Activity activity, int message) {
+    public static void showSuccess(Context activity, int message) {
         SimpleToast.ok(activity, activity.getResources().getString(message));
     }
 
@@ -144,7 +144,7 @@ public final class Notification {
      * @param activity context of activity
      * @param message  message to be displayed
      */
-    public static void showInfo(Activity activity, String message) {
+    public static void showInfo(Context activity, String message) {
         SimpleToast.info(activity, message);
     }
 
@@ -154,7 +154,7 @@ public final class Notification {
      * @param activity context of activity
      * @param message  message id to be displayed
      */
-    public static void showInfo(Activity activity, int message) {
+    public static void showInfo(Context activity, int message) {
         SimpleToast.info(activity, activity.getResources().getString(message));
     }
 

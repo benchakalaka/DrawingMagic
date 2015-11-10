@@ -21,10 +21,12 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
+import com.drawingmagic.R;
 import com.drawingmagic.SuperActivity;
 import com.drawingmagic.helpers.FrameProvider;
 import com.drawingmagic.utils.Conditions;
 import com.drawingmagic.utils.Logger;
+import com.drawingmagic.utils.Notification;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -170,7 +172,7 @@ public class DrawingView extends View {
         canvas.drawBitmap(drawingData.getCanvasBitmap(), SCALE_TO_FIT_CENTER_MATRIX, PAINT_BITMAP);
         FrameProvider frameProvider = drawingData.getFrame();
         if (Conditions.isNotNull(frameProvider)) {
-            canvas.drawBitmap(frameProvider.drawFrame(currentPaint,getResources(),drawingData.getCanvasBitmap().getWidth(),drawingData.getCanvasBitmap().getHeight()), SCALE_TO_FIT_CENTER_MATRIX, PAINT_BITMAP);
+            canvas.drawBitmap(frameProvider.drawFrame(currentPaint, getResources(), drawingData.getCanvasBitmap().getWidth(), drawingData.getCanvasBitmap().getHeight()), SCALE_TO_FIT_CENTER_MATRIX, PAINT_BITMAP);
         }
         //canvas.restore();
         // 2) draw all previously stored paths
@@ -637,6 +639,23 @@ public class DrawingView extends View {
     public void setGridType(int gridType) {
         drawingData.getShape().setGridType(gridType);
         invalidate();
+        Notification.showSuccess(getContext(), getStringRepresentationOfGrid(gridType));
+    }
+
+    private String getStringRepresentationOfGrid(int gridType) {
+        switch (gridType) {
+            case GridType.NO_GRID:
+                return getResources().getString(R.string.grid_off);
+
+            case GridType.PARTLY_GRID:
+                return getResources().getString(R.string.grid_partly);
+
+            case GridType.FULL_GRID:
+                return getResources().getString(R.string.grid_on);
+
+            default:
+                return "";
+        }
     }
 
 
@@ -729,6 +748,7 @@ public class DrawingView extends View {
             this.drawingData.setShape(shape);
             return this;
         }
+
         public DrawingDataBuilder withGridEnabled(boolean isEnabled) {
             drawingData.setGridEnable(isEnabled);
             return this;
@@ -872,12 +892,15 @@ public class DrawingView extends View {
         // Display lines while user drawing
         private boolean displayDashedMenu = true;
         private FrameProvider frameProvider;
+
         public FrameProvider getFrame() {
             return this.frameProvider;
         }
+
         public void setFrame(FrameProvider frameProvider) {
             this.frameProvider = frameProvider;
         }
+
         public CanvasSettings getCanvasSettings() {
             if (null == canvasSettings) {
                 canvasSettings = new CanvasSettings();

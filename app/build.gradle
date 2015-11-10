@@ -146,7 +146,7 @@ dependencies {
     compile 'com.mauriciotogneri:trail:1.0.0'
     compile 'com.android.support:support-v4:+'
 
-    // Floating btton
+    // Floating button
     compile 'com.github.clans:fab:1.6.1'
 
     // Event bus

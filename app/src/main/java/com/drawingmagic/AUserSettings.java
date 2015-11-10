@@ -13,8 +13,5 @@ import org.androidannotations.annotations.EActivity;
 public class AUserSettings extends SuperActivity {
     @Override
     public void onEventMainThread(Event event) {
-
     }
-
-
 }

@@ -1,5 +1,6 @@
 package com.drawingmagic.utils;
 
+
 import android.app.Dialog;
 import android.content.CursorLoader;
 import android.content.Intent;
@@ -62,23 +63,21 @@ public final class Utils {
     /**
      * Configure and set custom action bar
      *
-     * @param actionBar  action bar instance
      * @param customView view to be set as AB
      */
-    public static void configureCustomActionBar(ActionBar actionBar, View customView) {
-        actionBar.setDefaultDisplayHomeAsUpEnabled(false);
-        actionBar.setDisplayHomeAsUpEnabled(false);
-        actionBar.setDisplayShowCustomEnabled(true);
-        actionBar.setDisplayShowHomeEnabled(false);
-        actionBar.setDisplayShowTitleEnabled(false);
-        actionBar.setDisplayUseLogoEnabled(false);
-        actionBar.setBackgroundDrawable(new ColorDrawable(customView.getContext().getResources().getColor(R.color.default_ab_background_colour)));
-        actionBar.setHomeButtonEnabled(false);
-        //actionBar.setIcon(R.color.ab_background);
-        if (Conditions.isNotNull(customView)) {
+    public static void configureActionBar(View customView) {
+        ActionBar actionBar = ((SuperActivity) customView.getContext()).getSupportActionBar();
+        if (Conditions.isNotNull(actionBar)) {
+            actionBar.setDefaultDisplayHomeAsUpEnabled(false);
+            actionBar.setDisplayHomeAsUpEnabled(false);
+            actionBar.setDisplayShowCustomEnabled(true);
+            actionBar.setDisplayShowHomeEnabled(false);
+            actionBar.setDisplayShowTitleEnabled(false);
+            actionBar.setDisplayUseLogoEnabled(false);
+            actionBar.setBackgroundDrawable(new ColorDrawable(customView.getContext().getResources().getColor(R.color.default_ab_background_colour)));
+            actionBar.setHomeButtonEnabled(false);
             actionBar.setCustomView(customView);
         }
-
     }
 
     public static String getRealPathFromURI(SuperActivity activity, Uri contentUri) {

@@ -4,6 +4,7 @@
 
 package com.drawingmagic.utils;
 
+import com.drawingmagic.eventbus.Event;
 import com.mauriciotogneri.trail.Trail;
 
 import java.util.Map;
@@ -18,6 +19,15 @@ public final class Logger {
 
     private Logger() {
 
+    }
+
+    /**
+     * Log event from eventBus
+     *
+     * @param event exception to log
+     */
+    public static void e(Event event) {
+        Trail.debug(event);
     }
 
     /**

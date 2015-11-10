@@ -13,25 +13,26 @@ import com.viksaa.sssplash.lib.model.ConfigSplash;
  */
 public class ASplash extends AwesomeSplash {
 
-    private final int TITLE_TEXT_SIZE = 30;
-    private final int ANIMATION_DURATION = 300;
-    private final int ANIMATION_REVEAL_DURATION = 1000;
+    private final int TITLE_TEXT_SIZE = 50;
+    private final int ANIMATION_DURATION = 500;
+    private final int ANIMATION_REVEAL_DURATION = 1200;
 
 
     @Override
     public void animationsFinished() {
-        AStart_.intent(this).start();
+        AGuide_.intent(this).start();
     }
 
     @Override
     public void initSplash(ConfigSplash configSplash) {
-        //Customize Circular Reveal
+        configSplash.setAnimLogoSplashTechnique(Techniques.ZoomInLeft);
         configSplash.setTitleSplash(getResources().getString(R.string.splash_screen_title));
         configSplash.setTitleTextColor(R.color.white);
         configSplash.setTitleTextSize(TITLE_TEXT_SIZE);
         configSplash.setAnimTitleDuration(ANIMATION_DURATION);
         configSplash.setAnimTitleTechnique(Techniques.FadeInUp);
         configSplash.setBackgroundColor(R.color.default_background_colour);
+        configSplash.setLogoSplash(R.drawable.icon);
         configSplash.setAnimCircularRevealDuration(ANIMATION_REVEAL_DURATION);
         configSplash.setRevealFlagX(Flags.REVEAL_RIGHT);
         configSplash.setRevealFlagY(Flags.REVEAL_BOTTOM);

@@ -7,9 +7,9 @@
     <color name="default_transparency">#66000000</color>
 
     <!--View Pager spring indicator-->
-    <color name="indicator_1">#55B</color>
-    <color name="indicator_2">#64A4A4</color>
-    <color name="indicator_3">#662341</color>
-    <color name="indicator_4">#BBAACC</color>
+    <color name="indicator_1">#66bb6a</color>
+    <color name="indicator_2">#43a047</color>
+    <color name="indicator_3">#2e7d32</color>
+    <color name="indicator_4">#1b5e20</color>
     <color name="Yankeesblue">#1C2841</color>
 </resources>
